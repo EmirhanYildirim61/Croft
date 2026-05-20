@@ -23,13 +23,13 @@
 
 ## 🗄️ Phase 1A — Database Schema
 
-- [ ] Create `accounts` table: `id`, `name`, `type` (bank/credit/cash/savings), `currency`, `initial_balance`, `created_at`
-- [ ] Create `transactions` table: `id`, `account_id`, `date`, `amount_cents` (integer, never float), `payee`, `category_id`, `note`, `is_recurring`, `created_at`
-- [ ] Create `categories` table: `id`, `name`, `parent_id` (nullable, for sub-categories), `color`
-- [ ] Create `budgets` table: `id`, `category_id`, `month` (YYYY-MM), `amount_cents`
-- [ ] Create `recurring_items` table: `id`, `account_id`, `category_id`, `amount_cents`, `frequency`, `next_due_date`, `label`
-- [ ] Write SQLx migration files for each table (versioned, e.g. `0001_init.sql`)
-- [ ] Seed default categories on first launch (Food, Transport, Housing, Health, Entertainment, etc.)
+- [x] Create `accounts` table: `id`, `name`, `type` (bank/credit/cash/savings), `currency`, `initial_balance`, `created_at`
+- [x] Create `transactions` table: `id`, `account_id`, `date`, `amount_cents` (integer, never float), `payee`, `category_id`, `note`, `is_recurring`, `created_at`
+- [x] Create `categories` table: `id`, `name`, `parent_id` (nullable, for sub-categories), `color`
+- [x] Create `budgets` table: `id`, `category_id`, `month` (YYYY-MM), `amount_cents`
+- [x] Create `recurring_items` table: `id`, `account_id`, `category_id`, `amount_cents`, `frequency`, `next_due_date`, `label`
+- [x] Write SQLx migration files for each table (versioned, e.g. `0001_init.sql`)
+- [x] Seed default categories on first launch (Food, Transport, Housing, Health, Entertainment, etc.)
 
 > ⚠️ **Critical:** Store ALL monetary values as integers in cents/kuruş. Never use floats for money. Only convert to decimal on display.
 
