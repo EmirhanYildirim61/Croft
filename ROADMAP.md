@@ -97,22 +97,22 @@
 - [x] Manage categories: add, with color picker and optional parent
 - [x] Manage recurring items: list, add
 - [x] Export all data (CSV / JSON)
-- [ ] Database file location: show current path, "Move…" button (Phase 1D)
-- [ ] Currency display format (Phase 1D)
+- [x] Database file location: show current path, "Move…" button (Phase 1D)
+- [x] Currency display format (Phase 1D)
 
 ---
 
 ## ✅ Phase 1D — Quality & Polish
 
-- [ ] All currency display uses locale-aware formatter (never raw float)
-- [ ] Form validation: required fields, positive amounts, valid dates
-- [ ] Keyboard shortcuts: `N` = new transaction, `Esc` = close modal
-- [ ] Loading states for all async Tauri commands
-- [ ] Error toast notifications for failed operations
-- [ ] Confirm dialog for all destructive actions (delete transaction, delete account)
-- [ ] Responsive layout (minimum 900px wide desktop)
-- [ ] Unit tests for all financial calculation functions (sum, budget diff, net worth)
-- [ ] Integration tests for CSV import parser edge cases
+- [x] All currency display uses locale-aware formatter (never raw float)
+- [x] Form validation: required fields, positive amounts, valid dates
+- [x] Keyboard shortcuts: `N` = new transaction, `Esc` = close modal
+- [x] Loading states for all async Tauri commands
+- [x] Error toast notifications for failed operations
+- [x] Confirm dialog for all destructive actions (delete transaction, delete account)
+- [x] Responsive layout (minimum 900px wide desktop)
+- [x] Unit tests for all financial calculation functions (sum, budget diff, net worth)
+- [x] Integration tests for CSV import parser edge cases
 
 ---
 

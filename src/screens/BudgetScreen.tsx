@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../lib/tauri';
 import { formatCents } from '../lib/format';
+import { useToast } from '../context/toast';
 import type { BudgetSummaryRow } from '../types';
 
 interface Props {
@@ -8,9 +9,9 @@ interface Props {
 }
 
 export default function BudgetScreen({ month }: Props) {
+  const { showToast } = useToast();
   const [rows, setRows] = useState<BudgetSummaryRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   // editing state: categoryId → draft string
   const [editing, setEditing] = useState<Record<number, string>>({});
 
@@ -20,11 +21,11 @@ export default function BudgetScreen({ month }: Props) {
       const data = await api.getBudgetSummary(month);
       setRows(data);
     } catch (e) {
-      setError(String(e));
+      showToast(String(e), 'error');
     } finally {
       setLoading(false);
     }
-  }, [month]);
+  }, [month, showToast]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -35,13 +36,19 @@ export default function BudgetScreen({ month }: Props) {
   const commitEdit = async (catId: number) => {
     const val = editing[catId];
     if (val === undefined) return;
-    const cents = Math.round(parseFloat(val || '0') * 100);
+    const parsed = parseFloat(val || '0');
+    if (isNaN(parsed)) {
+      showToast('Enter a valid budget amount.', 'error');
+      setEditing((prev) => { const n = { ...prev }; delete n[catId]; return n; });
+      return;
+    }
+    const cents = Math.round(parsed * 100);
     setEditing((prev) => { const n = { ...prev }; delete n[catId]; return n; });
     try {
       await api.setBudget(catId, month, cents);
       await load();
     } catch (e) {
-      setError(String(e));
+      showToast(String(e), 'error');
     }
   };
 
@@ -72,12 +79,6 @@ export default function BudgetScreen({ month }: Props) {
         <h1 className="text-2xl font-bold text-slate-800">Budget</h1>
         <div className="text-sm text-slate-500">Click a budget amount to edit it</div>
       </div>
-
-      {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">
-          {error}
-        </div>
-      )}
 
       {/* Summary bar */}
       <div className="grid grid-cols-3 gap-4 mb-6">

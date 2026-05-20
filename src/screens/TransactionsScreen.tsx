@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../lib/tauri';
 import { formatCents } from '../lib/format';
+import { useToast } from '../context/toast';
 import Modal from '../components/Modal';
 import type { Transaction, AccountWithBalance, Category } from '../types';
 
@@ -8,14 +9,53 @@ interface Props {
   month: string;
   filterAccountId: number | null;
   onClearAccount: () => void;
+  openNewTxTrigger: number;
 }
 
-export default function TransactionsScreen({ month, filterAccountId, onClearAccount }: Props) {
+interface FormErrors {
+  date?: string;
+  amount?: string;
+  payee?: string;
+  account?: string;
+}
+
+function validateForm(
+  fDate: string,
+  fAmount: string,
+  fPayee: string,
+  fAccId: number | null,
+): FormErrors {
+  const errors: FormErrors = {};
+  if (!fDate) {
+    errors.date = 'Date is required.';
+  } else if (!/^\d{4}-\d{2}-\d{2}$/.test(fDate)) {
+    errors.date = 'Enter a valid date (YYYY-MM-DD).';
+  }
+  if (!fAmount.trim()) {
+    errors.amount = 'Amount is required.';
+  } else if (isNaN(parseFloat(fAmount))) {
+    errors.amount = 'Enter a valid number.';
+  }
+  if (!fPayee.trim()) {
+    errors.payee = 'Payee is required.';
+  }
+  if (fAccId === null) {
+    errors.account = 'Select an account.';
+  }
+  return errors;
+}
+
+export default function TransactionsScreen({
+  month,
+  filterAccountId,
+  onClearAccount,
+  openNewTxTrigger,
+}: Props) {
+  const { showToast } = useToast();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [accounts, setAccounts] = useState<AccountWithBalance[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [search, setSearch] = useState('');
   const [filterCatId, setFilterCatId] = useState<number | null>(null);
   const [filterAccId, setFilterAccId] = useState<number | null>(filterAccountId);
@@ -30,6 +70,10 @@ export default function TransactionsScreen({ month, filterAccountId, onClearAcco
   const [fAccId, setFAccId] = useState<number | null>(null);
   const [fNote, setFNote] = useState('');
   const [saving, setSaving] = useState(false);
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
+
+  // Confirm-delete modal
+  const [deleteTarget, setDeleteTarget] = useState<Transaction | null>(null);
 
   useEffect(() => { setFilterAccId(filterAccountId); }, [filterAccountId]);
 
@@ -44,13 +88,22 @@ export default function TransactionsScreen({ month, filterAccountId, onClearAcco
       setAccounts(accs);
       setCategories(cats);
     } catch (e) {
-      setError(String(e));
+      showToast(String(e), 'error');
     } finally {
       setLoading(false);
     }
-  }, [filterAccId, month, filterCatId]);
+  }, [filterAccId, month, filterCatId, showToast]);
 
   useEffect(() => { load(); }, [load]);
+
+  // Open add form when triggered externally (N shortcut from App.tsx)
+  useEffect(() => {
+    if (openNewTxTrigger > 0 && !showForm) {
+      openAdd();
+    }
+    // intentionally omitting showForm to avoid re-triggering on form open
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openNewTxTrigger]);
 
   const openAdd = () => {
     setEditing(null);
@@ -60,6 +113,7 @@ export default function TransactionsScreen({ month, filterAccountId, onClearAcco
     setFCatId(null);
     setFAccId(filterAccId ?? accounts[0]?.id ?? null);
     setFNote('');
+    setFormErrors({});
     setShowForm(true);
   };
 
@@ -71,36 +125,45 @@ export default function TransactionsScreen({ month, filterAccountId, onClearAcco
     setFCatId(tx.category_id);
     setFAccId(tx.account_id);
     setFNote(tx.note);
+    setFormErrors({});
     setShowForm(true);
   };
 
   const handleSave = async () => {
-    if (!fPayee.trim() || !fAmount || fAccId === null) return;
+    const errors = validateForm(fDate, fAmount, fPayee, fAccId);
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
     setSaving(true);
     const rawAmt = parseFloat(fAmount);
-    const cents = Math.round((isNaN(rawAmt) ? 0 : rawAmt) * 100);
+    const cents = Math.round(rawAmt * 100);
     try {
       if (editing) {
         await api.updateTransaction(editing.id, fDate, cents, fPayee.trim(), fCatId, fNote);
+        showToast('Transaction updated.', 'success');
       } else {
         await api.addTransaction(fAccId!, fDate, cents, fPayee.trim(), fCatId, fNote);
+        showToast('Transaction added.', 'success');
       }
       setShowForm(false);
       await load();
     } catch (e) {
-      setError(String(e));
+      showToast(String(e), 'error');
     } finally {
       setSaving(false);
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Delete this transaction?')) return;
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
     try {
-      await api.deleteTransaction(id);
+      await api.deleteTransaction(deleteTarget.id);
+      setDeleteTarget(null);
+      showToast('Transaction deleted.', 'success');
       await load();
     } catch (e) {
-      setError(String(e));
+      showToast(String(e), 'error');
     }
   };
 
@@ -171,12 +234,6 @@ export default function TransactionsScreen({ month, filterAccountId, onClearAcco
         </select>
       </div>
 
-      {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">
-          {error}
-        </div>
-      )}
-
       {visible.length === 0 ? (
         <div className="flex flex-col items-center py-16 text-center">
           <div className="text-5xl mb-3">📋</div>
@@ -232,7 +289,7 @@ export default function TransactionsScreen({ month, filterAccountId, onClearAcco
                   </td>
                   <td className="px-4 py-3 text-right">
                     <button
-                      onClick={(e) => { e.stopPropagation(); handleDelete(tx.id); }}
+                      onClick={(e) => { e.stopPropagation(); setDeleteTarget(tx); }}
                       className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition-all"
                     >
                       ✕
@@ -245,6 +302,7 @@ export default function TransactionsScreen({ month, filterAccountId, onClearAcco
         </div>
       )}
 
+      {/* Add/Edit modal */}
       {showForm && (
         <Modal title={editing ? 'Edit Transaction' : 'Add Transaction'} onClose={() => setShowForm(false)}>
           <div className="space-y-4">
@@ -254,9 +312,10 @@ export default function TransactionsScreen({ month, filterAccountId, onClearAcco
                 <input
                   type="date"
                   value={fDate}
-                  onChange={(e) => setFDate(e.target.value)}
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  onChange={(e) => { setFDate(e.target.value); setFormErrors((p) => ({ ...p, date: undefined })); }}
+                  className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${formErrors.date ? 'border-red-400' : 'border-slate-300'}`}
                 />
+                {formErrors.date && <p className="mt-1 text-xs text-red-500">{formErrors.date}</p>}
               </div>
               <div className="flex-1">
                 <label className="block text-sm font-medium text-slate-700 mb-1">Amount *</label>
@@ -265,32 +324,36 @@ export default function TransactionsScreen({ month, filterAccountId, onClearAcco
                   step="0.01"
                   autoFocus={!editing}
                   value={fAmount}
-                  onChange={(e) => setFAmount(e.target.value)}
+                  onChange={(e) => { setFAmount(e.target.value); setFormErrors((p) => ({ ...p, amount: undefined })); }}
                   placeholder="−50.00 or 1200.00"
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${formErrors.amount ? 'border-red-400' : 'border-slate-300'}`}
                 />
+                {formErrors.amount && <p className="mt-1 text-xs text-red-500">{formErrors.amount}</p>}
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Payee *</label>
               <input
                 value={fPayee}
-                onChange={(e) => setFPayee(e.target.value)}
+                onChange={(e) => { setFPayee(e.target.value); setFormErrors((p) => ({ ...p, payee: undefined })); }}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleSave(); }}
                 placeholder="e.g. Whole Foods"
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${formErrors.payee ? 'border-red-400' : 'border-slate-300'}`}
               />
+              {formErrors.payee && <p className="mt-1 text-xs text-red-500">{formErrors.payee}</p>}
             </div>
             <div className="flex gap-3">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-slate-700 mb-1">Account *</label>
                 <select
                   value={fAccId ?? ''}
-                  onChange={(e) => setFAccId(Number(e.target.value))}
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  onChange={(e) => { setFAccId(Number(e.target.value)); setFormErrors((p) => ({ ...p, account: undefined })); }}
+                  className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${formErrors.account ? 'border-red-400' : 'border-slate-300'}`}
                 >
                   <option value="" disabled>Select…</option>
                   {accounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
                 </select>
+                {formErrors.account && <p className="mt-1 text-xs text-red-500">{formErrors.account}</p>}
               </div>
               <div className="flex-1">
                 <label className="block text-sm font-medium text-slate-700 mb-1">Category</label>
@@ -322,12 +385,36 @@ export default function TransactionsScreen({ month, filterAccountId, onClearAcco
               </button>
               <button
                 onClick={handleSave}
-                disabled={!fPayee.trim() || !fAmount || fAccId === null || saving}
+                disabled={saving}
                 className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {saving ? 'Saving…' : editing ? 'Save Changes' : 'Add Transaction'}
               </button>
             </div>
+          </div>
+        </Modal>
+      )}
+
+      {/* Confirm delete modal */}
+      {deleteTarget && (
+        <Modal title="Delete Transaction" onClose={() => setDeleteTarget(null)}>
+          <p className="text-sm text-slate-600 mb-5">
+            Delete <strong>{deleteTarget.payee || 'this transaction'}</strong> ({formatCents(deleteTarget.amount_cents)})?
+            This cannot be undone.
+          </p>
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={() => setDeleteTarget(null)}
+              className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDelete}
+              className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700"
+            >
+              Delete
+            </button>
           </div>
         </Modal>
       )}

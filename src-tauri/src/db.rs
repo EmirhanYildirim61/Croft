@@ -5,6 +5,7 @@ use std::path::Path;
 
 pub struct AppState {
     pub db: SqlitePool,
+    pub db_path: String,
 }
 
 pub async fn init_db(db_path: &str) -> Result<SqlitePool, sqlx::Error> {

@@ -108,3 +108,43 @@ pub async fn generate_due_recurring_transactions(
     }
     Ok(count)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::advance_date;
+
+    #[test]
+    fn advance_daily() {
+        assert_eq!(advance_date("2024-01-31", "daily").unwrap(), "2024-02-01");
+    }
+
+    #[test]
+    fn advance_weekly() {
+        assert_eq!(advance_date("2024-03-01", "weekly").unwrap(), "2024-03-08");
+    }
+
+    #[test]
+    fn advance_monthly_normal() {
+        assert_eq!(advance_date("2024-01-15", "monthly").unwrap(), "2024-02-15");
+    }
+
+    #[test]
+    fn advance_monthly_year_boundary() {
+        assert_eq!(advance_date("2023-12-01", "monthly").unwrap(), "2024-01-01");
+    }
+
+    #[test]
+    fn advance_yearly() {
+        assert_eq!(advance_date("2023-06-15", "yearly").unwrap(), "2024-06-15");
+    }
+
+    #[test]
+    fn advance_unknown_frequency_errors() {
+        assert!(advance_date("2024-01-01", "fortnightly").is_err());
+    }
+
+    #[test]
+    fn advance_invalid_date_errors() {
+        assert!(advance_date("not-a-date", "daily").is_err());
+    }
+}

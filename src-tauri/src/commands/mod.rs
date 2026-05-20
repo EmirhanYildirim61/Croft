@@ -5,4 +5,5 @@ pub mod export;
 pub mod import;
 pub mod recurring;
 pub mod reports;
+pub mod settings;
 pub mod transactions;

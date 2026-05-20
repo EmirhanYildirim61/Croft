@@ -1,9 +1,13 @@
 mod commands;
 mod db;
+mod financial;
 mod models;
 
 use db::{init_db, AppState};
 use tauri::Manager;
+
+/// Name of the file saved in app_data_dir that overrides the default DB location.
+const DB_LOCATION_FILE: &str = "db_location.cfg";
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -15,12 +19,27 @@ pub fn run() {
                 .path()
                 .app_data_dir()
                 .expect("failed to resolve app data dir");
-            let db_path = app_data_dir.join("finance.db").to_string_lossy().to_string();
+
+            // Allow users to relocate the DB by writing its new path to db_location.cfg.
+            let cfg_file = app_data_dir.join(DB_LOCATION_FILE);
+            let db_path = if cfg_file.exists() {
+                std::fs::read_to_string(&cfg_file)
+                    .map(|s| s.trim().to_string())
+                    .unwrap_or_default()
+            } else {
+                String::new()
+            };
+
+            let db_path = if db_path.is_empty() {
+                app_data_dir.join("finance.db").to_string_lossy().to_string()
+            } else {
+                db_path
+            };
 
             let pool = tauri::async_runtime::block_on(init_db(&db_path))
                 .expect("failed to initialise database");
 
-            app.manage(AppState { db: pool });
+            app.manage(AppState { db: pool, db_path });
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -43,6 +62,8 @@ pub fn run() {
             commands::export::export_to_json,
             commands::import::import_csv,
             commands::import::confirm_csv_import,
+            commands::settings::get_db_path,
+            commands::settings::move_db,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

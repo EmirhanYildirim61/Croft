@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../lib/tauri';
 import { formatCents } from '../lib/format';
+import { useToast } from '../context/toast';
 import Modal from '../components/Modal';
 import type { AccountWithBalance, AccountType } from '../types';
 
@@ -24,10 +25,11 @@ interface Props {
 }
 
 export default function AccountsScreen({ onSelectAccount, onNetWorthChange }: Props) {
+  const { showToast } = useToast();
   const [accounts, setAccounts] = useState<AccountWithBalance[]>([]);
   const [showAdd, setShowAdd] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<AccountWithBalance | null>(null);
 
   // Add form state
   const [name, setName] = useState('');
@@ -36,6 +38,10 @@ export default function AccountsScreen({ onSelectAccount, onNetWorthChange }: Pr
   const [initialBalance, setInitialBalance] = useState('0.00');
   const [saving, setSaving] = useState(false);
 
+  // Form validation errors
+  const [nameError, setNameError] = useState('');
+  const [balanceError, setBalanceError] = useState('');
+
   const load = useCallback(async () => {
     try {
       const data = await api.listAccounts();
@@ -43,38 +49,46 @@ export default function AccountsScreen({ onSelectAccount, onNetWorthChange }: Pr
       const netWorth = data.reduce((s, a) => s + a.current_balance, 0);
       onNetWorthChange(netWorth);
     } catch (e) {
-      setError(String(e));
+      showToast(String(e), 'error');
     } finally {
       setLoading(false);
     }
-  }, [onNetWorthChange]);
+  }, [onNetWorthChange, showToast]);
 
   useEffect(() => { load(); }, [load]);
 
   const handleAdd = async () => {
-    if (!name.trim()) return;
+    let hasError = false;
+    if (!name.trim()) { setNameError('Account name is required.'); hasError = true; }
+    const balNum = parseFloat(initialBalance);
+    if (isNaN(balNum)) { setBalanceError('Enter a valid number.'); hasError = true; }
+    if (hasError) return;
+
     setSaving(true);
     try {
-      const cents = Math.round(parseFloat(initialBalance || '0') * 100);
+      const cents = Math.round(balNum * 100);
       await api.createAccount(name.trim(), accType, currency.trim() || 'USD', cents);
       setShowAdd(false);
       setName(''); setAccType('bank'); setCurrency('USD'); setInitialBalance('0.00');
+      setNameError(''); setBalanceError('');
+      showToast('Account created.', 'success');
       await load();
     } catch (e) {
-      setError(String(e));
+      showToast(String(e), 'error');
     } finally {
       setSaving(false);
     }
   };
 
-  const handleDelete = async (id: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!confirm('Delete this account and all its transactions?')) return;
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
     try {
-      await api.deleteAccount(id);
+      await api.deleteAccount(deleteTarget.id);
+      setDeleteTarget(null);
+      showToast('Account deleted.', 'success');
       await load();
     } catch (e) {
-      setError(String(e));
+      showToast(String(e), 'error');
     }
   };
 
@@ -91,12 +105,6 @@ export default function AccountsScreen({ onSelectAccount, onNetWorthChange }: Pr
           + Add Account
         </button>
       </div>
-
-      {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">
-          {error}
-        </div>
-      )}
 
       {accounts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -127,7 +135,7 @@ export default function AccountsScreen({ onSelectAccount, onNetWorthChange }: Pr
                   </span>
                 </div>
                 <button
-                  onClick={(e) => handleDelete(acc.id, e)}
+                  onClick={(e) => { e.stopPropagation(); setDeleteTarget(acc); }}
                   className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition-all text-lg leading-none"
                   title="Delete account"
                 >
@@ -147,18 +155,19 @@ export default function AccountsScreen({ onSelectAccount, onNetWorthChange }: Pr
       )}
 
       {showAdd && (
-        <Modal title="Add Account" onClose={() => setShowAdd(false)}>
+        <Modal title="Add Account" onClose={() => { setShowAdd(false); setNameError(''); setBalanceError(''); }}>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Name *</label>
               <input
                 autoFocus
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => { setName(e.target.value); setNameError(''); }}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleAdd(); }}
                 placeholder="e.g. Chase Checking"
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${nameError ? 'border-red-400' : 'border-slate-300'}`}
               />
+              {nameError && <p className="mt-1 text-xs text-red-500">{nameError}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Type *</label>
@@ -189,26 +198,50 @@ export default function AccountsScreen({ onSelectAccount, onNetWorthChange }: Pr
                   type="number"
                   step="0.01"
                   value={initialBalance}
-                  onChange={(e) => setInitialBalance(e.target.value)}
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  onChange={(e) => { setInitialBalance(e.target.value); setBalanceError(''); }}
+                  className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${balanceError ? 'border-red-400' : 'border-slate-300'}`}
                 />
+                {balanceError && <p className="mt-1 text-xs text-red-500">{balanceError}</p>}
               </div>
             </div>
             <div className="flex justify-end gap-3 pt-2">
               <button
-                onClick={() => setShowAdd(false)}
+                onClick={() => { setShowAdd(false); setNameError(''); setBalanceError(''); }}
                 className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50"
               >
                 Cancel
               </button>
               <button
                 onClick={handleAdd}
-                disabled={!name.trim() || saving}
+                disabled={saving}
                 className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {saving ? 'Saving…' : 'Add Account'}
               </button>
             </div>
+          </div>
+        </Modal>
+      )}
+
+      {/* Confirm delete account modal */}
+      {deleteTarget && (
+        <Modal title="Delete Account" onClose={() => setDeleteTarget(null)}>
+          <p className="text-sm text-slate-600 mb-5">
+            Delete <strong>{deleteTarget.name}</strong> and all its transactions? This cannot be undone.
+          </p>
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={() => setDeleteTarget(null)}
+              className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDelete}
+              className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700"
+            >
+              Delete
+            </button>
           </div>
         </Modal>
       )}

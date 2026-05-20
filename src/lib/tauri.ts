@@ -91,4 +91,8 @@ export const api = {
   // Import
   importCsv: (path: string) => invoke<CsvPreviewRow[]>('import_csv', { path }),
   confirmCsvImport: (rows: ImportRow[]) => invoke<number>('confirm_csv_import', { rows }),
+
+  // Settings
+  getDbPath: () => invoke<string>('get_db_path'),
+  moveDb: (newFolder: string) => invoke<string>('move_db', { newFolder }),
 };

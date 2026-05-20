@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { save } from '@tauri-apps/plugin-dialog';
+import { save, open as openDialog } from '@tauri-apps/plugin-dialog';
 import { api } from '../lib/tauri';
 import { formatCents } from '../lib/format';
+import { useToast } from '../context/toast';
 import Modal from '../components/Modal';
 import type { Category, RecurringItem, AccountWithBalance, Frequency } from '../types';
 
@@ -12,16 +13,20 @@ const FREQUENCIES: { value: Frequency; label: string }[] = [
   { value: 'yearly', label: 'Yearly' },
 ];
 
+// Common currency codes shown in the picker
+const CURRENCY_OPTIONS = ['USD', 'EUR', 'GBP', 'TRY', 'JPY', 'CAD', 'AUD', 'CHF', 'CNY', 'INR'];
+
+const DISPLAY_CURRENCY_KEY = 'display_currency';
+
 interface Props {
   accounts: AccountWithBalance[];
 }
 
 export default function SettingsScreen({ accounts }: Props) {
+  const { showToast } = useToast();
   const [categories, setCategories] = useState<Category[]>([]);
   const [recurring, setRecurring] = useState<RecurringItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
 
   // Add category form
   const [showAddCat, setShowAddCat] = useState(false);
@@ -29,6 +34,7 @@ export default function SettingsScreen({ accounts }: Props) {
   const [catColor, setCatColor] = useState('#6B7280');
   const [catParent, setCatParent] = useState<number | null>(null);
   const [savingCat, setSavingCat] = useState(false);
+  const [catNameError, setCatNameError] = useState('');
 
   // Add recurring form
   const [showAddRec, setShowAddRec] = useState(false);
@@ -39,54 +45,71 @@ export default function SettingsScreen({ accounts }: Props) {
   const [rFreq, setRFreq] = useState<Frequency>('monthly');
   const [rNextDate, setRNextDate] = useState(new Date().toISOString().slice(0, 10));
   const [savingRec, setSavingRec] = useState(false);
+  const [recErrors, setRecErrors] = useState<{ label?: string; amount?: string; account?: string }>({});
 
-  const showSuccess = (msg: string) => {
-    setSuccessMsg(msg);
-    setTimeout(() => setSuccessMsg(''), 3000);
-  };
+  // DB path
+  const [dbPath, setDbPath] = useState('');
+  const [movingDb, setMovingDb] = useState(false);
+
+  // Currency display preference (stored in localStorage)
+  const [displayCurrency, setDisplayCurrency] = useState(
+    () => localStorage.getItem(DISPLAY_CURRENCY_KEY) ?? 'USD',
+  );
 
   const load = useCallback(async () => {
     try {
-      const [cats, recs] = await Promise.all([api.listCategories(), api.listRecurringItems()]);
+      const [cats, recs, path] = await Promise.all([
+        api.listCategories(),
+        api.listRecurringItems(),
+        api.getDbPath(),
+      ]);
       setCategories(cats);
       setRecurring(recs);
+      setDbPath(path);
     } catch (e) {
-      setError(String(e));
+      showToast(String(e), 'error');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [showToast]);
 
   useEffect(() => { load(); }, [load]);
 
   const handleAddCategory = async () => {
-    if (!catName.trim()) return;
+    if (!catName.trim()) { setCatNameError('Category name is required.'); return; }
     setSavingCat(true);
     try {
       await api.addCategory(catName.trim(), catParent, catColor);
-      setCatName(''); setCatColor('#6B7280'); setCatParent(null);
+      setCatName(''); setCatColor('#6B7280'); setCatParent(null); setCatNameError('');
       setShowAddCat(false);
+      showToast('Category added.', 'success');
       await load();
     } catch (e) {
-      setError(String(e));
+      showToast(String(e), 'error');
     } finally {
       setSavingCat(false);
     }
   };
 
   const handleAddRecurring = async () => {
-    if (!rLabel.trim() || !rAmount || rAccId === null) return;
+    const errors: typeof recErrors = {};
+    if (!rLabel.trim()) errors.label = 'Label is required.';
+    if (!rAmount || isNaN(parseFloat(rAmount))) errors.amount = 'Enter a valid amount.';
+    if (rAccId === null) errors.account = 'Select an account.';
+    if (Object.keys(errors).length > 0) { setRecErrors(errors); return; }
+
     setSavingRec(true);
     const cents = Math.round(parseFloat(rAmount) * 100);
     try {
-      await api.addRecurringItem(rLabel.trim(), rAccId, rCatId, cents, rFreq, rNextDate);
+      await api.addRecurringItem(rLabel.trim(), rAccId!, rCatId, cents, rFreq, rNextDate);
       setRLabel(''); setRAmount(''); setRFreq('monthly');
       setRNextDate(new Date().toISOString().slice(0, 10));
-      setRCatId(null);
+      setRCatId(null); setRecErrors({});
       setShowAddRec(false);
+      showToast('Recurring item added.', 'success');
       await load();
     } catch (e) {
-      setError(String(e));
+      showToast(String(e), 'error');
     } finally {
       setSavingRec(false);
     }
@@ -97,9 +120,9 @@ export default function SettingsScreen({ accounts }: Props) {
       const path = await save({ filters: [{ name: 'CSV', extensions: ['csv'] }], defaultPath: 'transactions.csv' });
       if (!path) return;
       await api.exportToCsv(path);
-      showSuccess('CSV exported successfully.');
+      showToast('CSV exported successfully.', 'success');
     } catch (e) {
-      setError(String(e));
+      showToast(String(e), 'error');
     }
   };
 
@@ -108,10 +131,31 @@ export default function SettingsScreen({ accounts }: Props) {
       const path = await save({ filters: [{ name: 'JSON', extensions: ['json'] }], defaultPath: 'finance-data.json' });
       if (!path) return;
       await api.exportToJson(path);
-      showSuccess('JSON exported successfully.');
+      showToast('JSON exported successfully.', 'success');
     } catch (e) {
-      setError(String(e));
+      showToast(String(e), 'error');
     }
+  };
+
+  const handleMoveDb = async () => {
+    try {
+      const folder = await openDialog({ directory: true, multiple: false });
+      if (!folder) return;
+      setMovingDb(true);
+      const newPath = await api.moveDb(folder as string);
+      setDbPath(newPath);
+      showToast('Database copied. Restart the app to use the new location.', 'success');
+    } catch (e) {
+      showToast(String(e), 'error');
+    } finally {
+      setMovingDb(false);
+    }
+  };
+
+  const handleCurrencyChange = (code: string) => {
+    setDisplayCurrency(code);
+    localStorage.setItem(DISPLAY_CURRENCY_KEY, code);
+    showToast(`Display currency set to ${code}.`, 'success');
   };
 
   const accName = (id: number) => accounts.find((a) => a.id === id)?.name ?? '—';
@@ -121,17 +165,6 @@ export default function SettingsScreen({ accounts }: Props) {
   return (
     <div className="space-y-8 max-w-3xl">
       <h1 className="text-2xl font-bold text-slate-800">Settings</h1>
-
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">
-          {error}
-        </div>
-      )}
-      {successMsg && (
-        <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-lg px-4 py-3 text-sm">
-          {successMsg}
-        </div>
-      )}
 
       {/* Export */}
       <section className="bg-white rounded-xl border border-slate-200 p-6">
@@ -150,6 +183,59 @@ export default function SettingsScreen({ accounts }: Props) {
             Export all data as JSON
           </button>
         </div>
+      </section>
+
+      {/* Database location */}
+      <section className="bg-white rounded-xl border border-slate-200 p-6">
+        <h2 className="text-base font-semibold text-slate-700 mb-1">Database File</h2>
+        <p className="text-xs text-slate-400 mb-4">
+          Your data is stored in a single SQLite file. Move it anywhere — a Dropbox folder, iCloud Drive, etc.
+        </p>
+        <div className="flex items-center gap-3">
+          <code className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-600 truncate">
+            {dbPath || '—'}
+          </code>
+          <button
+            onClick={() => { if (dbPath) navigator.clipboard.writeText(dbPath); }}
+            title="Copy path"
+            className="text-xs border border-slate-300 text-slate-600 px-3 py-2 rounded-lg hover:bg-slate-50 shrink-0"
+          >
+            Copy
+          </button>
+          <button
+            onClick={handleMoveDb}
+            disabled={movingDb}
+            className="text-xs bg-indigo-600 text-white px-3 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 shrink-0"
+          >
+            {movingDb ? 'Copying…' : 'Move…'}
+          </button>
+        </div>
+      </section>
+
+      {/* Currency display format */}
+      <section className="bg-white rounded-xl border border-slate-200 p-6">
+        <h2 className="text-base font-semibold text-slate-700 mb-1">Default Display Currency</h2>
+        <p className="text-xs text-slate-400 mb-4">
+          Used where no per-account currency is available (e.g. net worth summary).
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {CURRENCY_OPTIONS.map((code) => (
+            <button
+              key={code}
+              onClick={() => handleCurrencyChange(code)}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
+                displayCurrency === code
+                  ? 'bg-indigo-600 text-white border-indigo-600'
+                  : 'border-slate-300 text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              {code}
+            </button>
+          ))}
+        </div>
+        <p className="mt-3 text-xs text-slate-400">
+          Current: {formatCents(0, displayCurrency).replace('0.00', '').trim() || displayCurrency}
+        </p>
       </section>
 
       {/* Categories */}
@@ -216,18 +302,19 @@ export default function SettingsScreen({ accounts }: Props) {
 
       {/* Add Category Modal */}
       {showAddCat && (
-        <Modal title="Add Category" onClose={() => setShowAddCat(false)}>
+        <Modal title="Add Category" onClose={() => { setShowAddCat(false); setCatNameError(''); }}>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Name *</label>
               <input
                 autoFocus
                 value={catName}
-                onChange={(e) => setCatName(e.target.value)}
+                onChange={(e) => { setCatName(e.target.value); setCatNameError(''); }}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleAddCategory(); }}
                 placeholder="e.g. Gym & Fitness"
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${catNameError ? 'border-red-400' : 'border-slate-300'}`}
               />
+              {catNameError && <p className="mt-1 text-xs text-red-500">{catNameError}</p>}
             </div>
             <div className="flex gap-3">
               <div className="flex-1">
@@ -255,10 +342,10 @@ export default function SettingsScreen({ accounts }: Props) {
               </div>
             </div>
             <div className="flex justify-end gap-3 pt-2">
-              <button onClick={() => setShowAddCat(false)} className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50">Cancel</button>
+              <button onClick={() => { setShowAddCat(false); setCatNameError(''); }} className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50">Cancel</button>
               <button
                 onClick={handleAddCategory}
-                disabled={!catName.trim() || savingCat}
+                disabled={savingCat}
                 className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
               >
                 {savingCat ? 'Saving…' : 'Add Category'}
@@ -270,17 +357,18 @@ export default function SettingsScreen({ accounts }: Props) {
 
       {/* Add Recurring Modal */}
       {showAddRec && (
-        <Modal title="Add Recurring Item" onClose={() => setShowAddRec(false)}>
+        <Modal title="Add Recurring Item" onClose={() => { setShowAddRec(false); setRecErrors({}); }}>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Label *</label>
               <input
                 autoFocus
                 value={rLabel}
-                onChange={(e) => setRLabel(e.target.value)}
+                onChange={(e) => { setRLabel(e.target.value); setRecErrors((p) => ({ ...p, label: undefined })); }}
                 placeholder="e.g. Netflix, Rent"
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${recErrors.label ? 'border-red-400' : 'border-slate-300'}`}
               />
+              {recErrors.label && <p className="mt-1 text-xs text-red-500">{recErrors.label}</p>}
             </div>
             <div className="flex gap-3">
               <div className="flex-1">
@@ -289,10 +377,11 @@ export default function SettingsScreen({ accounts }: Props) {
                   type="number"
                   step="0.01"
                   value={rAmount}
-                  onChange={(e) => setRAmount(e.target.value)}
+                  onChange={(e) => { setRAmount(e.target.value); setRecErrors((p) => ({ ...p, amount: undefined })); }}
                   placeholder="−15.99"
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${recErrors.amount ? 'border-red-400' : 'border-slate-300'}`}
                 />
+                {recErrors.amount && <p className="mt-1 text-xs text-red-500">{recErrors.amount}</p>}
               </div>
               <div className="flex-1">
                 <label className="block text-sm font-medium text-slate-700 mb-1">Frequency *</label>
@@ -310,11 +399,12 @@ export default function SettingsScreen({ accounts }: Props) {
                 <label className="block text-sm font-medium text-slate-700 mb-1">Account *</label>
                 <select
                   value={rAccId ?? ''}
-                  onChange={(e) => setRAccId(Number(e.target.value))}
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  onChange={(e) => { setRAccId(Number(e.target.value)); setRecErrors((p) => ({ ...p, account: undefined })); }}
+                  className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${recErrors.account ? 'border-red-400' : 'border-slate-300'}`}
                 >
                   {accounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
                 </select>
+                {recErrors.account && <p className="mt-1 text-xs text-red-500">{recErrors.account}</p>}
               </div>
               <div className="flex-1">
                 <label className="block text-sm font-medium text-slate-700 mb-1">Next Due Date *</label>
@@ -338,10 +428,10 @@ export default function SettingsScreen({ accounts }: Props) {
               </select>
             </div>
             <div className="flex justify-end gap-3 pt-2">
-              <button onClick={() => setShowAddRec(false)} className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50">Cancel</button>
+              <button onClick={() => { setShowAddRec(false); setRecErrors({}); }} className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50">Cancel</button>
               <button
                 onClick={handleAddRecurring}
-                disabled={!rLabel.trim() || !rAmount || rAccId === null || savingRec}
+                disabled={savingRec}
                 className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
               >
                 {savingRec ? 'Saving…' : 'Add Recurring Item'}

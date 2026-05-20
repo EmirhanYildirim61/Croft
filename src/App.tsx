@@ -7,6 +7,7 @@ import BudgetScreen from './screens/BudgetScreen';
 import ReportsScreen from './screens/ReportsScreen';
 import ImportScreen from './screens/ImportScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import { ToastProvider } from './context/toast';
 import { api } from './lib/tauri';
 import { currentYearMonth } from './lib/format';
 import type { AccountWithBalance, Category } from './types';
@@ -16,6 +17,8 @@ export default function App() {
   const [month, setMonth] = useState(currentYearMonth());
   const [netWorthCents, setNetWorthCents] = useState(0);
   const [filterAccountId, setFilterAccountId] = useState<number | null>(null);
+  // Increments each time the user presses N → triggers TransactionsScreen to open the add form
+  const [openNewTxTrigger, setOpenNewTxTrigger] = useState(0);
 
   // Shared data needed by multiple screens
   const [accounts, setAccounts] = useState<AccountWithBalance[]>([]);
@@ -33,7 +36,6 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    // Fire-and-forget: generate any overdue recurring transactions on launch
     api.generateDueRecurringTransactions().catch(() => {});
     loadShared();
   }, [loadShared]);
@@ -45,13 +47,12 @@ export default function App() {
 
   const handleNavigate = (s: Screen) => {
     setScreen(s);
-    // Refresh shared data whenever user navigates (accounts/categories may have changed)
     loadShared();
   };
 
   const handleNetWorthChange = (cents: number) => setNetWorthCents(cents);
 
-  // Keyboard shortcut: N = new transaction
+  // N = new transaction: navigate to transactions and open the add form
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (
@@ -62,6 +63,7 @@ export default function App() {
         (e.target as HTMLElement).tagName !== 'SELECT'
       ) {
         setScreen('transactions');
+        setOpenNewTxTrigger((n) => n + 1);
       }
     };
     window.addEventListener('keydown', handler);
@@ -69,32 +71,35 @@ export default function App() {
   }, []);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50" style={{ minWidth: 900 }}>
-      <Sidebar active={screen} onNavigate={handleNavigate} />
-      <div className="flex flex-col flex-1 min-w-0">
-        <TopBar month={month} onMonthChange={setMonth} netWorthCents={netWorthCents} />
-        <main className="flex-1 overflow-y-auto p-6">
-          {screen === 'accounts' && (
-            <AccountsScreen
-              onSelectAccount={handleSelectAccount}
-              onNetWorthChange={handleNetWorthChange}
-            />
-          )}
-          {screen === 'transactions' && (
-            <TransactionsScreen
-              month={month}
-              filterAccountId={filterAccountId}
-              onClearAccount={() => setFilterAccountId(null)}
-            />
-          )}
-          {screen === 'budget' && <BudgetScreen month={month} />}
-          {screen === 'reports' && <ReportsScreen month={month} />}
-          {screen === 'import' && (
-            <ImportScreen accounts={accounts} categories={categories} />
-          )}
-          {screen === 'settings' && <SettingsScreen accounts={accounts} />}
-        </main>
+    <ToastProvider>
+      <div className="flex h-screen overflow-hidden bg-slate-50" style={{ minWidth: 900 }}>
+        <Sidebar active={screen} onNavigate={handleNavigate} />
+        <div className="flex flex-col flex-1 min-w-0">
+          <TopBar month={month} onMonthChange={setMonth} netWorthCents={netWorthCents} />
+          <main className="flex-1 overflow-y-auto p-6">
+            {screen === 'accounts' && (
+              <AccountsScreen
+                onSelectAccount={handleSelectAccount}
+                onNetWorthChange={handleNetWorthChange}
+              />
+            )}
+            {screen === 'transactions' && (
+              <TransactionsScreen
+                month={month}
+                filterAccountId={filterAccountId}
+                onClearAccount={() => setFilterAccountId(null)}
+                openNewTxTrigger={openNewTxTrigger}
+              />
+            )}
+            {screen === 'budget' && <BudgetScreen month={month} />}
+            {screen === 'reports' && <ReportsScreen month={month} />}
+            {screen === 'import' && (
+              <ImportScreen accounts={accounts} categories={categories} />
+            )}
+            {screen === 'settings' && <SettingsScreen accounts={accounts} />}
+          </main>
+        </div>
       </div>
-    </div>
+    </ToastProvider>
   );
 }

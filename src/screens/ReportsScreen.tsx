@@ -6,6 +6,7 @@ import {
 } from 'recharts';
 import { api } from '../lib/tauri';
 import { formatCents, formatMonth } from '../lib/format';
+import { useToast } from '../context/toast';
 import type { BudgetSummaryRow, NetWorthPoint } from '../types';
 
 interface Props {
@@ -13,10 +14,10 @@ interface Props {
 }
 
 export default function ReportsScreen({ month }: Props) {
+  const { showToast } = useToast();
   const [spendingByCategory, setSpendingByCategory] = useState<BudgetSummaryRow[]>([]);
   const [netWorthHistory, setNetWorthHistory] = useState<NetWorthPoint[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -28,11 +29,11 @@ export default function ReportsScreen({ month }: Props) {
       setSpendingByCategory(summary.filter((r) => r.spent_cents > 0));
       setNetWorthHistory(history);
     } catch (e) {
-      setError(String(e));
+      showToast(String(e), 'error');
     } finally {
       setLoading(false);
     }
-  }, [month]);
+  }, [month, showToast]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -50,12 +51,6 @@ export default function ReportsScreen({ month }: Props) {
   return (
     <div className="space-y-8">
       <h1 className="text-2xl font-bold text-slate-800">Reports</h1>
-
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">
-          {error}
-        </div>
-      )}
 
       {/* Spending by Category */}
       <section className="bg-white rounded-xl border border-slate-200 p-6">

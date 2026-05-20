@@ -92,3 +92,82 @@ pub async fn confirm_csv_import(
     }
     Ok(count)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{find_col, parse_amount_cents};
+
+    // ── parse_amount_cents ────────────────────────────────────────────────────
+
+    #[test]
+    fn parse_plain_integer() {
+        assert_eq!(parse_amount_cents("42"), 4200);
+    }
+
+    #[test]
+    fn parse_decimal_rounds() {
+        assert_eq!(parse_amount_cents("19.99"), 1999);
+    }
+
+    #[test]
+    fn parse_negative() {
+        assert_eq!(parse_amount_cents("-50.00"), -5000);
+    }
+
+    #[test]
+    fn parse_with_currency_symbol() {
+        // dollar sign and comma are stripped; only digits, dot, minus survive
+        assert_eq!(parse_amount_cents("$1,234.56"), 123456);
+    }
+
+    #[test]
+    fn parse_empty_is_zero() {
+        assert_eq!(parse_amount_cents(""), 0);
+    }
+
+    #[test]
+    fn parse_non_numeric_is_zero() {
+        assert_eq!(parse_amount_cents("N/A"), 0);
+    }
+
+    // ── find_col ─────────────────────────────────────────────────────────────
+
+    fn make_headers(cols: &[&str]) -> csv::StringRecord {
+        csv::StringRecord::from(cols.to_vec())
+    }
+
+    #[test]
+    fn find_col_exact_match() {
+        let h = make_headers(&["date", "amount", "payee"]);
+        assert_eq!(find_col(&h, &["date"]), Some(0));
+        assert_eq!(find_col(&h, &["amount"]), Some(1));
+    }
+
+    #[test]
+    fn find_col_alias_match() {
+        let h = make_headers(&["Transaction Date", "Description", "Debit"]);
+        // "transaction date" alias should hit column 0
+        assert_eq!(
+            find_col(&h, &["date", "transaction date", "trans date"]),
+            Some(0)
+        );
+    }
+
+    #[test]
+    fn find_col_case_insensitive() {
+        let h = make_headers(&["PAYEE"]);
+        assert_eq!(find_col(&h, &["payee"]), Some(0));
+    }
+
+    #[test]
+    fn find_col_missing_returns_none() {
+        let h = make_headers(&["date", "amount"]);
+        assert_eq!(find_col(&h, &["payee", "description"]), None);
+    }
+
+    #[test]
+    fn find_col_whitespace_trimmed() {
+        let h = make_headers(&["  amount  "]);
+        assert_eq!(find_col(&h, &["amount"]), Some(0));
+    }
+}

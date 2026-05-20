@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { open } from '@tauri-apps/plugin-dialog';
 import { api } from '../lib/tauri';
 import { formatCents } from '../lib/format';
+import { useToast } from '../context/toast';
 import type { CsvPreviewRow, ImportRow, AccountWithBalance, Category } from '../types';
 
 interface Props {
@@ -10,15 +11,14 @@ interface Props {
 }
 
 export default function ImportScreen({ accounts, categories }: Props) {
+  const { showToast } = useToast();
   const [preview, setPreview] = useState<CsvPreviewRow[]>([]);
   const [rowMeta, setRowMeta] = useState<Record<number, { accountId: number; categoryId: number | null }>>({});
   const [step, setStep] = useState<'idle' | 'preview' | 'done'>('idle');
   const [importing, setImporting] = useState(false);
-  const [error, setError] = useState('');
   const [importedCount, setImportedCount] = useState(0);
 
   const handlePickFile = async () => {
-    setError('');
     try {
       const path = await open({
         filters: [{ name: 'CSV Files', extensions: ['csv'] }],
@@ -39,13 +39,12 @@ export default function ImportScreen({ accounts, categories }: Props) {
       setRowMeta(meta);
       setStep('preview');
     } catch (e) {
-      setError(String(e));
+      showToast(String(e), 'error');
     }
   };
 
   const handleConfirm = async () => {
     setImporting(true);
-    setError('');
     try {
       const importRows: ImportRow[] = preview.map((row) => ({
         account_id: rowMeta[row.row_index]?.accountId ?? accounts[0]?.id ?? 0,
@@ -59,7 +58,7 @@ export default function ImportScreen({ accounts, categories }: Props) {
       setImportedCount(count);
       setStep('done');
     } catch (e) {
-      setError(String(e));
+      showToast(String(e), 'error');
     } finally {
       setImporting(false);
     }
@@ -69,18 +68,11 @@ export default function ImportScreen({ accounts, categories }: Props) {
     setPreview([]);
     setRowMeta({});
     setStep('idle');
-    setError('');
   };
 
   return (
     <div>
       <h1 className="text-2xl font-bold text-slate-800 mb-6">CSV Import</h1>
-
-      {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">
-          {error}
-        </div>
-      )}
 
       {step === 'idle' && (
         <div className="flex flex-col items-center justify-center py-20 text-center">
