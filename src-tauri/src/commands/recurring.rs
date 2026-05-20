@@ -72,29 +72,39 @@ pub async fn generate_due_recurring_transactions(
     .await
     .map_err(|e| e.to_string())?;
 
-    let count = due.len();
+    let mut count = 0usize;
     for item in &due {
-        sqlx::query(
-            "INSERT INTO transactions
-                 (account_id, date, amount_cents, payee, category_id, note, is_recurring)
-             VALUES (?, ?, ?, ?, ?, '', 1)",
-        )
-        .bind(item.account_id)
-        .bind(&item.next_due_date)
-        .bind(item.amount_cents)
-        .bind(&item.label)
-        .bind(item.category_id)
-        .execute(&state.db)
-        .await
-        .map_err(|e| e.to_string())?;
-
-        let next = advance_date(&item.next_due_date, &item.frequency)?;
-        sqlx::query("UPDATE recurring_items SET next_due_date = ? WHERE id = ?")
-            .bind(&next)
-            .bind(item.id)
+        let mut current_due = item.next_due_date.clone();
+        // Loop to catch up multiple overdue periods (e.g. app not opened for months)
+        loop {
+            sqlx::query(
+                "INSERT INTO transactions
+                     (account_id, date, amount_cents, payee, category_id, note, is_recurring)
+                 VALUES (?, ?, ?, ?, ?, '', 1)",
+            )
+            .bind(item.account_id)
+            .bind(&current_due)
+            .bind(item.amount_cents)
+            .bind(&item.label)
+            .bind(item.category_id)
             .execute(&state.db)
             .await
             .map_err(|e| e.to_string())?;
+
+            count += 1;
+            let next = advance_date(&current_due, &item.frequency)?;
+            sqlx::query("UPDATE recurring_items SET next_due_date = ? WHERE id = ?")
+                .bind(&next)
+                .bind(item.id)
+                .execute(&state.db)
+                .await
+                .map_err(|e| e.to_string())?;
+
+            if next > today {
+                break;
+            }
+            current_due = next;
+        }
     }
     Ok(count)
 }

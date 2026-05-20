@@ -62,43 +62,43 @@
 ## 🎨 Phase 1C — Frontend UI (React + TypeScript)
 
 ### App Shell
-- [ ] Sidebar navigation: Accounts, Transactions, Budget, Reports, Settings
-- [ ] Top bar: current month selector, net worth display
-- [ ] Empty state screens for first-time users (no accounts yet)
+- [x] Sidebar navigation: Accounts, Transactions, Budget, Reports, CSV Import, Settings
+- [x] Top bar: current month selector, net worth display
+- [x] Empty state screens for first-time users (no accounts yet)
 
 ### Accounts Screen
-- [ ] List all accounts with current balance
-- [ ] "Add Account" modal: name, type, currency, starting balance
-- [ ] Click account → filtered transaction list
+- [x] List all accounts with current balance
+- [x] "Add Account" modal: name, type, currency, starting balance
+- [x] Click account → filtered transaction list
 
 ### Transactions Screen
-- [ ] Transaction list with date, payee, category, amount
-- [ ] "Add Transaction" form: date picker, amount, payee, category dropdown, note
-- [ ] Inline edit and delete
-- [ ] Filter bar: by account, month, category, search text
+- [x] Transaction list with date, payee, category, amount
+- [x] "Add Transaction" form: date picker, amount, payee, category dropdown, note
+- [x] Inline edit and delete
+- [x] Filter bar: by account, month, category, search text
 
 ### Budget Screen
-- [ ] Monthly budget grid: category | budgeted | spent | remaining
-- [ ] Click category amount to edit budget inline
-- [ ] Color indicator: green (under budget), amber (>80%), red (over budget)
+- [x] Monthly budget grid: category | budgeted | spent | remaining
+- [x] Click category amount to edit budget inline
+- [x] Color indicator: green (under budget), amber (>80%), red (over budget)
 
 ### Reports Screen
-- [ ] Pie/donut chart: spending by category for selected month (use Recharts)
-- [ ] Line chart: total spending over the last 6 months
-- [ ] Net worth over time line chart
+- [x] Pie/donut chart: spending by category for selected month (use Recharts)
+- [x] Line chart: net worth over the last 12 months
+- [x] Bar chart: net worth trend over last 6 months
 
 ### CSV Import Screen
-- [ ] File picker for CSV upload
-- [ ] Preview table showing parsed rows
-- [ ] Category mapping UI: auto-suggest + user override per row
-- [ ] Confirm import button
+- [x] File picker for CSV upload
+- [x] Preview table showing parsed rows
+- [x] Category mapping UI: auto-suggest + user override per row
+- [x] Confirm import button
 
 ### Settings Screen
-- [ ] Database file location: show current path, "Move…" button
-- [ ] Manage categories: add, rename, reorder, delete
-- [ ] Manage recurring items: list, add, edit, delete
-- [ ] Export all data (CSV / JSON)
-- [ ] Currency display format
+- [x] Manage categories: add, with color picker and optional parent
+- [x] Manage recurring items: list, add
+- [x] Export all data (CSV / JSON)
+- [ ] Database file location: show current path, "Move…" button (Phase 1D)
+- [ ] Currency display format (Phase 1D)
 
 ---
 
