@@ -1,5 +1,3 @@
-PRAGMA foreign_keys = ON;
-
 -- Categories (defined before transactions so the FK can reference it)
 CREATE TABLE IF NOT EXISTS categories (
     id        INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -37,25 +37,25 @@
 
 ## 🦀 Phase 1B — Rust Backend Commands (Tauri IPC)
 
-- [ ] `create_account(name, type, currency, initial_balance)`
-- [ ] `list_accounts()` → returns all accounts with current balance
-- [ ] `delete_account(id)`
-- [ ] `add_transaction(account_id, date, amount_cents, payee, category_id, note)`
-- [ ] `list_transactions(account_id?, month?, category_id?)` → filterable
-- [ ] `update_transaction(id, fields...)`
-- [ ] `delete_transaction(id)`
-- [ ] `list_categories()`
-- [ ] `add_category(name, parent_id?, color)`
-- [ ] `set_budget(category_id, month, amount_cents)`
-- [ ] `get_budget_summary(month)` → budgeted vs. spent per category
-- [ ] `add_recurring_item(label, account_id, category_id, amount_cents, frequency, next_due_date)`
-- [ ] `list_recurring_items()`
-- [ ] `generate_due_recurring_transactions()` → call on app start
-- [ ] `get_net_worth_history()` → total balance across all accounts over time
-- [ ] `export_to_csv(path)` → all transactions
-- [ ] `export_to_json(path)` → all data
-- [ ] `import_csv(path)` → parse bank export, return preview rows
-- [ ] `confirm_csv_import(rows_with_categories)` → save after user maps categories
+- [x] `create_account(name, type, currency, initial_balance)`
+- [x] `list_accounts()` → returns all accounts with current balance
+- [x] `delete_account(id)`
+- [x] `add_transaction(account_id, date, amount_cents, payee, category_id, note)`
+- [x] `list_transactions(account_id?, month?, category_id?)` → filterable
+- [x] `update_transaction(id, fields...)`
+- [x] `delete_transaction(id)`
+- [x] `list_categories()`
+- [x] `add_category(name, parent_id?, color)`
+- [x] `set_budget(category_id, month, amount_cents)`
+- [x] `get_budget_summary(month)` → budgeted vs. spent per category
+- [x] `add_recurring_item(label, account_id, category_id, amount_cents, frequency, next_due_date)`
+- [x] `list_recurring_items()`
+- [x] `generate_due_recurring_transactions()` → call on app start
+- [x] `get_net_worth_history()` → total balance across all accounts over time
+- [x] `export_to_csv(path)` → all transactions
+- [x] `export_to_json(path)` → all data
+- [x] `import_csv(path)` → parse bank export, return preview rows
+- [x] `confirm_csv_import(rows_with_categories)` → save after user maps categories
 
 ---
 

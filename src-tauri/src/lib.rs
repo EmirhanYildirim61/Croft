@@ -1,29 +1,9 @@
-use sqlx::SqlitePool;
-use std::fs;
-use tauri::{Manager, State};
+mod commands;
+mod db;
+mod models;
 
-pub struct AppState {
-    pub db: SqlitePool,
-}
-
-async fn init_db(db_path: &str) -> Result<SqlitePool, sqlx::Error> {
-    // Ensure the parent directory exists
-    if let Some(parent) = std::path::Path::new(db_path).parent() {
-        fs::create_dir_all(parent).ok();
-    }
-
-    let connect_str = format!("sqlite://{}?mode=rwc", db_path);
-    let pool = SqlitePool::connect(&connect_str).await?;
-    sqlx::migrate!("./migrations").run(&pool).await?;
-    Ok(pool)
-}
-
-#[tauri::command]
-fn get_db_path(state: State<'_, AppState>) -> String {
-    // Returns empty — real path exposed later via settings
-    drop(state);
-    String::new()
-}
+use db::{init_db, AppState};
+use tauri::Manager;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -35,10 +15,7 @@ pub fn run() {
                 .path()
                 .app_data_dir()
                 .expect("failed to resolve app data dir");
-            let db_path = app_data_dir
-                .join("finance.db")
-                .to_string_lossy()
-                .to_string();
+            let db_path = app_data_dir.join("finance.db").to_string_lossy().to_string();
 
             let pool = tauri::async_runtime::block_on(init_db(&db_path))
                 .expect("failed to initialise database");
@@ -46,7 +23,27 @@ pub fn run() {
             app.manage(AppState { db: pool });
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![get_db_path])
+        .invoke_handler(tauri::generate_handler![
+            commands::accounts::create_account,
+            commands::accounts::list_accounts,
+            commands::accounts::delete_account,
+            commands::transactions::add_transaction,
+            commands::transactions::list_transactions,
+            commands::transactions::update_transaction,
+            commands::transactions::delete_transaction,
+            commands::categories::list_categories,
+            commands::categories::add_category,
+            commands::budgets::set_budget,
+            commands::budgets::get_budget_summary,
+            commands::recurring::add_recurring_item,
+            commands::recurring::list_recurring_items,
+            commands::recurring::generate_due_recurring_transactions,
+            commands::reports::get_net_worth_history,
+            commands::export::export_to_csv,
+            commands::export::export_to_json,
+            commands::import::import_csv,
+            commands::import::confirm_csv_import,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
