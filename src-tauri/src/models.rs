@@ -137,3 +137,12 @@ pub struct SpendingRow {
     pub color: String,
     pub spent_cents: i64,
 }
+
+#[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
+pub struct ExchangeRate {
+    pub id: i64,
+    pub from_currency: String,
+    pub to_currency: String,
+    pub rate: f64,
+    pub updated_at: String,
+}

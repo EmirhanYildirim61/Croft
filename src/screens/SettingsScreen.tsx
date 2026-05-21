@@ -4,7 +4,7 @@ import { api } from '../lib/tauri';
 import { formatCents } from '../lib/format';
 import { useToast } from '../context/toast';
 import Modal from '../components/Modal';
-import type { Category, RecurringItem, AccountWithBalance, Frequency } from '../types';
+import type { Category, ExchangeRate, RecurringItem, AccountWithBalance, Frequency } from '../types';
 
 const FREQUENCIES: { value: Frequency; label: string }[] = [
   { value: 'daily', label: 'Daily' },
@@ -51,6 +51,14 @@ export default function SettingsScreen({ accounts }: Props) {
   const [dbPath, setDbPath] = useState('');
   const [movingDb, setMovingDb] = useState(false);
 
+  // Exchange rates
+  const [exchangeRates, setExchangeRates] = useState<ExchangeRate[]>([]);
+  const [showAddRate, setShowAddRate] = useState(false);
+  const [rateFrom, setRateFrom] = useState('');
+  const [rateTo, setRateTo] = useState('USD');
+  const [rateValue, setRateValue] = useState('');
+  const [savingRate, setSavingRate] = useState(false);
+
   // Currency display preference (stored in localStorage)
   const [displayCurrency, setDisplayCurrency] = useState(
     () => localStorage.getItem(DISPLAY_CURRENCY_KEY) ?? 'USD',
@@ -58,14 +66,16 @@ export default function SettingsScreen({ accounts }: Props) {
 
   const load = useCallback(async () => {
     try {
-      const [cats, recs, path] = await Promise.all([
+      const [cats, recs, path, rates] = await Promise.all([
         api.listCategories(),
         api.listRecurringItems(),
         api.getDbPath(),
+        api.listExchangeRates(),
       ]);
       setCategories(cats);
       setRecurring(recs);
       setDbPath(path);
+      setExchangeRates(rates);
     } catch (e) {
       showToast(String(e), 'error');
     } finally {
@@ -115,11 +125,15 @@ export default function SettingsScreen({ accounts }: Props) {
     }
   };
 
+  const recordBackup = () =>
+    localStorage.setItem('last_backup_date', new Date().toISOString().slice(0, 10));
+
   const handleExportCsv = async () => {
     try {
       const path = await save({ filters: [{ name: 'CSV', extensions: ['csv'] }], defaultPath: 'transactions.csv' });
       if (!path) return;
       await api.exportToCsv(path);
+      recordBackup();
       showToast('CSV exported successfully.', 'success');
     } catch (e) {
       showToast(String(e), 'error');
@@ -131,6 +145,7 @@ export default function SettingsScreen({ accounts }: Props) {
       const path = await save({ filters: [{ name: 'JSON', extensions: ['json'] }], defaultPath: 'finance-data.json' });
       if (!path) return;
       await api.exportToJson(path);
+      recordBackup();
       showToast('JSON exported successfully.', 'success');
     } catch (e) {
       showToast(String(e), 'error');
@@ -156,6 +171,34 @@ export default function SettingsScreen({ accounts }: Props) {
     setDisplayCurrency(code);
     localStorage.setItem(DISPLAY_CURRENCY_KEY, code);
     showToast(`Display currency set to ${code}.`, 'success');
+  };
+
+  const handleAddRate = async () => {
+    const r = parseFloat(rateValue);
+    if (!rateFrom.trim()) { showToast('Enter the source currency code.', 'error'); return; }
+    if (!rateValue || isNaN(r) || r <= 0) { showToast('Enter a positive rate.', 'error'); return; }
+    setSavingRate(true);
+    try {
+      await api.setExchangeRate(rateFrom.trim().toUpperCase(), rateTo.trim().toUpperCase(), r);
+      setRateFrom(''); setRateValue('');
+      setShowAddRate(false);
+      showToast('Exchange rate saved.', 'success');
+      setExchangeRates(await api.listExchangeRates());
+    } catch (e) {
+      showToast(String(e), 'error');
+    } finally {
+      setSavingRate(false);
+    }
+  };
+
+  const handleDeleteRate = async (id: number) => {
+    try {
+      await api.deleteExchangeRate(id);
+      setExchangeRates((prev) => prev.filter((r) => r.id !== id));
+      showToast('Exchange rate removed.', 'success');
+    } catch (e) {
+      showToast(String(e), 'error');
+    }
   };
 
   const handleMarkPaid = async (id: number, label: string) => {
@@ -264,6 +307,42 @@ export default function SettingsScreen({ accounts }: Props) {
         </p>
       </section>
 
+      {/* Exchange Rates */}
+      <section className="bg-white rounded-xl border border-slate-200 p-6">
+        <div className="flex items-center justify-between mb-1">
+          <h2 className="text-base font-semibold text-slate-700">Exchange Rates</h2>
+          <button
+            onClick={() => { setRateTo(displayCurrency); setShowAddRate(true); }}
+            className="text-sm bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700"
+          >
+            + Add
+          </button>
+        </div>
+        <p className="text-xs text-slate-400 mb-4">
+          Define manual rates so multi-currency accounts are converted to your base currency in Net Worth.
+        </p>
+        {exchangeRates.length === 0 ? (
+          <p className="text-slate-400 text-sm">No exchange rates defined yet.</p>
+        ) : (
+          <div className="space-y-1">
+            {exchangeRates.map((r) => (
+              <div key={r.id} className="flex items-center gap-3 py-2 border-b border-slate-100 last:border-0">
+                <span className="text-sm font-medium text-slate-700 w-12">{r.from_currency}</span>
+                <span className="text-slate-400 text-xs">→</span>
+                <span className="text-sm text-slate-700 w-12">{r.to_currency}</span>
+                <span className="text-sm tabular-nums text-slate-600 flex-1">= {r.rate}</span>
+                <button
+                  onClick={() => handleDeleteRate(r.id)}
+                  className="text-xs text-red-500 hover:text-red-700 px-2 py-0.5 rounded hover:bg-red-50"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
       {/* Categories */}
       <section className="bg-white rounded-xl border border-slate-200 p-6">
         <div className="flex items-center justify-between mb-4">
@@ -349,6 +428,65 @@ export default function SettingsScreen({ accounts }: Props) {
           </div>
         )}
       </section>
+
+      {/* Add Exchange Rate Modal */}
+      {showAddRate && (
+        <Modal title="Add Exchange Rate" onClose={() => setShowAddRate(false)}>
+          <div className="space-y-4">
+            <p className="text-xs text-slate-500">
+              Enter how many units of <strong>{rateTo}</strong> equal 1 unit of the source currency.
+              Example: 1 EUR = 1.08 USD → From: EUR, To: USD, Rate: 1.08
+            </p>
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1">From currency *</label>
+                <input
+                  autoFocus
+                  value={rateFrom}
+                  onChange={(e) => setRateFrom(e.target.value.toUpperCase())}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleAddRate(); }}
+                  placeholder="EUR"
+                  maxLength={10}
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1">To currency *</label>
+                <input
+                  value={rateTo}
+                  onChange={(e) => setRateTo(e.target.value.toUpperCase())}
+                  placeholder="USD"
+                  maxLength={10}
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Rate *</label>
+              <input
+                type="number"
+                step="any"
+                min="0.000001"
+                value={rateValue}
+                onChange={(e) => setRateValue(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleAddRate(); }}
+                placeholder="1.08"
+                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <div className="flex justify-end gap-3 pt-2">
+              <button onClick={() => setShowAddRate(false)} className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50">Cancel</button>
+              <button
+                onClick={handleAddRate}
+                disabled={savingRate}
+                className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+              >
+                {savingRate ? 'Saving…' : 'Save Rate'}
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
 
       {/* Add Category Modal */}
       {showAddCat && (

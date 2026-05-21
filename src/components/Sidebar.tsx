@@ -1,4 +1,4 @@
-export type Screen = 'accounts' | 'transactions' | 'budget' | 'reports' | 'net-worth' | 'import' | 'settings';
+export type Screen = 'accounts' | 'transactions' | 'budget' | 'reports' | 'net-worth' | 'subscriptions' | 'import' | 'settings';
 
 interface NavItem {
   id: Screen;
@@ -54,6 +54,16 @@ function IconNetWorth() {
   );
 }
 
+function IconSubscriptions() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <path d="M16 2v4M8 2v4M3 10h18" />
+      <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" />
+    </svg>
+  );
+}
+
 function IconImport() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
@@ -74,13 +84,14 @@ function IconSettings() {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { id: 'accounts',     label: 'Accounts',     icon: <IconAccounts /> },
-  { id: 'transactions', label: 'Transactions', icon: <IconTransactions /> },
-  { id: 'budget',       label: 'Budget',       icon: <IconBudget /> },
-  { id: 'reports',      label: 'Reports',      icon: <IconReports /> },
-  { id: 'net-worth',    label: 'Net Worth',    icon: <IconNetWorth /> },
-  { id: 'import',       label: 'CSV Import',   icon: <IconImport /> },
-  { id: 'settings',     label: 'Settings',     icon: <IconSettings /> },
+  { id: 'accounts',      label: 'Accounts',      icon: <IconAccounts /> },
+  { id: 'transactions',  label: 'Transactions',  icon: <IconTransactions /> },
+  { id: 'budget',        label: 'Budget',        icon: <IconBudget /> },
+  { id: 'reports',       label: 'Reports',       icon: <IconReports /> },
+  { id: 'net-worth',     label: 'Net Worth',     icon: <IconNetWorth /> },
+  { id: 'subscriptions', label: 'Subscriptions', icon: <IconSubscriptions /> },
+  { id: 'import',        label: 'CSV Import',    icon: <IconImport /> },
+  { id: 'settings',      label: 'Settings',      icon: <IconSettings /> },
 ];
 
 interface Props {

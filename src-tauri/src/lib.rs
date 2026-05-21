@@ -71,6 +71,9 @@ pub fn run() {
             commands::reports::get_month_comparison,
             commands::settings::get_db_path,
             commands::settings::move_db,
+            commands::currency::set_exchange_rate,
+            commands::currency::list_exchange_rates,
+            commands::currency::delete_exchange_rate,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

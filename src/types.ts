@@ -104,3 +104,11 @@ export interface SpendingRow {
   color: string;
   spent_cents: number;
 }
+
+export interface ExchangeRate {
+  id: number;
+  from_currency: string;
+  to_currency: string;
+  rate: number;
+  updated_at: string;
+}

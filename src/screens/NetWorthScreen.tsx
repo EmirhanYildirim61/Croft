@@ -5,23 +5,36 @@ import {
 import { api } from '../lib/tauri';
 import { formatCents } from '../lib/format';
 import { useToast } from '../context/toast';
-import type { AccountNetWorthRow, NetWorthPoint } from '../types';
+import type { AccountNetWorthRow, ExchangeRate, NetWorthPoint } from '../types';
+
+const DISPLAY_CURRENCY_KEY = 'display_currency';
+
+function convertCents(cents: number, fromCurrency: string, baseCurrency: string, rates: ExchangeRate[]): number {
+  if (fromCurrency === baseCurrency) return cents;
+  const rate = rates.find((r) => r.from_currency === fromCurrency && r.to_currency === baseCurrency);
+  if (rate) return Math.round(cents * rate.rate);
+  return cents;
+}
 
 export default function NetWorthScreen() {
   const { showToast } = useToast();
   const [accounts, setAccounts] = useState<AccountNetWorthRow[]>([]);
   const [history, setHistory] = useState<NetWorthPoint[]>([]);
+  const [exchangeRates, setExchangeRates] = useState<ExchangeRate[]>([]);
   const [loading, setLoading] = useState(true);
+  const baseCurrency = localStorage.getItem(DISPLAY_CURRENCY_KEY) ?? 'USD';
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [accs, hist] = await Promise.all([
+      const [accs, hist, rates] = await Promise.all([
         api.getNetWorthDetail(),
         api.getNetWorthHistory(),
+        api.listExchangeRates(),
       ]);
       setAccounts(accs);
       setHistory(hist);
+      setExchangeRates(rates);
     } catch (e) {
       showToast(String(e), 'error');
     } finally {
@@ -31,8 +44,14 @@ export default function NetWorthScreen() {
 
   useEffect(() => { load(); }, [load]);
 
-  const totalCurrent = accounts.reduce((s, a) => s + a.current_balance, 0);
-  const totalPrev = accounts.reduce((s, a) => s + a.prev_month_balance, 0);
+  const hasMultiCurrency = accounts.some((a) => a.currency !== baseCurrency);
+
+  const totalCurrent = accounts.reduce(
+    (s, a) => s + convertCents(a.current_balance, a.currency, baseCurrency, exchangeRates), 0,
+  );
+  const totalPrev = accounts.reduce(
+    (s, a) => s + convertCents(a.prev_month_balance, a.currency, baseCurrency, exchangeRates), 0,
+  );
   const delta = totalCurrent - totalPrev;
 
   if (loading) return <div className="text-slate-400 text-sm p-2">Loading…</div>;
@@ -44,15 +63,22 @@ export default function NetWorthScreen() {
       {/* Summary header */}
       <div className="bg-white rounded-xl border border-slate-200 p-6 flex items-center gap-8">
         <div>
-          <p className="text-sm text-slate-500 mb-1">Total Net Worth</p>
+          <p className="text-sm text-slate-500 mb-1">
+            Total Net Worth
+            {hasMultiCurrency && (
+              <span className="ml-2 text-xs bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full">
+                in {baseCurrency}
+              </span>
+            )}
+          </p>
           <p className={`text-3xl font-bold tabular-nums ${totalCurrent >= 0 ? 'text-slate-800' : 'text-red-600'}`}>
-            {formatCents(totalCurrent)}
+            {formatCents(totalCurrent, baseCurrency)}
           </p>
         </div>
         <div className="border-l border-slate-200 pl-8">
           <p className="text-sm text-slate-500 mb-1">vs. Last Month</p>
           <p className={`text-xl font-semibold tabular-nums ${delta >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-            {delta >= 0 ? '+' : ''}{formatCents(delta)}
+            {delta >= 0 ? '+' : ''}{formatCents(delta, baseCurrency)}
           </p>
         </div>
       </div>

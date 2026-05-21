@@ -139,15 +139,15 @@
 
 ## 🌍 Phase 3 — Maturity & Growth (Week 13+)
 
-- [ ] **Multi-currency support**
-  - [ ] Store exchange rates locally (manual entry, no live API required)
-  - [ ] Display all amounts in a chosen base currency
-- [ ] **Subscription tracker module**
-  - [ ] Dedicated panel listing all recurring subscriptions
-  - [ ] Annual cost summary ("you're spending X/year on subscriptions")
+- [x] **Multi-currency support**
+  - [x] Store exchange rates locally (manual entry, no live API required)
+  - [x] Display all amounts in a chosen base currency
+- [x] **Subscription tracker module**
+  - [x] Dedicated panel listing all recurring subscriptions
+  - [x] Annual cost summary ("you're spending X/year on subscriptions")
 - [ ] **Plugin / theme system** (if community demand warrants it)
 - [ ] **Mobile app** (Tauri 2.0 iOS/Android — post-MVP)
-- [ ] **Automatic backup reminder** (prompt every 30 days to back up SQLite file)
+- [x] **Automatic backup reminder** (prompt every 30 days to back up SQLite file)
 
 ---
 

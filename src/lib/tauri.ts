@@ -5,6 +5,7 @@ import type {
   BudgetSummaryRow,
   Category,
   CsvPreviewRow,
+  ExchangeRate,
   ImportRow,
   MonthComparisonRow,
   NetWorthPoint,
@@ -124,4 +125,10 @@ export const api = {
   // Settings
   getDbPath: () => invoke<string>('get_db_path'),
   moveDb: (newFolder: string) => invoke<string>('move_db', { newFolder }),
+
+  // Currency
+  listExchangeRates: () => invoke<ExchangeRate[]>('list_exchange_rates'),
+  setExchangeRate: (fromCurrency: string, toCurrency: string, rate: number) =>
+    invoke<void>('set_exchange_rate', { fromCurrency, toCurrency, rate }),
+  deleteExchangeRate: (id: number) => invoke<void>('delete_exchange_rate', { id }),
 };
