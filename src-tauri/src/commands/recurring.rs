@@ -109,6 +109,62 @@ pub async fn generate_due_recurring_transactions(
     Ok(count)
 }
 
+#[tauri::command]
+pub async fn mark_recurring_paid(state: State<'_, AppState>, id: i64) -> Result<(), String> {
+    let item: RecurringItem = sqlx::query_as::<_, RecurringItem>(
+        "SELECT * FROM recurring_items WHERE id = ?",
+    )
+    .bind(id)
+    .fetch_one(&state.db)
+    .await
+    .map_err(|e| e.to_string())?;
+
+    sqlx::query(
+        "INSERT INTO transactions
+             (account_id, date, amount_cents, payee, category_id, note, is_recurring)
+         VALUES (?, ?, ?, ?, ?, '', 1)",
+    )
+    .bind(item.account_id)
+    .bind(&item.next_due_date)
+    .bind(item.amount_cents)
+    .bind(&item.label)
+    .bind(item.category_id)
+    .execute(&state.db)
+    .await
+    .map_err(|e| e.to_string())?;
+
+    let next = advance_date(&item.next_due_date, &item.frequency)?;
+    sqlx::query("UPDATE recurring_items SET next_due_date = ? WHERE id = ?")
+        .bind(&next)
+        .bind(id)
+        .execute(&state.db)
+        .await
+        .map_err(|e| e.to_string())?;
+
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn skip_recurring(state: State<'_, AppState>, id: i64) -> Result<(), String> {
+    let item: RecurringItem = sqlx::query_as::<_, RecurringItem>(
+        "SELECT * FROM recurring_items WHERE id = ?",
+    )
+    .bind(id)
+    .fetch_one(&state.db)
+    .await
+    .map_err(|e| e.to_string())?;
+
+    let next = advance_date(&item.next_due_date, &item.frequency)?;
+    sqlx::query("UPDATE recurring_items SET next_due_date = ? WHERE id = ?")
+        .bind(&next)
+        .bind(id)
+        .execute(&state.db)
+        .await
+        .map_err(|e| e.to_string())?;
+
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::advance_date;

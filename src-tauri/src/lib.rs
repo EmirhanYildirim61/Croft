@@ -62,6 +62,13 @@ pub fn run() {
             commands::export::export_to_json,
             commands::import::import_csv,
             commands::import::confirm_csv_import,
+            commands::import::import_ynab_csv,
+            commands::import::import_qif,
+            commands::recurring::mark_recurring_paid,
+            commands::recurring::skip_recurring,
+            commands::reports::get_spending_by_date_range,
+            commands::reports::get_net_worth_detail,
+            commands::reports::get_month_comparison,
             commands::settings::get_db_path,
             commands::settings::move_db,
         ])

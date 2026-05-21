@@ -35,6 +35,10 @@ pub async fn list_transactions(
     account_id: Option<i64>,
     month: Option<String>,
     category_id: Option<i64>,
+    category_ids: Option<Vec<i64>>,
+    search: Option<String>,
+    date_from: Option<String>,
+    date_to: Option<String>,
 ) -> Result<Vec<Transaction>, String> {
     let mut qb: QueryBuilder<sqlx::Sqlite> =
         QueryBuilder::new("SELECT * FROM transactions WHERE 1=1");
@@ -47,9 +51,35 @@ pub async fn list_transactions(
         qb.push(" AND strftime('%Y-%m', date) = ");
         qb.push_bind(m.clone());
     }
-    if let Some(cid) = category_id {
+    if let Some(ref df) = date_from {
+        qb.push(" AND date >= ");
+        qb.push_bind(df.clone());
+    }
+    if let Some(ref dt) = date_to {
+        qb.push(" AND date <= ");
+        qb.push_bind(dt.clone());
+    }
+    // category_ids (multi-select) takes priority over single category_id
+    if let Some(ref ids) = category_ids {
+        if !ids.is_empty() {
+            qb.push(" AND category_id IN (");
+            let mut sep = qb.separated(", ");
+            for id in ids {
+                sep.push_bind(*id);
+            }
+            qb.push(")");
+        }
+    } else if let Some(cid) = category_id {
         qb.push(" AND category_id = ");
         qb.push_bind(cid);
+    }
+    if let Some(ref q) = search {
+        let pattern = format!("%{}%", q);
+        qb.push(" AND (payee LIKE ");
+        qb.push_bind(pattern.clone());
+        qb.push(" OR note LIKE ");
+        qb.push_bind(pattern);
+        qb.push(")");
     }
     qb.push(" ORDER BY date DESC, id DESC");
 

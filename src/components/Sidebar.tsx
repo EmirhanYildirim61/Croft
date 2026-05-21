@@ -1,4 +1,4 @@
-export type Screen = 'accounts' | 'transactions' | 'budget' | 'reports' | 'import' | 'settings';
+export type Screen = 'accounts' | 'transactions' | 'budget' | 'reports' | 'net-worth' | 'import' | 'settings';
 
 interface NavItem {
   id: Screen;
@@ -45,6 +45,15 @@ function IconReports() {
   );
 }
 
+function IconNetWorth() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+      <line x1="12" y1="1" x2="12" y2="23" />
+      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+    </svg>
+  );
+}
+
 function IconImport() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
@@ -69,6 +78,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'transactions', label: 'Transactions', icon: <IconTransactions /> },
   { id: 'budget',       label: 'Budget',       icon: <IconBudget /> },
   { id: 'reports',      label: 'Reports',      icon: <IconReports /> },
+  { id: 'net-worth',    label: 'Net Worth',    icon: <IconNetWorth /> },
   { id: 'import',       label: 'CSV Import',   icon: <IconImport /> },
   { id: 'settings',     label: 'Settings',     icon: <IconSettings /> },
 ];

@@ -158,7 +158,33 @@ export default function SettingsScreen({ accounts }: Props) {
     showToast(`Display currency set to ${code}.`, 'success');
   };
 
+  const handleMarkPaid = async (id: number, label: string) => {
+    try {
+      await api.markRecurringPaid(id);
+      showToast(`Marked "${label}" as paid.`, 'success');
+      await load();
+    } catch (e) {
+      showToast(String(e), 'error');
+    }
+  };
+
+  const handleSkip = async (id: number, label: string) => {
+    try {
+      await api.skipRecurring(id);
+      showToast(`Skipped "${label}" — next date advanced.`, 'success');
+      await load();
+    } catch (e) {
+      showToast(String(e), 'error');
+    }
+  };
+
   const accName = (id: number) => accounts.find((a) => a.id === id)?.name ?? '—';
+
+  const today = new Date().toISOString().slice(0, 10);
+  const sevenDaysLater = new Date(Date.now() + 7 * 86400_000).toISOString().slice(0, 10);
+
+  const isDueNow = (d: string) => d <= today;
+  const isDueSoon = (d: string) => d > today && d <= sevenDaysLater;
 
   if (loading) return <div className="text-slate-400 text-sm p-2">Loading…</div>;
 
@@ -284,16 +310,40 @@ export default function SettingsScreen({ accounts }: Props) {
         ) : (
           <div className="space-y-2">
             {recurring.map((item) => (
-              <div key={item.id} className="flex items-center gap-3 py-2 border-b border-slate-100 last:border-0">
+              <div key={item.id} className="flex items-center gap-3 py-2.5 border-b border-slate-100 last:border-0">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-700 truncate">{item.label}</p>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="text-sm font-medium text-slate-700 truncate">{item.label}</p>
+                    {isDueNow(item.next_due_date) && (
+                      <span className="text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full font-medium">Due</span>
+                    )}
+                    {isDueSoon(item.next_due_date) && (
+                      <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full font-medium">Due soon</span>
+                    )}
+                  </div>
                   <p className="text-xs text-slate-400">
                     {item.frequency} · next: {item.next_due_date} · {accName(item.account_id)}
                   </p>
                 </div>
-                <span className={`text-sm font-semibold tabular-nums ${item.amount_cents >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                <span className={`text-sm font-semibold tabular-nums shrink-0 ${item.amount_cents >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
                   {item.amount_cents >= 0 ? '+' : ''}{formatCents(item.amount_cents)}
                 </span>
+                <div className="flex gap-1.5 shrink-0">
+                  <button
+                    onClick={() => handleMarkPaid(item.id, item.label)}
+                    className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md hover:bg-emerald-100 transition-colors"
+                    title="Record a transaction for this item and advance the due date"
+                  >
+                    Mark paid
+                  </button>
+                  <button
+                    onClick={() => handleSkip(item.id, item.label)}
+                    className="text-xs bg-slate-50 text-slate-600 border border-slate-200 px-2 py-1 rounded-md hover:bg-slate-100 transition-colors"
+                    title="Skip this occurrence and advance the due date without recording a transaction"
+                  >
+                    Skip
+                  </button>
+                </div>
               </div>
             ))}
           </div>

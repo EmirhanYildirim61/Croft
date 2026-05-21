@@ -80,3 +80,27 @@ export interface ImportRow {
   category_id: number | null;
   note: string;
 }
+
+export interface AccountNetWorthRow {
+  id: number;
+  name: string;
+  type: string;
+  currency: string;
+  current_balance: number;
+  prev_month_balance: number;
+}
+
+export interface MonthComparisonRow {
+  category_id: number;
+  category_name: string;
+  color: string;
+  month_a_cents: number;
+  month_b_cents: number;
+}
+
+export interface SpendingRow {
+  category_id: number;
+  category_name: string;
+  color: string;
+  spent_cents: number;
+}

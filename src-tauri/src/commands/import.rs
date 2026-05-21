@@ -1,6 +1,7 @@
 use crate::db::AppState;
 use crate::models::{CsvPreviewRow, ImportRow};
 use tauri::State;
+use std::fs;
 
 fn find_col(headers: &csv::StringRecord, candidates: &[&str]) -> Option<usize> {
     headers.iter().position(|h| {
@@ -91,6 +92,112 @@ pub async fn confirm_csv_import(
         .map_err(|e| e.to_string())?;
     }
     Ok(count)
+}
+
+fn parse_ynab_date(s: &str) -> String {
+    // YNAB exports MM/DD/YYYY; normalize to YYYY-MM-DD
+    let s = s.trim();
+    if s.contains('/') {
+        let parts: Vec<&str> = s.splitn(3, '/').collect();
+        if parts.len() == 3 {
+            let m: u32 = parts[0].parse().unwrap_or(0);
+            let d: u32 = parts[1].parse().unwrap_or(0);
+            let y: u32 = parts[2].parse().unwrap_or(0);
+            return format!("{:04}-{:02}-{:02}", y, m, d);
+        }
+    }
+    s.to_string()
+}
+
+#[tauri::command]
+pub async fn import_ynab_csv(path: String) -> Result<Vec<CsvPreviewRow>, String> {
+    let mut rdr = csv::Reader::from_path(&path).map_err(|e| e.to_string())?;
+    let headers = rdr.headers().map_err(|e| e.to_string())?.clone();
+
+    let date_col    = find_col(&headers, &["date"]);
+    let payee_col   = find_col(&headers, &["payee", "payee name"]);
+    let memo_col    = find_col(&headers, &["memo"]);
+    let outflow_col = find_col(&headers, &["outflow"]);
+    let inflow_col  = find_col(&headers, &["inflow"]);
+
+    let mut rows = Vec::new();
+    for (i, result) in rdr.records().enumerate() {
+        let record = result.map_err(|e| e.to_string())?;
+
+        let raw_date = date_col.and_then(|c| record.get(c)).unwrap_or("").trim().to_string();
+        let date = parse_ynab_date(&raw_date);
+        let payee = payee_col.and_then(|c| record.get(c)).unwrap_or("").trim().to_string();
+        let note  = memo_col.and_then(|c| record.get(c)).unwrap_or("").trim().to_string();
+
+        let outflow = outflow_col.and_then(|c| record.get(c)).map(parse_amount_cents).unwrap_or(0);
+        let inflow  = inflow_col.and_then(|c| record.get(c)).map(parse_amount_cents).unwrap_or(0);
+        // YNAB convention: outflow is positive for expenses → negate; inflow positive for income
+        let amount_cents = inflow - outflow;
+
+        rows.push(CsvPreviewRow { row_index: i, date, payee, amount_cents, suggested_category_id: None, note });
+    }
+    Ok(rows)
+}
+
+fn parse_qif_date(s: &str) -> String {
+    let s = s.trim();
+    // Formats: M/D/Y, MM/DD/YY, MM/DD/YYYY, M-D-Y (GnuCash uses / or -)
+    let sep = if s.contains('/') { '/' } else { '-' };
+    let parts: Vec<&str> = s.splitn(3, sep).collect();
+    if parts.len() == 3 {
+        let m: u32 = parts[0].parse().unwrap_or(0);
+        let d: u32 = parts[1].parse().unwrap_or(0);
+        let y_raw: u32 = parts[2].parse().unwrap_or(0);
+        let y = if y_raw < 100 { 2000 + y_raw } else { y_raw };
+        return format!("{:04}-{:02}-{:02}", y, m, d);
+    }
+    s.to_string()
+}
+
+#[tauri::command]
+pub async fn import_qif(path: String) -> Result<Vec<CsvPreviewRow>, String> {
+    let content = fs::read_to_string(&path).map_err(|e| e.to_string())?;
+
+    let mut rows = Vec::new();
+    let mut row_index: usize = 0;
+    let mut date = String::new();
+    let mut amount_cents: i64 = 0;
+    let mut payee = String::new();
+    let mut note = String::new();
+
+    for line in content.lines() {
+        if line.is_empty() || line.starts_with('!') {
+            continue;
+        }
+        let (tag, value) = line.split_at(1);
+        let value = value.trim();
+        match tag {
+            "D" => date = parse_qif_date(value),
+            "T" | "U" => amount_cents = parse_amount_cents(value),
+            "P" => payee = value.to_string(),
+            "M" | "N" => note = value.to_string(),
+            "^" => {
+                if !date.is_empty() {
+                    rows.push(CsvPreviewRow {
+                        row_index,
+                        date: date.clone(),
+                        payee: payee.clone(),
+                        amount_cents,
+                        suggested_category_id: None,
+                        note: note.clone(),
+                    });
+                    row_index += 1;
+                }
+                date.clear(); payee.clear(); note.clear(); amount_cents = 0;
+            }
+            _ => {}
+        }
+    }
+    // Flush last record if no trailing ^
+    if !date.is_empty() {
+        rows.push(CsvPreviewRow { row_index, date, payee, amount_cents, suggested_category_id: None, note });
+    }
+    Ok(rows)
 }
 
 #[cfg(test)]

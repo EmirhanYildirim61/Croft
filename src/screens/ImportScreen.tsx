@@ -10,8 +10,17 @@ interface Props {
   categories: Category[];
 }
 
+type ImportFormat = 'generic' | 'ynab' | 'qif';
+
+const FORMAT_OPTIONS: { value: ImportFormat; label: string; desc: string; exts: string[] }[] = [
+  { value: 'generic', label: 'Generic CSV', desc: 'Auto-detect columns (date, payee, amount)', exts: ['csv'] },
+  { value: 'ynab',    label: 'YNAB CSV',    desc: 'YNAB export format (Inflow/Outflow columns)', exts: ['csv'] },
+  { value: 'qif',     label: 'GnuCash QIF', desc: 'Quicken Interchange Format (.qif)', exts: ['qif'] },
+];
+
 export default function ImportScreen({ accounts, categories }: Props) {
   const { showToast } = useToast();
+  const [format, setFormat] = useState<ImportFormat>('generic');
   const [preview, setPreview] = useState<CsvPreviewRow[]>([]);
   const [rowMeta, setRowMeta] = useState<Record<number, { accountId: number; categoryId: number | null }>>({});
   const [step, setStep] = useState<'idle' | 'preview' | 'done'>('idle');
@@ -19,15 +28,24 @@ export default function ImportScreen({ accounts, categories }: Props) {
   const [importedCount, setImportedCount] = useState(0);
 
   const handlePickFile = async () => {
+    const fmt = FORMAT_OPTIONS.find((f) => f.value === format)!;
     try {
       const path = await open({
-        filters: [{ name: 'CSV Files', extensions: ['csv'] }],
+        filters: [{ name: fmt.label, extensions: fmt.exts }],
         multiple: false,
       });
       if (!path) return;
-      const rows = await api.importCsv(path as string);
+
+      let rows: CsvPreviewRow[];
+      if (format === 'ynab') {
+        rows = await api.importYnabCsv(path as string);
+      } else if (format === 'qif') {
+        rows = await api.importQif(path as string);
+      } else {
+        rows = await api.importCsv(path as string);
+      }
+
       setPreview(rows);
-      // Initialise row metadata with defaults
       const defaultAccId = accounts[0]?.id ?? 0;
       const meta: Record<number, { accountId: number; categoryId: number | null }> = {};
       for (const row of rows) {
@@ -75,12 +93,33 @@ export default function ImportScreen({ accounts, categories }: Props) {
       <h1 className="text-2xl font-bold text-slate-800 mb-6">CSV Import</h1>
 
       {step === 'idle' && (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
+        <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="text-6xl mb-4">📂</div>
-          <h2 className="text-xl font-semibold text-slate-700 mb-2">Import transactions from CSV</h2>
+          <h2 className="text-xl font-semibold text-slate-700 mb-2">Import transactions</h2>
           <p className="text-slate-500 mb-6 max-w-sm">
-            Pick a CSV file exported from your bank. Columns are auto-detected (date, payee/description, amount).
+            Choose a format, then pick a file. Categories and accounts can be assigned before confirming.
           </p>
+
+          {/* Format selector */}
+          <div className="flex gap-3 mb-6">
+            {FORMAT_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setFormat(opt.value)}
+                className={`px-4 py-2.5 rounded-xl border text-sm font-medium text-left transition-colors ${
+                  format === opt.value
+                    ? 'bg-indigo-600 text-white border-indigo-600'
+                    : 'border-slate-300 text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                <div className="font-semibold">{opt.label}</div>
+                <div className={`text-xs mt-0.5 ${format === opt.value ? 'text-indigo-200' : 'text-slate-400'}`}>
+                  {opt.desc}
+                </div>
+              </button>
+            ))}
+          </div>
+
           {accounts.length === 0 ? (
             <p className="text-amber-600 text-sm bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
               You need at least one account before importing.
@@ -90,7 +129,7 @@ export default function ImportScreen({ accounts, categories }: Props) {
               onClick={handlePickFile}
               className="bg-indigo-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
             >
-              Choose CSV File…
+              Choose File…
             </button>
           )}
         </div>

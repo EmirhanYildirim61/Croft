@@ -5,6 +5,7 @@ import AccountsScreen from './screens/AccountsScreen';
 import TransactionsScreen from './screens/TransactionsScreen';
 import BudgetScreen from './screens/BudgetScreen';
 import ReportsScreen from './screens/ReportsScreen';
+import NetWorthScreen from './screens/NetWorthScreen';
 import ImportScreen from './screens/ImportScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import { ToastProvider } from './context/toast';
@@ -93,6 +94,7 @@ export default function App() {
             )}
             {screen === 'budget' && <BudgetScreen month={month} />}
             {screen === 'reports' && <ReportsScreen month={month} />}
+            {screen === 'net-worth' && <NetWorthScreen />}
             {screen === 'import' && (
               <ImportScreen accounts={accounts} categories={categories} />
             )}

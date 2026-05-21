@@ -1,12 +1,15 @@
 import { invoke } from '@tauri-apps/api/core';
 import type {
+  AccountNetWorthRow,
   AccountWithBalance,
   BudgetSummaryRow,
   Category,
   CsvPreviewRow,
   ImportRow,
+  MonthComparisonRow,
   NetWorthPoint,
   RecurringItem,
+  SpendingRow,
   Transaction,
 } from '../types';
 
@@ -29,11 +32,23 @@ export const api = {
     note: string,
   ) => invoke<number>('add_transaction', { accountId, date, amountCents, payee, categoryId, note }),
 
-  listTransactions: (accountId?: number | null, month?: string | null, categoryId?: number | null) =>
+  listTransactions: (
+    accountId?: number | null,
+    month?: string | null,
+    categoryId?: number | null,
+    categoryIds?: number[] | null,
+    search?: string | null,
+    dateFrom?: string | null,
+    dateTo?: string | null,
+  ) =>
     invoke<Transaction[]>('list_transactions', {
       accountId: accountId ?? null,
       month: month ?? null,
       categoryId: categoryId ?? null,
+      categoryIds: categoryIds ?? null,
+      search: search ?? null,
+      dateFrom: dateFrom ?? null,
+      dateTo: dateTo ?? null,
     }),
 
   updateTransaction: (
@@ -81,8 +96,20 @@ export const api = {
 
   generateDueRecurringTransactions: () => invoke<number>('generate_due_recurring_transactions'),
 
+  markRecurringPaid: (id: number) => invoke<void>('mark_recurring_paid', { id }),
+
+  skipRecurring: (id: number) => invoke<void>('skip_recurring', { id }),
+
   // Reports
   getNetWorthHistory: () => invoke<NetWorthPoint[]>('get_net_worth_history'),
+
+  getNetWorthDetail: () => invoke<AccountNetWorthRow[]>('get_net_worth_detail'),
+
+  getSpendingByDateRange: (dateFrom: string, dateTo: string) =>
+    invoke<SpendingRow[]>('get_spending_by_date_range', { dateFrom, dateTo }),
+
+  getMonthComparison: (monthA: string, monthB: string) =>
+    invoke<MonthComparisonRow[]>('get_month_comparison', { monthA, monthB }),
 
   // Export
   exportToCsv: (path: string) => invoke<void>('export_to_csv', { path }),
@@ -90,6 +117,8 @@ export const api = {
 
   // Import
   importCsv: (path: string) => invoke<CsvPreviewRow[]>('import_csv', { path }),
+  importYnabCsv: (path: string) => invoke<CsvPreviewRow[]>('import_ynab_csv', { path }),
+  importQif: (path: string) => invoke<CsvPreviewRow[]>('import_qif', { path }),
   confirmCsvImport: (rows: ImportRow[]) => invoke<number>('confirm_csv_import', { rows }),
 
   // Settings

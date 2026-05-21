@@ -10,6 +10,7 @@ interface Props {
   filterAccountId: number | null;
   onClearAccount: () => void;
   openNewTxTrigger: number;
+  initialSearch?: string;
 }
 
 interface FormErrors {
@@ -57,8 +58,11 @@ export default function TransactionsScreen({
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [filterCatId, setFilterCatId] = useState<number | null>(null);
+  const [filterCatIds, setFilterCatIds] = useState<number[]>([]);
   const [filterAccId, setFilterAccId] = useState<number | null>(filterAccountId);
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [showDateRange, setShowDateRange] = useState(false);
 
   // Add/edit modal
   const [showForm, setShowForm] = useState(false);
@@ -79,8 +83,17 @@ export default function TransactionsScreen({
 
   const load = useCallback(async () => {
     try {
+      const effectiveMonth = (showDateRange && (dateFrom || dateTo)) ? null : month;
       const [txns, accs, cats] = await Promise.all([
-        api.listTransactions(filterAccId, month, filterCatId),
+        api.listTransactions(
+          filterAccId,
+          effectiveMonth,
+          null,
+          filterCatIds.length > 0 ? filterCatIds : null,
+          search || null,
+          showDateRange && dateFrom ? dateFrom : null,
+          showDateRange && dateTo ? dateTo : null,
+        ),
         api.listAccounts(),
         api.listCategories(),
       ]);
@@ -92,7 +105,7 @@ export default function TransactionsScreen({
     } finally {
       setLoading(false);
     }
-  }, [filterAccId, month, filterCatId, showToast]);
+  }, [filterAccId, month, filterCatIds, search, dateFrom, dateTo, showDateRange, showToast]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -176,15 +189,7 @@ export default function TransactionsScreen({
   const accName = (id: number) =>
     accounts.find((a) => a.id === id)?.name ?? '—';
 
-  const visible = transactions.filter((tx) => {
-    if (!search) return true;
-    const q = search.toLowerCase();
-    return (
-      tx.payee.toLowerCase().includes(q) ||
-      tx.note.toLowerCase().includes(q) ||
-      catName(tx.category_id).toLowerCase().includes(q)
-    );
-  });
+  const visible = transactions;
 
   if (loading) return <div className="text-slate-400 text-sm p-2">Loading…</div>;
 
@@ -209,7 +214,7 @@ export default function TransactionsScreen({
       </div>
 
       {/* Filter bar */}
-      <div className="flex flex-wrap gap-3 mb-5">
+      <div className="flex flex-wrap gap-3 mb-5 items-center">
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -224,14 +229,64 @@ export default function TransactionsScreen({
           <option value="">All accounts</option>
           {accounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
         </select>
-        <select
-          value={filterCatId ?? ''}
-          onChange={(e) => setFilterCatId(e.target.value ? Number(e.target.value) : null)}
-          className="border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        {/* Multi-category filter */}
+        <div className="relative">
+          <select
+            multiple
+            value={filterCatIds.map(String)}
+            onChange={(e) => {
+              const selected = Array.from(e.target.selectedOptions).map((o) => Number(o.value));
+              setFilterCatIds(selected);
+            }}
+            size={1}
+            className="border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 min-w-36"
+            style={{ height: 34 }}
+            title="Hold Ctrl/Cmd to select multiple categories"
+          >
+            {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
+          {filterCatIds.length > 0 && (
+            <span className="ml-1.5 text-xs bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded-full">
+              {filterCatIds.length}
+            </span>
+          )}
+        </div>
+        {filterCatIds.length > 0 && (
+          <button
+            onClick={() => setFilterCatIds([])}
+            className="text-xs text-slate-400 hover:text-slate-700"
+          >
+            Clear categories
+          </button>
+        )}
+        {/* Date range toggle */}
+        <button
+          onClick={() => { setShowDateRange((v) => !v); setDateFrom(''); setDateTo(''); }}
+          className={`text-sm px-3 py-1.5 rounded-lg border transition-colors ${
+            showDateRange
+              ? 'bg-indigo-600 text-white border-indigo-600'
+              : 'border-slate-300 text-slate-600 hover:bg-slate-50'
+          }`}
         >
-          <option value="">All categories</option>
-          {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-        </select>
+          Date range
+        </button>
+        {showDateRange && (
+          <>
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              className="border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <span className="text-slate-400 text-sm">→</span>
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              className="border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </>
+        )}
       </div>
 
       {visible.length === 0 ? (

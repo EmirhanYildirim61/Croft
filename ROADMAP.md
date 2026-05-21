@@ -118,22 +118,22 @@
 
 ## 🚀 Phase 2 — Community Feedback Iteration (Weeks 7–12)
 
-- [ ] **Data migration tools**
-  - [ ] Import YNAB export CSV format
-  - [ ] Import GnuCash QIF format
-- [ ] **Recurring items UI improvements**
-  - [ ] Reminder notification when a recurring item is due
-  - [ ] Mark as paid / skip for this month
-- [ ] **Advanced filtering & search**
-  - [ ] Full-text search across payee and notes
-  - [ ] Multi-category filter
-  - [ ] Custom date range picker
-- [ ] **Net worth screen**
-  - [ ] Dedicated screen with account breakdown
-  - [ ] Month-over-month delta
-- [ ] **Customizable reports**
-  - [ ] User-defined date ranges
-  - [ ] Side-by-side month comparison
+- [x] **Data migration tools**
+  - [x] Import YNAB export CSV format
+  - [x] Import GnuCash QIF format
+- [x] **Recurring items UI improvements**
+  - [x] Reminder notification when a recurring item is due
+  - [x] Mark as paid / skip for this month
+- [x] **Advanced filtering & search**
+  - [x] Full-text search across payee and notes
+  - [x] Multi-category filter
+  - [x] Custom date range picker
+- [x] **Net worth screen**
+  - [x] Dedicated screen with account breakdown
+  - [x] Month-over-month delta
+- [x] **Customizable reports**
+  - [x] User-defined date ranges
+  - [x] Side-by-side month comparison
 
 ---
 

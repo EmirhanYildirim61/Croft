@@ -108,3 +108,32 @@ pub struct ExportData {
     pub budgets: Vec<Budget>,
     pub recurring_items: Vec<RecurringItem>,
 }
+
+#[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
+pub struct AccountNetWorthRow {
+    pub id: i64,
+    pub name: String,
+    #[sqlx(rename = "type")]
+    #[serde(rename = "type")]
+    pub account_type: String,
+    pub currency: String,
+    pub current_balance: i64,
+    pub prev_month_balance: i64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct MonthComparisonRow {
+    pub category_id: i64,
+    pub category_name: String,
+    pub color: String,
+    pub month_a_cents: i64,
+    pub month_b_cents: i64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SpendingRow {
+    pub category_id: i64,
+    pub category_name: String,
+    pub color: String,
+    pub spent_cents: i64,
+}
