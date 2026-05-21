@@ -1,46 +1,75 @@
 name: Release
 
+# ── How to ship a new version ──────────────────────────────────────────────────
+# Option A (recommended): push a version tag
+#   git tag v1.2.3 && git push origin v1.2.3
+# Option B: trigger manually from the Actions tab → "Release" → "Run workflow"
+# Either way a DRAFT release is created — review it on GitHub, then publish.
+# ────────────────────────────────────────────────────────────────────────────────
+
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Version tag (e.g. v1.2.3)'
+        required: true
+        default: 'v0.1.0'
 
 jobs:
-  build:
+  release:
+    permissions:
+      contents: write   # required to create the GitHub Release and upload assets
+
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: macos-latest
+          # macOS universal binary — works on both Apple Silicon and Intel Macs
+          - platform: macos-latest
             args: '--target universal-apple-darwin'
-          - os: windows-latest
-            args: ''
-          - os: ubuntu-22.04
-            args: ''
+            rust-targets: 'aarch64-apple-darwin,x86_64-apple-darwin'
 
-    runs-on: ${{ matrix.os }}
+          # Windows — produces an .msi installer and a portable .exe
+          - platform: windows-latest
+            args: ''
+            rust-targets: ''
+
+          # Linux — produces a .deb package and a portable .AppImage
+          - platform: ubuntu-22.04
+            args: ''
+            rust-targets: ''
+
+    runs-on: ${{ matrix.platform }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Install Linux dependencies
-        if: matrix.os == 'ubuntu-22.04'
+      - name: Install Linux system libraries
+        if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf
 
-      - name: Setup Node
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
 
-      - name: Install Rust stable
+      - name: Set up Rust (stable)
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.os == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          targets: ${{ matrix.rust-targets }}
 
-      - name: Rust cache
+      - name: Cache Rust build artifacts
         uses: swatinem/rust-cache@v2
         with:
           workspaces: './src-tauri -> target'
@@ -48,13 +77,24 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
 
-      - name: Build app
+      - name: Build & publish release
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: ${{ github.ref_name }}
-          releaseName: 'Finance App ${{ github.ref_name }}'
+          tagName: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+          releaseName: 'Croft ${{ github.event_name == ''workflow_dispatch'' && inputs.tag || github.ref_name }}'
+          releaseBody: |
+            ## Download & install
+
+            | Platform | File |
+            |---|---|
+            | **macOS** (Apple Silicon + Intel) | `.dmg` |
+            | **Windows** | `.msi` installer (recommended) or `.exe` setup |
+            | **Linux** (Debian/Ubuntu) | `.deb` package |
+            | **Linux** (other) | `.AppImage` portable binary |
+
+            Double-click the downloaded file to install. No server required — all data stays on your machine.
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
