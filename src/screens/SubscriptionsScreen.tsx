@@ -6,6 +6,7 @@ import type { AccountWithBalance, RecurringItem } from '../types';
 
 interface Props {
   accounts: AccountWithBalance[];
+  onRefresh?: () => void;
 }
 
 function annualCents(item: RecurringItem): number {
@@ -27,7 +28,7 @@ const FREQ_LABEL: Record<string, string> = {
   daily: 'Daily', weekly: 'Weekly', monthly: 'Monthly', yearly: 'Yearly',
 };
 
-export default function SubscriptionsScreen({ accounts }: Props) {
+export default function SubscriptionsScreen({ accounts, onRefresh }: Props) {
   const { showToast } = useToast();
   const [items, setItems] = useState<RecurringItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,6 +51,7 @@ export default function SubscriptionsScreen({ accounts }: Props) {
       await api.markRecurringPaid(id);
       showToast(`Marked "${label}" as paid.`, 'success');
       await load();
+      onRefresh?.();
     } catch (e) {
       showToast(String(e), 'error');
     }

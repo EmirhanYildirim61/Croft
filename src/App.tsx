@@ -12,13 +12,28 @@ import SettingsScreen from './screens/SettingsScreen';
 import { ToastProvider } from './context/toast';
 import { api } from './lib/tauri';
 import { currentYearMonth } from './lib/format';
-import type { AccountWithBalance, Category } from './types';
+import type { AccountWithBalance, Category, ExchangeRate } from './types';
 
 const BACKUP_DATE_KEY = 'last_backup_date';
 const BACKUP_INTERVAL_DAYS = 30;
+const DISPLAY_CURRENCY_KEY = 'display_currency';
 
 function daysSince(dateStr: string): number {
   return Math.floor((Date.now() - new Date(dateStr).getTime()) / 86_400_000);
+}
+
+function convertCents(
+  cents: number,
+  fromCurrency: string,
+  baseCurrency: string,
+  rates: ExchangeRate[],
+): number {
+  if (fromCurrency === baseCurrency) return cents;
+  const rate = rates.find(
+    (r) => r.from_currency === fromCurrency && r.to_currency === baseCurrency,
+  );
+  if (rate) return Math.round(cents * rate.rate);
+  return cents;
 }
 
 export default function App() {
@@ -34,16 +49,26 @@ export default function App() {
   const [accounts, setAccounts] = useState<AccountWithBalance[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
 
+  const baseCurrency = localStorage.getItem(DISPLAY_CURRENCY_KEY) ?? 'USD';
+
   const loadShared = useCallback(async () => {
     try {
-      const [accs, cats] = await Promise.all([api.listAccounts(), api.listCategories()]);
+      const [accs, cats, rates] = await Promise.all([
+        api.listAccounts(),
+        api.listCategories(),
+        api.listExchangeRates(),
+      ]);
       setAccounts(accs);
       setCategories(cats);
-      setNetWorthCents(accs.reduce((s, a) => s + a.current_balance, 0));
+      const total = accs.reduce(
+        (s, a) => s + convertCents(a.current_balance, a.currency, baseCurrency, rates),
+        0,
+      );
+      setNetWorthCents(total);
     } catch {
       // non-fatal on startup
     }
-  }, []);
+  }, [baseCurrency]);
 
   useEffect(() => {
     api.generateDueRecurringTransactions().catch(() => {});
@@ -66,6 +91,9 @@ export default function App() {
   };
 
   const handleNetWorthChange = (cents: number) => setNetWorthCents(cents);
+
+  // Pass the base currency through so child screens can format the TopBar consistently.
+  const topBarCurrency = baseCurrency;
 
   const dismissBackupBanner = (goToSettings = false) => {
     setShowBackupBanner(false);
@@ -95,7 +123,12 @@ export default function App() {
       <div className="flex h-screen overflow-hidden bg-slate-50" style={{ minWidth: 900 }}>
         <Sidebar active={screen} onNavigate={handleNavigate} />
         <div className="flex flex-col flex-1 min-w-0">
-          <TopBar month={month} onMonthChange={setMonth} netWorthCents={netWorthCents} />
+          <TopBar
+            month={month}
+            onMonthChange={setMonth}
+            netWorthCents={netWorthCents}
+            currency={topBarCurrency}
+          />
           {showBackupBanner && (
             <div className="flex items-center gap-3 bg-amber-50 border-b border-amber-200 px-6 py-2.5 text-sm text-amber-800 shrink-0">
               <span className="text-amber-500">⚠</span>
@@ -128,6 +161,7 @@ export default function App() {
               <AccountsScreen
                 onSelectAccount={handleSelectAccount}
                 onNetWorthChange={handleNetWorthChange}
+                onRefresh={loadShared}
               />
             )}
             {screen === 'transactions' && (
@@ -136,16 +170,30 @@ export default function App() {
                 filterAccountId={filterAccountId}
                 onClearAccount={() => setFilterAccountId(null)}
                 openNewTxTrigger={openNewTxTrigger}
+                accounts={accounts}
+                categories={categories}
+                onRefresh={loadShared}
               />
             )}
             {screen === 'budget' && <BudgetScreen month={month} />}
             {screen === 'reports' && <ReportsScreen month={month} />}
             {screen === 'net-worth' && <NetWorthScreen />}
-            {screen === 'subscriptions' && <SubscriptionsScreen accounts={accounts} />}
-            {screen === 'import' && (
-              <ImportScreen accounts={accounts} categories={categories} />
+            {screen === 'subscriptions' && (
+              <SubscriptionsScreen accounts={accounts} onRefresh={loadShared} />
             )}
-            {screen === 'settings' && <SettingsScreen accounts={accounts} />}
+            {screen === 'import' && (
+              <ImportScreen
+                accounts={accounts}
+                categories={categories}
+                onRefresh={loadShared}
+              />
+            )}
+            {screen === 'settings' && (
+              <SettingsScreen
+                accounts={accounts}
+                onRefresh={loadShared}
+              />
+            )}
           </main>
         </div>
       </div>

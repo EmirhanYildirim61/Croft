@@ -59,6 +59,46 @@ pub async fn list_recurring_items(
 }
 
 #[tauri::command]
+pub async fn update_recurring_item(
+    state: State<'_, AppState>,
+    id: i64,
+    label: String,
+    account_id: i64,
+    category_id: Option<i64>,
+    amount_cents: i64,
+    frequency: String,
+    next_due_date: String,
+) -> Result<(), String> {
+    sqlx::query(
+        "UPDATE recurring_items
+            SET label = ?, account_id = ?, category_id = ?,
+                amount_cents = ?, frequency = ?, next_due_date = ?
+          WHERE id = ?",
+    )
+    .bind(&label)
+    .bind(account_id)
+    .bind(category_id)
+    .bind(amount_cents)
+    .bind(&frequency)
+    .bind(&next_due_date)
+    .bind(id)
+    .execute(&state.db)
+    .await
+    .map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn delete_recurring_item(state: State<'_, AppState>, id: i64) -> Result<(), String> {
+    sqlx::query("DELETE FROM recurring_items WHERE id = ?")
+        .bind(id)
+        .execute(&state.db)
+        .await
+        .map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[tauri::command]
 pub async fn generate_due_recurring_transactions(
     state: State<'_, AppState>,
 ) -> Result<usize, String> {

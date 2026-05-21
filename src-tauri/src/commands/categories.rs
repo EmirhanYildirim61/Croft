@@ -27,3 +27,35 @@ pub async fn add_category(
             .map_err(|e| e.to_string())?;
     Ok(result.last_insert_rowid())
 }
+
+#[tauri::command]
+pub async fn update_category(
+    state: State<'_, AppState>,
+    id: i64,
+    name: String,
+    parent_id: Option<i64>,
+    color: String,
+) -> Result<(), String> {
+    if parent_id == Some(id) {
+        return Err("A category cannot be its own parent.".to_string());
+    }
+    sqlx::query("UPDATE categories SET name = ?, parent_id = ?, color = ? WHERE id = ?")
+        .bind(&name)
+        .bind(parent_id)
+        .bind(&color)
+        .bind(id)
+        .execute(&state.db)
+        .await
+        .map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn delete_category(state: State<'_, AppState>, id: i64) -> Result<(), String> {
+    sqlx::query("DELETE FROM categories WHERE id = ?")
+        .bind(id)
+        .execute(&state.db)
+        .await
+        .map_err(|e| e.to_string())?;
+    Ok(())
+}

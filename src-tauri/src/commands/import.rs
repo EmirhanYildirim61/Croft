@@ -34,9 +34,13 @@ pub async fn import_csv(path: String) -> Result<Vec<CsvPreviewRow>, String> {
         &headers,
         &["payee", "description", "merchant", "memo", "name", "narrative"],
     );
+    // If both Debit and Credit columns exist (common bank export format),
+    // we'll combine them. Otherwise fall back to a single "amount" column.
+    let debit_col  = find_col(&headers, &["debit", "withdrawal", "outflow"]);
+    let credit_col = find_col(&headers, &["credit", "deposit", "inflow"]);
     let amount_col = find_col(
         &headers,
-        &["amount", "debit", "credit", "transaction amount", "value"],
+        &["amount", "transaction amount", "value"],
     );
 
     let mut rows = Vec::new();
@@ -52,10 +56,13 @@ pub async fn import_csv(path: String) -> Result<Vec<CsvPreviewRow>, String> {
             .unwrap_or("")
             .trim()
             .to_string();
-        let amount_cents = amount_col
-            .and_then(|c| record.get(c))
-            .map(parse_amount_cents)
-            .unwrap_or(0);
+        let amount_cents = if debit_col.is_some() || credit_col.is_some() {
+            let debit  = debit_col.and_then(|c| record.get(c)).map(parse_amount_cents).unwrap_or(0).abs();
+            let credit = credit_col.and_then(|c| record.get(c)).map(parse_amount_cents).unwrap_or(0).abs();
+            credit - debit
+        } else {
+            amount_col.and_then(|c| record.get(c)).map(parse_amount_cents).unwrap_or(0)
+        };
 
         rows.push(CsvPreviewRow {
             row_index: i,
@@ -75,6 +82,7 @@ pub async fn confirm_csv_import(
     rows: Vec<ImportRow>,
 ) -> Result<usize, String> {
     let count = rows.len();
+    let mut tx = state.db.begin().await.map_err(|e| e.to_string())?;
     for row in &rows {
         sqlx::query(
             "INSERT INTO transactions
@@ -87,10 +95,11 @@ pub async fn confirm_csv_import(
         .bind(&row.payee)
         .bind(row.category_id)
         .bind(&row.note)
-        .execute(&state.db)
+        .execute(&mut *tx)
         .await
         .map_err(|e| e.to_string())?;
     }
+    tx.commit().await.map_err(|e| e.to_string())?;
     Ok(count)
 }
 

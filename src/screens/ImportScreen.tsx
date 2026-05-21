@@ -8,6 +8,7 @@ import type { CsvPreviewRow, ImportRow, AccountWithBalance, Category } from '../
 interface Props {
   accounts: AccountWithBalance[];
   categories: Category[];
+  onRefresh?: () => void;
 }
 
 type ImportFormat = 'generic' | 'ynab' | 'qif';
@@ -18,7 +19,7 @@ const FORMAT_OPTIONS: { value: ImportFormat; label: string; desc: string; exts: 
   { value: 'qif',     label: 'GnuCash QIF', desc: 'Quicken Interchange Format (.qif)', exts: ['qif'] },
 ];
 
-export default function ImportScreen({ accounts, categories }: Props) {
+export default function ImportScreen({ accounts, categories, onRefresh }: Props) {
   const { showToast } = useToast();
   const [format, setFormat] = useState<ImportFormat>('generic');
   const [preview, setPreview] = useState<CsvPreviewRow[]>([]);
@@ -75,6 +76,7 @@ export default function ImportScreen({ accounts, categories }: Props) {
       const count = await api.confirmCsvImport(importRows);
       setImportedCount(count);
       setStep('done');
+      onRefresh?.();
     } catch (e) {
       showToast(String(e), 'error');
     } finally {

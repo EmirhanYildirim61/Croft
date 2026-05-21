@@ -22,9 +22,10 @@ const TYPE_COLORS: Record<AccountType, string> = {
 interface Props {
   onSelectAccount: (id: number) => void;
   onNetWorthChange: (cents: number) => void;
+  onRefresh?: () => void;
 }
 
-export default function AccountsScreen({ onSelectAccount, onNetWorthChange }: Props) {
+export default function AccountsScreen({ onSelectAccount, onNetWorthChange, onRefresh }: Props) {
   const { showToast } = useToast();
   const [accounts, setAccounts] = useState<AccountWithBalance[]>([]);
   const [showAdd, setShowAdd] = useState(false);
@@ -73,6 +74,7 @@ export default function AccountsScreen({ onSelectAccount, onNetWorthChange }: Pr
       setNameError(''); setBalanceError('');
       showToast('Account created.', 'success');
       await load();
+      onRefresh?.();
     } catch (e) {
       showToast(String(e), 'error');
     } finally {
@@ -87,6 +89,7 @@ export default function AccountsScreen({ onSelectAccount, onNetWorthChange }: Pr
       setDeleteTarget(null);
       showToast('Account deleted.', 'success');
       await load();
+      onRefresh?.();
     } catch (e) {
       showToast(String(e), 'error');
     }

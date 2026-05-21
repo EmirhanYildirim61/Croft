@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { api } from '../lib/tauri';
 import { formatCents } from '../lib/format';
 import { useToast } from '../context/toast';
@@ -11,6 +11,9 @@ interface Props {
   onClearAccount: () => void;
   openNewTxTrigger: number;
   initialSearch?: string;
+  accounts: AccountWithBalance[];
+  categories: Category[];
+  onRefresh: () => void;
 }
 
 interface FormErrors {
@@ -51,11 +54,12 @@ export default function TransactionsScreen({
   filterAccountId,
   onClearAccount,
   openNewTxTrigger,
+  accounts,
+  categories,
+  onRefresh,
 }: Props) {
   const { showToast } = useToast();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [accounts, setAccounts] = useState<AccountWithBalance[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterCatIds, setFilterCatIds] = useState<number[]>([]);
@@ -79,27 +83,37 @@ export default function TransactionsScreen({
   // Confirm-delete modal
   const [deleteTarget, setDeleteTarget] = useState<Transaction | null>(null);
 
+  // Category checkbox dropdown
+  const [showCatPicker, setShowCatPicker] = useState(false);
+  const catPickerRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => { setFilterAccId(filterAccountId); }, [filterAccountId]);
+
+  // Close the category dropdown on outside click
+  useEffect(() => {
+    if (!showCatPicker) return;
+    const handler = (e: MouseEvent) => {
+      if (catPickerRef.current && !catPickerRef.current.contains(e.target as Node)) {
+        setShowCatPicker(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [showCatPicker]);
 
   const load = useCallback(async () => {
     try {
       const effectiveMonth = (showDateRange && (dateFrom || dateTo)) ? null : month;
-      const [txns, accs, cats] = await Promise.all([
-        api.listTransactions(
-          filterAccId,
-          effectiveMonth,
-          null,
-          filterCatIds.length > 0 ? filterCatIds : null,
-          search || null,
-          showDateRange && dateFrom ? dateFrom : null,
-          showDateRange && dateTo ? dateTo : null,
-        ),
-        api.listAccounts(),
-        api.listCategories(),
-      ]);
+      const txns = await api.listTransactions(
+        filterAccId,
+        effectiveMonth,
+        null,
+        filterCatIds.length > 0 ? filterCatIds : null,
+        search || null,
+        showDateRange && dateFrom ? dateFrom : null,
+        showDateRange && dateTo ? dateTo : null,
+      );
       setTransactions(txns);
-      setAccounts(accs);
-      setCategories(cats);
     } catch (e) {
       showToast(String(e), 'error');
     } finally {
@@ -161,6 +175,7 @@ export default function TransactionsScreen({
       }
       setShowForm(false);
       await load();
+      onRefresh();
     } catch (e) {
       showToast(String(e), 'error');
     } finally {
@@ -175,6 +190,7 @@ export default function TransactionsScreen({
       setDeleteTarget(null);
       showToast('Transaction deleted.', 'success');
       await load();
+      onRefresh();
     } catch (e) {
       showToast(String(e), 'error');
     }
@@ -229,36 +245,63 @@ export default function TransactionsScreen({
           <option value="">All accounts</option>
           {accounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
         </select>
-        {/* Multi-category filter */}
-        <div className="relative">
-          <select
-            multiple
-            value={filterCatIds.map(String)}
-            onChange={(e) => {
-              const selected = Array.from(e.target.selectedOptions).map((o) => Number(o.value));
-              setFilterCatIds(selected);
-            }}
-            size={1}
-            className="border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 min-w-36"
-            style={{ height: 34 }}
-            title="Hold Ctrl/Cmd to select multiple categories"
+        {/* Multi-category filter (checkbox dropdown) */}
+        <div className="relative" ref={catPickerRef}>
+          <button
+            type="button"
+            onClick={() => setShowCatPicker((v) => !v)}
+            className="border border-slate-300 rounded-lg px-3 py-1.5 text-sm hover:bg-slate-50 flex items-center gap-1.5 min-w-36 justify-between"
           >
-            {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-          </select>
-          {filterCatIds.length > 0 && (
-            <span className="ml-1.5 text-xs bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded-full">
-              {filterCatIds.length}
+            <span className={filterCatIds.length === 0 ? 'text-slate-500' : 'text-slate-700'}>
+              {filterCatIds.length === 0
+                ? 'All categories'
+                : filterCatIds.length === 1
+                  ? (categories.find((c) => c.id === filterCatIds[0])?.name ?? '1 selected')
+                  : `${filterCatIds.length} selected`}
             </span>
+            <span className="text-slate-400 text-xs">▾</span>
+          </button>
+          {showCatPicker && (
+            <div className="absolute left-0 top-full mt-1 z-10 bg-white border border-slate-200 rounded-lg shadow-lg w-56 max-h-72 overflow-y-auto py-1">
+              {categories.length === 0 ? (
+                <p className="text-xs text-slate-400 px-3 py-2">No categories.</p>
+              ) : (
+                categories.map((c) => {
+                  const checked = filterCatIds.includes(c.id);
+                  return (
+                    <label
+                      key={c.id}
+                      className="flex items-center gap-2 px-3 py-1.5 hover:bg-slate-50 cursor-pointer text-sm"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={(e) => {
+                          setFilterCatIds((prev) =>
+                            e.target.checked
+                              ? [...prev, c.id]
+                              : prev.filter((id) => id !== c.id),
+                          );
+                        }}
+                        className="accent-indigo-600"
+                      />
+                      <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: c.color }} />
+                      <span className="flex-1 text-slate-700">{c.name}</span>
+                    </label>
+                  );
+                })
+              )}
+              {filterCatIds.length > 0 && (
+                <button
+                  onClick={() => setFilterCatIds([])}
+                  className="w-full text-left text-xs text-indigo-600 hover:bg-slate-50 px-3 py-1.5 border-t border-slate-100"
+                >
+                  Clear selection
+                </button>
+              )}
+            </div>
           )}
         </div>
-        {filterCatIds.length > 0 && (
-          <button
-            onClick={() => setFilterCatIds([])}
-            className="text-xs text-slate-400 hover:text-slate-700"
-          >
-            Clear categories
-          </button>
-        )}
         {/* Date range toggle */}
         <button
           onClick={() => { setShowDateRange((v) => !v); setDateFrom(''); setDateTo(''); }}

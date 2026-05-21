@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-See [ROADMAP.md](ROADMAP.md) for the full feature plan and current phase status (Phases 1A–1D complete, Phase 2 is next).
+See [ROADMAP.md](ROADMAP.md) for the full feature plan and current phase status. Phases 1A–2, the Phase 3 features that are in scope (multi-currency, subscriptions tracker, backup reminder), and the Phase 2.5 QoL pass are complete. The only remaining items are out-of-scope Phase 3 ones (plugin/theme system, mobile) and the launch checklist.
 
 ## Commands
 
@@ -53,11 +53,11 @@ All data access goes through **Tauri commands** (Rust functions tagged `#[tauri:
 
 ### Frontend state
 
-`App.tsx` owns shared data (accounts + categories) and exposes it as props to screens that need it. Screens that mutate data call `loadShared()` (passed as `onRefresh` or triggered via navigation) to keep the sidebar net worth in sync. Screen-local state stays inside each screen.
+`App.tsx` owns shared data (accounts + categories) and exposes it as props to screens that need it. Screens that mutate data call `loadShared()` (passed as `onRefresh` or triggered via navigation) to keep the top-bar net worth in sync. Screen-local state stays inside each screen. The top-bar net worth is **currency-aware**: balances are converted into the user's display currency (stored in `localStorage` under `display_currency`) using exchange rates fetched alongside accounts.
 
 ### Rust command modules
 
-`src-tauri/src/commands/` has one file per domain. Each command receives `State<'_, AppState>` to access the pool. Adding a new command requires: (1) writing it in the appropriate module, (2) exporting it from `mod.rs` if it's a new module, and (3) adding it to `tauri::generate_handler![]` in `lib.rs`.
+`src-tauri/src/commands/` has one file per domain. Each command receives `State<'_, AppState>` to access the pool. Adding a new command requires: (1) writing it in the appropriate module, (2) exporting it from `mod.rs` if it's a new module, and (3) adding it to `tauri::generate_handler![]` in `lib.rs`. Bulk write operations (e.g. CSV imports) must be wrapped in a sqlx transaction (`pool.begin()` / `tx.commit()`) so they are atomic.
 
 ### Database
 

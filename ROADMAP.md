@@ -137,6 +137,32 @@
 
 ---
 
+## 🧹 Phase 2.5 — QoL & Bug Fixes
+
+> Cross-cutting clean-up pass after Phases 1A–2 / Phase 3 implementation.
+
+- [x] **Bug:** top-bar net worth stayed stale after mutations on Transactions / Import /
+      Subscriptions / Settings screens. Lifted a shared `loadShared()` callback in
+      `App.tsx` and wired it through every screen that mutates accounts or transactions.
+- [x] **Bug:** top-bar net worth ignored per-account currency. `App.tsx` now converts
+      each account balance into the user-selected display currency using stored
+      exchange rates, and `TopBar` formats with that currency.
+- [x] **Bug:** `confirm_csv_import` had no atomicity — partial data was committed if a
+      row failed mid-import. Wrapped the whole batch in a sqlx transaction.
+- [x] **Bug:** generic CSV importer treated separate `Debit` / `Credit` columns as a
+      single amount and silently picked the first match. Now merges them as
+      `credit − debit` when both are present.
+- [x] **Bug / data integrity:** users could not edit or delete categories or recurring
+      items once added. Added `update_category`, `delete_category`,
+      `update_recurring_item`, `delete_recurring_item` Tauri commands + UI in Settings.
+- [x] **QoL:** category multi-select used `<select multiple size={1}>` which was
+      effectively unusable. Replaced with a checkbox dropdown that shows the selected
+      count and a clear button.
+- [x] **Efficiency:** `TransactionsScreen` re-fetched accounts and categories on every
+      filter change. Now consumes them as props from `App.tsx`'s shared state.
+
+---
+
 ## 🌍 Phase 3 — Maturity & Growth (Week 13+)
 
 - [x] **Multi-currency support**

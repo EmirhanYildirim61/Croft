@@ -20,24 +20,28 @@ const DISPLAY_CURRENCY_KEY = 'display_currency';
 
 interface Props {
   accounts: AccountWithBalance[];
+  onRefresh?: () => void;
 }
 
-export default function SettingsScreen({ accounts }: Props) {
+export default function SettingsScreen({ accounts, onRefresh }: Props) {
   const { showToast } = useToast();
   const [categories, setCategories] = useState<Category[]>([]);
   const [recurring, setRecurring] = useState<RecurringItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Add category form
+  // Add/edit category form
   const [showAddCat, setShowAddCat] = useState(false);
+  const [editingCat, setEditingCat] = useState<Category | null>(null);
   const [catName, setCatName] = useState('');
   const [catColor, setCatColor] = useState('#6B7280');
   const [catParent, setCatParent] = useState<number | null>(null);
   const [savingCat, setSavingCat] = useState(false);
   const [catNameError, setCatNameError] = useState('');
+  const [deleteCatTarget, setDeleteCatTarget] = useState<Category | null>(null);
 
-  // Add recurring form
+  // Add/edit recurring form
   const [showAddRec, setShowAddRec] = useState(false);
+  const [editingRec, setEditingRec] = useState<RecurringItem | null>(null);
   const [rLabel, setRLabel] = useState('');
   const [rAccId, setRAccId] = useState<number | null>(null);
   const [rCatId, setRCatId] = useState<number | null>(null);
@@ -46,6 +50,7 @@ export default function SettingsScreen({ accounts }: Props) {
   const [rNextDate, setRNextDate] = useState(new Date().toISOString().slice(0, 10));
   const [savingRec, setSavingRec] = useState(false);
   const [recErrors, setRecErrors] = useState<{ label?: string; amount?: string; account?: string }>({});
+  const [deleteRecTarget, setDeleteRecTarget] = useState<RecurringItem | null>(null);
 
   // DB path
   const [dbPath, setDbPath] = useState('');
@@ -85,20 +90,82 @@ export default function SettingsScreen({ accounts }: Props) {
 
   useEffect(() => { load(); }, [load]);
 
+  const openAddCategory = () => {
+    setEditingCat(null);
+    setCatName(''); setCatColor('#6B7280'); setCatParent(null); setCatNameError('');
+    setShowAddCat(true);
+  };
+
+  const openEditCategory = (cat: Category) => {
+    setEditingCat(cat);
+    setCatName(cat.name);
+    setCatColor(cat.color);
+    setCatParent(cat.parent_id);
+    setCatNameError('');
+    setShowAddCat(true);
+  };
+
   const handleAddCategory = async () => {
     if (!catName.trim()) { setCatNameError('Category name is required.'); return; }
     setSavingCat(true);
     try {
-      await api.addCategory(catName.trim(), catParent, catColor);
+      if (editingCat) {
+        await api.updateCategory(editingCat.id, catName.trim(), catParent, catColor);
+        showToast('Category updated.', 'success');
+      } else {
+        await api.addCategory(catName.trim(), catParent, catColor);
+        showToast('Category added.', 'success');
+      }
       setCatName(''); setCatColor('#6B7280'); setCatParent(null); setCatNameError('');
       setShowAddCat(false);
-      showToast('Category added.', 'success');
+      setEditingCat(null);
       await load();
+      onRefresh?.();
     } catch (e) {
       showToast(String(e), 'error');
     } finally {
       setSavingCat(false);
     }
+  };
+
+  const handleDeleteCategory = async () => {
+    if (!deleteCatTarget) return;
+    try {
+      await api.deleteCategory(deleteCatTarget.id);
+      setDeleteCatTarget(null);
+      showToast('Category deleted.', 'success');
+      await load();
+      onRefresh?.();
+    } catch (e) {
+      showToast(String(e), 'error');
+    }
+  };
+
+  const openAddRecurring = () => {
+    setEditingRec(null);
+    setRLabel(''); setRAmount(''); setRFreq('monthly');
+    setRNextDate(new Date().toISOString().slice(0, 10));
+    setRAccId(accounts[0]?.id ?? null);
+    setRCatId(null); setRecErrors({});
+    setShowAddRec(true);
+  };
+
+  const openEditRecurring = (item: RecurringItem) => {
+    setEditingRec(item);
+    setRLabel(item.label);
+    setRAmount((Math.abs(item.amount_cents) / 100).toFixed(2));
+    // Preserve the sign by storing the negative sign in the input
+    if (item.amount_cents < 0) {
+      setRAmount('-' + (Math.abs(item.amount_cents) / 100).toFixed(2));
+    } else {
+      setRAmount((item.amount_cents / 100).toFixed(2));
+    }
+    setRFreq(item.frequency);
+    setRNextDate(item.next_due_date);
+    setRAccId(item.account_id);
+    setRCatId(item.category_id);
+    setRecErrors({});
+    setShowAddRec(true);
   };
 
   const handleAddRecurring = async () => {
@@ -111,17 +178,36 @@ export default function SettingsScreen({ accounts }: Props) {
     setSavingRec(true);
     const cents = Math.round(parseFloat(rAmount) * 100);
     try {
-      await api.addRecurringItem(rLabel.trim(), rAccId!, rCatId, cents, rFreq, rNextDate);
+      if (editingRec) {
+        await api.updateRecurringItem(editingRec.id, rLabel.trim(), rAccId!, rCatId, cents, rFreq, rNextDate);
+        showToast('Recurring item updated.', 'success');
+      } else {
+        await api.addRecurringItem(rLabel.trim(), rAccId!, rCatId, cents, rFreq, rNextDate);
+        showToast('Recurring item added.', 'success');
+      }
       setRLabel(''); setRAmount(''); setRFreq('monthly');
       setRNextDate(new Date().toISOString().slice(0, 10));
       setRCatId(null); setRecErrors({});
       setShowAddRec(false);
-      showToast('Recurring item added.', 'success');
+      setEditingRec(null);
       await load();
+      onRefresh?.();
     } catch (e) {
       showToast(String(e), 'error');
     } finally {
       setSavingRec(false);
+    }
+  };
+
+  const handleDeleteRecurring = async () => {
+    if (!deleteRecTarget) return;
+    try {
+      await api.deleteRecurringItem(deleteRecTarget.id);
+      setDeleteRecTarget(null);
+      showToast('Recurring item deleted.', 'success');
+      await load();
+    } catch (e) {
+      showToast(String(e), 'error');
     }
   };
 
@@ -206,6 +292,7 @@ export default function SettingsScreen({ accounts }: Props) {
       await api.markRecurringPaid(id);
       showToast(`Marked "${label}" as paid.`, 'success');
       await load();
+      onRefresh?.();
     } catch (e) {
       showToast(String(e), 'error');
     }
@@ -348,7 +435,7 @@ export default function SettingsScreen({ accounts }: Props) {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-semibold text-slate-700">Categories</h2>
           <button
-            onClick={() => setShowAddCat(true)}
+            onClick={openAddCategory}
             className="text-sm bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700"
           >
             + Add
@@ -356,7 +443,7 @@ export default function SettingsScreen({ accounts }: Props) {
         </div>
         <div className="space-y-2">
           {categories.map((cat) => (
-            <div key={cat.id} className="flex items-center gap-3 py-2 border-b border-slate-100 last:border-0">
+            <div key={cat.id} className="flex items-center gap-3 py-2 border-b border-slate-100 last:border-0 group">
               <span
                 className="w-4 h-4 rounded-full shrink-0 border border-white shadow-sm"
                 style={{ backgroundColor: cat.color }}
@@ -367,6 +454,20 @@ export default function SettingsScreen({ accounts }: Props) {
                   sub of {categories.find((c) => c.id === cat.parent_id)?.name}
                 </span>
               )}
+              <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  onClick={() => openEditCategory(cat)}
+                  className="text-xs text-slate-500 hover:text-slate-800 px-2 py-0.5 rounded hover:bg-slate-50"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => setDeleteCatTarget(cat)}
+                  className="text-xs text-red-500 hover:text-red-700 px-2 py-0.5 rounded hover:bg-red-50"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -377,7 +478,7 @@ export default function SettingsScreen({ accounts }: Props) {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-semibold text-slate-700">Recurring Items</h2>
           <button
-            onClick={() => { setRAccId(accounts[0]?.id ?? null); setShowAddRec(true); }}
+            onClick={openAddRecurring}
             className="text-sm bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700"
             disabled={accounts.length === 0}
           >
@@ -421,6 +522,20 @@ export default function SettingsScreen({ accounts }: Props) {
                     title="Skip this occurrence and advance the due date without recording a transaction"
                   >
                     Skip
+                  </button>
+                  <button
+                    onClick={() => openEditRecurring(item)}
+                    className="text-xs bg-white border border-slate-200 text-slate-600 px-2 py-1 rounded-md hover:bg-slate-50"
+                    title="Edit recurring item"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => setDeleteRecTarget(item)}
+                    className="text-xs bg-white border border-red-200 text-red-600 px-2 py-1 rounded-md hover:bg-red-50"
+                    title="Delete recurring item"
+                  >
+                    Delete
                   </button>
                 </div>
               </div>
@@ -488,9 +603,12 @@ export default function SettingsScreen({ accounts }: Props) {
         </Modal>
       )}
 
-      {/* Add Category Modal */}
+      {/* Add/Edit Category Modal */}
       {showAddCat && (
-        <Modal title="Add Category" onClose={() => { setShowAddCat(false); setCatNameError(''); }}>
+        <Modal
+          title={editingCat ? 'Edit Category' : 'Add Category'}
+          onClose={() => { setShowAddCat(false); setEditingCat(null); setCatNameError(''); }}
+        >
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Name *</label>
@@ -525,27 +643,60 @@ export default function SettingsScreen({ accounts }: Props) {
                   className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
                   <option value="">None (top-level)</option>
-                  {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  {categories
+                    .filter((c) => !editingCat || c.id !== editingCat.id)
+                    .map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
             </div>
             <div className="flex justify-end gap-3 pt-2">
-              <button onClick={() => { setShowAddCat(false); setCatNameError(''); }} className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50">Cancel</button>
+              <button
+                onClick={() => { setShowAddCat(false); setEditingCat(null); setCatNameError(''); }}
+                className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50"
+              >
+                Cancel
+              </button>
               <button
                 onClick={handleAddCategory}
                 disabled={savingCat}
                 className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
               >
-                {savingCat ? 'Saving…' : 'Add Category'}
+                {savingCat ? 'Saving…' : editingCat ? 'Save Changes' : 'Add Category'}
               </button>
             </div>
           </div>
         </Modal>
       )}
 
-      {/* Add Recurring Modal */}
+      {/* Delete category confirmation */}
+      {deleteCatTarget && (
+        <Modal title="Delete Category" onClose={() => setDeleteCatTarget(null)}>
+          <p className="text-sm text-slate-600 mb-5">
+            Delete <strong>{deleteCatTarget.name}</strong>? Existing transactions will keep their category as "uncategorized".
+          </p>
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={() => setDeleteCatTarget(null)}
+              className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDeleteCategory}
+              className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700"
+            >
+              Delete
+            </button>
+          </div>
+        </Modal>
+      )}
+
+      {/* Add/Edit Recurring Modal */}
       {showAddRec && (
-        <Modal title="Add Recurring Item" onClose={() => { setShowAddRec(false); setRecErrors({}); }}>
+        <Modal
+          title={editingRec ? 'Edit Recurring Item' : 'Add Recurring Item'}
+          onClose={() => { setShowAddRec(false); setEditingRec(null); setRecErrors({}); }}
+        >
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Label *</label>
@@ -616,15 +767,44 @@ export default function SettingsScreen({ accounts }: Props) {
               </select>
             </div>
             <div className="flex justify-end gap-3 pt-2">
-              <button onClick={() => { setShowAddRec(false); setRecErrors({}); }} className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50">Cancel</button>
+              <button
+                onClick={() => { setShowAddRec(false); setEditingRec(null); setRecErrors({}); }}
+                className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50"
+              >
+                Cancel
+              </button>
               <button
                 onClick={handleAddRecurring}
                 disabled={savingRec}
                 className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
               >
-                {savingRec ? 'Saving…' : 'Add Recurring Item'}
+                {savingRec ? 'Saving…' : editingRec ? 'Save Changes' : 'Add Recurring Item'}
               </button>
             </div>
+          </div>
+        </Modal>
+      )}
+
+      {/* Delete recurring item confirmation */}
+      {deleteRecTarget && (
+        <Modal title="Delete Recurring Item" onClose={() => setDeleteRecTarget(null)}>
+          <p className="text-sm text-slate-600 mb-5">
+            Delete <strong>{deleteRecTarget.label}</strong>? This stops the schedule but keeps any
+            transactions already generated for it.
+          </p>
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={() => setDeleteRecTarget(null)}
+              className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDeleteRecurring}
+              className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700"
+            >
+              Delete
+            </button>
           </div>
         </Modal>
       )}

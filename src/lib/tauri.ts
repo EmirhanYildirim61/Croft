@@ -69,6 +69,11 @@ export const api = {
   addCategory: (name: string, parentId: number | null, color: string) =>
     invoke<number>('add_category', { name, parentId, color }),
 
+  updateCategory: (id: number, name: string, parentId: number | null, color: string) =>
+    invoke<void>('update_category', { id, name, parentId, color }),
+
+  deleteCategory: (id: number) => invoke<void>('delete_category', { id }),
+
   // Budgets
   setBudget: (categoryId: number, month: string, amountCents: number) =>
     invoke<void>('set_budget', { categoryId, month, amountCents }),
@@ -94,6 +99,27 @@ export const api = {
     }),
 
   listRecurringItems: () => invoke<RecurringItem[]>('list_recurring_items'),
+
+  updateRecurringItem: (
+    id: number,
+    label: string,
+    accountId: number,
+    categoryId: number | null,
+    amountCents: number,
+    frequency: string,
+    nextDueDate: string,
+  ) =>
+    invoke<void>('update_recurring_item', {
+      id,
+      label,
+      accountId,
+      categoryId,
+      amountCents,
+      frequency,
+      nextDueDate,
+    }),
+
+  deleteRecurringItem: (id: number) => invoke<void>('delete_recurring_item', { id }),
 
   generateDueRecurringTransactions: () => invoke<number>('generate_due_recurring_transactions'),
 
