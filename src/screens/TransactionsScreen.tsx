@@ -89,6 +89,15 @@ export default function TransactionsScreen({
 
   useEffect(() => { setFilterAccId(filterAccountId); }, [filterAccountId]);
 
+  // If the local filter references an account that disappeared (deleted while we
+  // weren't looking), drop it so the chip and form seed don't go stale.
+  useEffect(() => {
+    if (filterAccId !== null && accounts.length > 0 && !accounts.some((a) => a.id === filterAccId)) {
+      setFilterAccId(null);
+      onClearAccount();
+    }
+  }, [filterAccId, accounts, onClearAccount]);
+
   // Close the category dropdown on outside click
   useEffect(() => {
     if (!showCatPicker) return;
@@ -138,7 +147,13 @@ export default function TransactionsScreen({
     setFAmount('');
     setFPayee('');
     setFCatId(null);
-    setFAccId(filterAccId ?? accounts[0]?.id ?? null);
+    // Only seed from filterAccId if it still resolves to a real account,
+    // otherwise the FK insert will fail when the user clicks Save.
+    const seededAccId =
+      filterAccId !== null && accounts.some((a) => a.id === filterAccId)
+        ? filterAccId
+        : (accounts[0]?.id ?? null);
+    setFAccId(seededAccId);
     setFNote('');
     setFormErrors({});
     setShowForm(true);
@@ -214,7 +229,7 @@ export default function TransactionsScreen({
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold text-slate-800">Transactions</h1>
-          {filterAccId !== null && (
+          {filterAccId !== null && accounts.some((a) => a.id === filterAccId) && (
             <span className="flex items-center gap-1 bg-indigo-100 text-indigo-700 text-xs font-medium px-2.5 py-1 rounded-full">
               {accName(filterAccId)}
               <button onClick={onClearAccount} className="ml-1 hover:text-indigo-900">✕</button>

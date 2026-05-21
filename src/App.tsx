@@ -60,6 +60,11 @@ export default function App() {
       ]);
       setAccounts(accs);
       setCategories(cats);
+      // Drop a filterAccountId that points to an account that no longer exists,
+      // otherwise screens consuming it will seed forms with a stale FK.
+      setFilterAccountId((current) =>
+        current !== null && !accs.some((a) => a.id === current) ? null : current,
+      );
       const total = accs.reduce(
         (s, a) => s + convertCents(a.current_balance, a.currency, baseCurrency, rates),
         0,
