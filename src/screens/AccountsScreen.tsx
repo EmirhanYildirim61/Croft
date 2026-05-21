@@ -5,6 +5,60 @@ import { useToast } from '../context/toast';
 import Modal from '../components/Modal';
 import type { AccountWithBalance, AccountType } from '../types';
 
+const CURRENCY_OPTIONS: { code: string; name: string }[] = [
+  { code: 'USD', name: 'US Dollar' },
+  { code: 'EUR', name: 'Euro' },
+  { code: 'GBP', name: 'British Pound' },
+  { code: 'JPY', name: 'Japanese Yen' },
+  { code: 'CAD', name: 'Canadian Dollar' },
+  { code: 'AUD', name: 'Australian Dollar' },
+  { code: 'CHF', name: 'Swiss Franc' },
+  { code: 'CNY', name: 'Chinese Yuan' },
+  { code: 'HKD', name: 'Hong Kong Dollar' },
+  { code: 'SGD', name: 'Singapore Dollar' },
+  { code: 'NZD', name: 'New Zealand Dollar' },
+  { code: 'NOK', name: 'Norwegian Krone' },
+  { code: 'SEK', name: 'Swedish Krona' },
+  { code: 'DKK', name: 'Danish Krone' },
+  { code: 'INR', name: 'Indian Rupee' },
+  { code: 'BRL', name: 'Brazilian Real' },
+  { code: 'MXN', name: 'Mexican Peso' },
+  { code: 'RUB', name: 'Russian Ruble' },
+  { code: 'KRW', name: 'South Korean Won' },
+  { code: 'TRY', name: 'Turkish Lira' },
+  { code: 'ZAR', name: 'South African Rand' },
+  { code: 'PLN', name: 'Polish Zloty' },
+  { code: 'CZK', name: 'Czech Koruna' },
+  { code: 'HUF', name: 'Hungarian Forint' },
+  { code: 'RON', name: 'Romanian Leu' },
+  { code: 'BGN', name: 'Bulgarian Lev' },
+  { code: 'UAH', name: 'Ukrainian Hryvnia' },
+  { code: 'ILS', name: 'Israeli New Shekel' },
+  { code: 'SAR', name: 'Saudi Riyal' },
+  { code: 'AED', name: 'UAE Dirham' },
+  { code: 'QAR', name: 'Qatari Riyal' },
+  { code: 'KWD', name: 'Kuwaiti Dinar' },
+  { code: 'BHD', name: 'Bahraini Dinar' },
+  { code: 'OMR', name: 'Omani Rial' },
+  { code: 'EGP', name: 'Egyptian Pound' },
+  { code: 'MAD', name: 'Moroccan Dirham' },
+  { code: 'NGN', name: 'Nigerian Naira' },
+  { code: 'KES', name: 'Kenyan Shilling' },
+  { code: 'GHS', name: 'Ghanaian Cedi' },
+  { code: 'IDR', name: 'Indonesian Rupiah' },
+  { code: 'MYR', name: 'Malaysian Ringgit' },
+  { code: 'PHP', name: 'Philippine Peso' },
+  { code: 'THB', name: 'Thai Baht' },
+  { code: 'VND', name: 'Vietnamese Dong' },
+  { code: 'PKR', name: 'Pakistani Rupee' },
+  { code: 'BDT', name: 'Bangladeshi Taka' },
+  { code: 'LKR', name: 'Sri Lankan Rupee' },
+  { code: 'ARS', name: 'Argentine Peso' },
+  { code: 'CLP', name: 'Chilean Peso' },
+  { code: 'COP', name: 'Colombian Peso' },
+  { code: 'PEN', name: 'Peruvian Sol' },
+];
+
 const ACCOUNT_TYPES: { value: AccountType; label: string }[] = [
   { value: 'bank', label: 'Bank' },
   { value: 'credit', label: 'Credit Card' },
@@ -187,13 +241,15 @@ export default function AccountsScreen({ onSelectAccount, onNetWorthChange, onRe
             <div className="flex gap-3">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-slate-700 mb-1">Currency</label>
-                <input
+                <select
                   value={currency}
-                  onChange={(e) => setCurrency(e.target.value.toUpperCase())}
-                  maxLength={3}
-                  placeholder="USD"
+                  onChange={(e) => setCurrency(e.target.value)}
                   className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
+                >
+                  {CURRENCY_OPTIONS.map(({ code, name }) => (
+                    <option key={code} value={code}>{code} – {name}</option>
+                  ))}
+                </select>
               </div>
               <div className="flex-1">
                 <label className="block text-sm font-medium text-slate-700 mb-1">Starting Balance</label>

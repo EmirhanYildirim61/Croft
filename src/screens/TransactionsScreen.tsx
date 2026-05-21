@@ -77,6 +77,7 @@ export default function TransactionsScreen({
   const [fCatId, setFCatId] = useState<number | null>(null);
   const [fAccId, setFAccId] = useState<number | null>(null);
   const [fNote, setFNote] = useState('');
+  const [fType, setFType] = useState<'expense' | 'income'>('expense');
   const [saving, setSaving] = useState(false);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
 
@@ -155,6 +156,7 @@ export default function TransactionsScreen({
         : (accounts[0]?.id ?? null);
     setFAccId(seededAccId);
     setFNote('');
+    setFType('expense');
     setFormErrors({});
     setShowForm(true);
   };
@@ -163,6 +165,7 @@ export default function TransactionsScreen({
     setEditing(tx);
     setFDate(tx.date);
     setFAmount((Math.abs(tx.amount_cents) / 100).toFixed(2));
+    setFType(tx.amount_cents >= 0 ? 'income' : 'expense');
     setFPayee(tx.payee);
     setFCatId(tx.category_id);
     setFAccId(tx.account_id);
@@ -178,8 +181,8 @@ export default function TransactionsScreen({
       return;
     }
     setSaving(true);
-    const rawAmt = parseFloat(fAmount);
-    const cents = Math.round(rawAmt * 100);
+    const rawAmt = Math.abs(parseFloat(fAmount));
+    const cents = Math.round(rawAmt * 100) * (fType === 'expense' ? -1 : 1);
     try {
       if (editing) {
         await api.updateTransaction(editing.id, fDate, cents, fPayee.trim(), fCatId, fNote);
@@ -419,6 +422,25 @@ export default function TransactionsScreen({
       {showForm && (
         <Modal title={editing ? 'Edit Transaction' : 'Add Transaction'} onClose={() => setShowForm(false)}>
           <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Type *</label>
+              <div className="flex rounded-lg overflow-hidden border border-slate-300">
+                <button
+                  type="button"
+                  onClick={() => setFType('expense')}
+                  className={`flex-1 py-2 text-sm font-medium transition-colors ${fType === 'expense' ? 'bg-red-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
+                >
+                  Expense
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFType('income')}
+                  className={`flex-1 py-2 text-sm font-medium transition-colors ${fType === 'income' ? 'bg-emerald-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
+                >
+                  Income
+                </button>
+              </div>
+            </div>
             <div className="flex gap-3">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-slate-700 mb-1">Date *</label>
@@ -435,10 +457,11 @@ export default function TransactionsScreen({
                 <input
                   type="number"
                   step="0.01"
+                  min="0"
                   autoFocus={!editing}
                   value={fAmount}
                   onChange={(e) => { setFAmount(e.target.value); setFormErrors((p) => ({ ...p, amount: undefined })); }}
-                  placeholder="−50.00 or 1200.00"
+                  placeholder="50.00"
                   className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${formErrors.amount ? 'border-red-400' : 'border-slate-300'}`}
                 />
                 {formErrors.amount && <p className="mt-1 text-xs text-red-500">{formErrors.amount}</p>}

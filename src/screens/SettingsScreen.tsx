@@ -13,8 +13,59 @@ const FREQUENCIES: { value: Frequency; label: string }[] = [
   { value: 'yearly', label: 'Yearly' },
 ];
 
-// Common currency codes shown in the picker
-const CURRENCY_OPTIONS = ['USD', 'EUR', 'GBP', 'TRY', 'JPY', 'CAD', 'AUD', 'CHF', 'CNY', 'INR'];
+const CURRENCY_OPTIONS: { code: string; name: string }[] = [
+  { code: 'USD', name: 'US Dollar' },
+  { code: 'EUR', name: 'Euro' },
+  { code: 'GBP', name: 'British Pound' },
+  { code: 'JPY', name: 'Japanese Yen' },
+  { code: 'CAD', name: 'Canadian Dollar' },
+  { code: 'AUD', name: 'Australian Dollar' },
+  { code: 'CHF', name: 'Swiss Franc' },
+  { code: 'CNY', name: 'Chinese Yuan' },
+  { code: 'HKD', name: 'Hong Kong Dollar' },
+  { code: 'SGD', name: 'Singapore Dollar' },
+  { code: 'NZD', name: 'New Zealand Dollar' },
+  { code: 'NOK', name: 'Norwegian Krone' },
+  { code: 'SEK', name: 'Swedish Krona' },
+  { code: 'DKK', name: 'Danish Krone' },
+  { code: 'INR', name: 'Indian Rupee' },
+  { code: 'BRL', name: 'Brazilian Real' },
+  { code: 'MXN', name: 'Mexican Peso' },
+  { code: 'RUB', name: 'Russian Ruble' },
+  { code: 'KRW', name: 'South Korean Won' },
+  { code: 'TRY', name: 'Turkish Lira' },
+  { code: 'ZAR', name: 'South African Rand' },
+  { code: 'PLN', name: 'Polish Zloty' },
+  { code: 'CZK', name: 'Czech Koruna' },
+  { code: 'HUF', name: 'Hungarian Forint' },
+  { code: 'RON', name: 'Romanian Leu' },
+  { code: 'BGN', name: 'Bulgarian Lev' },
+  { code: 'UAH', name: 'Ukrainian Hryvnia' },
+  { code: 'ILS', name: 'Israeli New Shekel' },
+  { code: 'SAR', name: 'Saudi Riyal' },
+  { code: 'AED', name: 'UAE Dirham' },
+  { code: 'QAR', name: 'Qatari Riyal' },
+  { code: 'KWD', name: 'Kuwaiti Dinar' },
+  { code: 'BHD', name: 'Bahraini Dinar' },
+  { code: 'OMR', name: 'Omani Rial' },
+  { code: 'EGP', name: 'Egyptian Pound' },
+  { code: 'MAD', name: 'Moroccan Dirham' },
+  { code: 'NGN', name: 'Nigerian Naira' },
+  { code: 'KES', name: 'Kenyan Shilling' },
+  { code: 'GHS', name: 'Ghanaian Cedi' },
+  { code: 'IDR', name: 'Indonesian Rupiah' },
+  { code: 'MYR', name: 'Malaysian Ringgit' },
+  { code: 'PHP', name: 'Philippine Peso' },
+  { code: 'THB', name: 'Thai Baht' },
+  { code: 'VND', name: 'Vietnamese Dong' },
+  { code: 'PKR', name: 'Pakistani Rupee' },
+  { code: 'BDT', name: 'Bangladeshi Taka' },
+  { code: 'LKR', name: 'Sri Lankan Rupee' },
+  { code: 'ARS', name: 'Argentine Peso' },
+  { code: 'CLP', name: 'Chilean Peso' },
+  { code: 'COP', name: 'Colombian Peso' },
+  { code: 'PEN', name: 'Peruvian Sol' },
+];
 
 const DISPLAY_CURRENCY_KEY = 'display_currency';
 
@@ -59,7 +110,7 @@ export default function SettingsScreen({ accounts, onRefresh }: Props) {
   // Exchange rates
   const [exchangeRates, setExchangeRates] = useState<ExchangeRate[]>([]);
   const [showAddRate, setShowAddRate] = useState(false);
-  const [rateFrom, setRateFrom] = useState('');
+  const [rateFrom, setRateFrom] = useState('EUR');
   const [rateTo, setRateTo] = useState('USD');
   const [rateValue, setRateValue] = useState('');
   const [savingRate, setSavingRate] = useState(false);
@@ -261,12 +312,12 @@ export default function SettingsScreen({ accounts, onRefresh }: Props) {
 
   const handleAddRate = async () => {
     const r = parseFloat(rateValue);
-    if (!rateFrom.trim()) { showToast('Enter the source currency code.', 'error'); return; }
+    if (!rateFrom) { showToast('Select a source currency.', 'error'); return; }
     if (!rateValue || isNaN(r) || r <= 0) { showToast('Enter a positive rate.', 'error'); return; }
     setSavingRate(true);
     try {
       await api.setExchangeRate(rateFrom.trim().toUpperCase(), rateTo.trim().toUpperCase(), r);
-      setRateFrom(''); setRateValue('');
+      setRateFrom('EUR'); setRateValue('');
       setShowAddRate(false);
       showToast('Exchange rate saved.', 'success');
       setExchangeRates(await api.listExchangeRates());
@@ -374,24 +425,15 @@ export default function SettingsScreen({ accounts, onRefresh }: Props) {
         <p className="text-xs text-slate-400 mb-4">
           Used where no per-account currency is available (e.g. net worth summary).
         </p>
-        <div className="flex flex-wrap gap-2">
-          {CURRENCY_OPTIONS.map((code) => (
-            <button
-              key={code}
-              onClick={() => handleCurrencyChange(code)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
-                displayCurrency === code
-                  ? 'bg-indigo-600 text-white border-indigo-600'
-                  : 'border-slate-300 text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              {code}
-            </button>
+        <select
+          value={displayCurrency}
+          onChange={(e) => handleCurrencyChange(e.target.value)}
+          className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-72"
+        >
+          {CURRENCY_OPTIONS.map(({ code, name }) => (
+            <option key={code} value={code}>{code} – {name}</option>
           ))}
-        </div>
-        <p className="mt-3 text-xs text-slate-400">
-          Current: {formatCents(0, displayCurrency).replace('0.00', '').trim() || displayCurrency}
-        </p>
+        </select>
       </section>
 
       {/* Exchange Rates */}
@@ -555,25 +597,28 @@ export default function SettingsScreen({ accounts, onRefresh }: Props) {
             <div className="flex gap-3">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-slate-700 mb-1">From currency *</label>
-                <input
+                <select
                   autoFocus
                   value={rateFrom}
-                  onChange={(e) => setRateFrom(e.target.value.toUpperCase())}
-                  onKeyDown={(e) => { if (e.key === 'Enter') handleAddRate(); }}
-                  placeholder="EUR"
-                  maxLength={10}
+                  onChange={(e) => setRateFrom(e.target.value)}
                   className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
+                >
+                  {CURRENCY_OPTIONS.map(({ code, name }) => (
+                    <option key={code} value={code}>{code} – {name}</option>
+                  ))}
+                </select>
               </div>
               <div className="flex-1">
                 <label className="block text-sm font-medium text-slate-700 mb-1">To currency *</label>
-                <input
+                <select
                   value={rateTo}
-                  onChange={(e) => setRateTo(e.target.value.toUpperCase())}
-                  placeholder="USD"
-                  maxLength={10}
+                  onChange={(e) => setRateTo(e.target.value)}
                   className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
+                >
+                  {CURRENCY_OPTIONS.map(({ code, name }) => (
+                    <option key={code} value={code}>{code} – {name}</option>
+                  ))}
+                </select>
               </div>
             </div>
             <div>
