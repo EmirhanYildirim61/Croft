@@ -1,4 +1,4 @@
-# Local-First Personal Finance App — Roadmap & To-Do List
+# Croft — Roadmap & To-Do List
 
 > A free, open-source, server-less desktop budget tracker built with Tauri + React + SQLite.
 > Work through each task one at a time. Check off items as you go.
