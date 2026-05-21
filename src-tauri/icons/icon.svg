@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Finance App icon: dark navy bg, blue border, two small top tabs, 3 bars -->
+
+  <!-- Left tab (sits above the top border edge) -->
+  <rect x="416" y="26" width="82" height="52" rx="10" fill="#4B4ED2"/>
+
+  <!-- Right tab -->
+  <rect x="526" y="26" width="82" height="52" rx="10" fill="#4B4ED2"/>
+
+  <!-- Outer blue rounded-rect border -->
+  <rect x="41" y="41" width="942" height="942" rx="174" ry="174" fill="#4B4ED2"/>
+
+  <!-- Inner dark navy area -->
+  <rect x="114" y="114" width="796" height="796" rx="105" ry="105" fill="#0A0D1C"/>
+
+  <!-- Top bar (blue pill) -->
+  <rect x="195" y="295" width="634" height="98" rx="49" fill="#5E61DC"/>
+
+  <!-- Middle bar (green pill, shorter on right) -->
+  <rect x="195" y="463" width="500" height="98" rx="49" fill="#1EB978"/>
+
+  <!-- Bottom bar (blue pill) -->
+  <rect x="195" y="631" width="634" height="98" rx="49" fill="#5E61DC"/>
+</svg>
