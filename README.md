@@ -18,6 +18,8 @@ A free, open-source, server-less desktop budget tracker. Track accounts, transac
 - **Export** — full data export to CSV or JSON
 - **Net worth screen** — account breakdown with month-over-month delta
 - **Automatic backup reminder** — prompts every 30 days to back up the SQLite file
+- **13 languages out of the box** — English, Turkish, Spanish, French, Portuguese (BR & PT), German, Russian, Arabic (RTL), Hindi, Japanese, Chinese (Simplified & Traditional). Picked on first launch and changeable from Settings
+- **First-run onboarding** — language picker that also localises the seeded default categories
 
 ## No Network Connections
 
@@ -29,6 +31,8 @@ This app makes **zero outbound network connections**. There is no telemetry, no 
 - React + TypeScript — UI
 - Tailwind CSS v4 — styling
 - SQLx + SQLite — local database (WAL mode, integer-cent storage)
+- i18next + react-i18next — localisation (resources bundled, no runtime fetch)
+- Recharts — charts for the Reports and Net Worth screens
 
 ## Building from Source
 

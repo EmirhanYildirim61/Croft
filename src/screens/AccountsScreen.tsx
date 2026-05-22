@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import { api } from '../lib/tauri';
 import { formatCents } from '../lib/format';
 import { useToast } from '../context/toast';
@@ -59,12 +60,7 @@ const CURRENCY_OPTIONS: { code: string; name: string }[] = [
   { code: 'PEN', name: 'Peruvian Sol' },
 ];
 
-const ACCOUNT_TYPES: { value: AccountType; label: string }[] = [
-  { value: 'bank', label: 'Bank' },
-  { value: 'credit', label: 'Credit Card' },
-  { value: 'cash', label: 'Cash' },
-  { value: 'savings', label: 'Savings' },
-];
+const ACCOUNT_TYPE_VALUES: AccountType[] = ['bank', 'credit', 'cash', 'savings'];
 
 const TYPE_COLORS: Record<AccountType, string> = {
   bank: 'bg-blue-100 text-blue-700',
@@ -80,20 +76,19 @@ interface Props {
 }
 
 export default function AccountsScreen({ onSelectAccount, onNetWorthChange, onRefresh }: Props) {
+  const { t } = useTranslation();
   const { showToast } = useToast();
   const [accounts, setAccounts] = useState<AccountWithBalance[]>([]);
   const [showAdd, setShowAdd] = useState(false);
   const [loading, setLoading] = useState(true);
   const [deleteTarget, setDeleteTarget] = useState<AccountWithBalance | null>(null);
 
-  // Add form state
   const [name, setName] = useState('');
   const [accType, setAccType] = useState<AccountType>('bank');
   const [currency, setCurrency] = useState('USD');
   const [initialBalance, setInitialBalance] = useState('0.00');
   const [saving, setSaving] = useState(false);
 
-  // Form validation errors
   const [nameError, setNameError] = useState('');
   const [balanceError, setBalanceError] = useState('');
 
@@ -114,9 +109,9 @@ export default function AccountsScreen({ onSelectAccount, onNetWorthChange, onRe
 
   const handleAdd = async () => {
     let hasError = false;
-    if (!name.trim()) { setNameError('Account name is required.'); hasError = true; }
+    if (!name.trim()) { setNameError(t('accounts.addModal.nameRequired')); hasError = true; }
     const balNum = parseFloat(initialBalance);
-    if (isNaN(balNum)) { setBalanceError('Enter a valid number.'); hasError = true; }
+    if (isNaN(balNum)) { setBalanceError(t('accounts.addModal.balanceInvalid')); hasError = true; }
     if (hasError) return;
 
     setSaving(true);
@@ -126,7 +121,7 @@ export default function AccountsScreen({ onSelectAccount, onNetWorthChange, onRe
       setShowAdd(false);
       setName(''); setAccType('bank'); setCurrency('USD'); setInitialBalance('0.00');
       setNameError(''); setBalanceError('');
-      showToast('Account created.', 'success');
+      showToast(t('accounts.toast.created'), 'success');
       await load();
       onRefresh?.();
     } catch (e) {
@@ -141,7 +136,7 @@ export default function AccountsScreen({ onSelectAccount, onNetWorthChange, onRe
     try {
       await api.deleteAccount(deleteTarget.id);
       setDeleteTarget(null);
-      showToast('Account deleted.', 'success');
+      showToast(t('accounts.toast.deleted'), 'success');
       await load();
       onRefresh?.();
     } catch (e) {
@@ -149,32 +144,30 @@ export default function AccountsScreen({ onSelectAccount, onNetWorthChange, onRe
     }
   };
 
-  if (loading) return <div className="text-slate-400 text-sm p-2">Loading…</div>;
+  if (loading) return <div className="text-slate-400 text-sm p-2">{t('common.loading')}</div>;
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-slate-800">Accounts</h1>
+        <h1 className="text-2xl font-bold text-slate-800">{t('accounts.title')}</h1>
         <button
           onClick={() => setShowAdd(true)}
           className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
         >
-          + Add Account
+          {t('accounts.addButton')}
         </button>
       </div>
 
       {accounts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="text-6xl mb-4">🏦</div>
-          <h2 className="text-xl font-semibold text-slate-700 mb-2">No accounts yet</h2>
-          <p className="text-slate-500 mb-6 max-w-xs">
-            Add your first account to start tracking your finances.
-          </p>
+          <h2 className="text-xl font-semibold text-slate-700 mb-2">{t('accounts.emptyTitle')}</h2>
+          <p className="text-slate-500 mb-6 max-w-xs">{t('accounts.emptyBody')}</p>
           <button
             onClick={() => setShowAdd(true)}
             className="bg-indigo-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
           >
-            Add Account
+            {t('accounts.addModal.title')}
           </button>
         </div>
       ) : (
@@ -188,13 +181,13 @@ export default function AccountsScreen({ onSelectAccount, onNetWorthChange, onRe
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full ${TYPE_COLORS[acc.type as AccountType]}`}>
-                    {ACCOUNT_TYPES.find((t) => t.value === acc.type)?.label ?? acc.type}
+                    {t(`accounts.types.${acc.type}`, { defaultValue: acc.type })}
                   </span>
                 </div>
                 <button
                   onClick={(e) => { e.stopPropagation(); setDeleteTarget(acc); }}
                   className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition-all text-lg leading-none"
-                  title="Delete account"
+                  title={t('accounts.deleteTooltip')}
                 >
                   ✕
                 </button>
@@ -204,7 +197,7 @@ export default function AccountsScreen({ onSelectAccount, onNetWorthChange, onRe
                 {formatCents(acc.current_balance, acc.currency)}
               </p>
               <p className="text-xs text-slate-400 mt-1">
-                Initial: {formatCents(acc.initial_balance, acc.currency)} · {acc.currency}
+                {t('accounts.initialBalance', { amount: formatCents(acc.initial_balance, acc.currency), currency: acc.currency })}
               </p>
             </div>
           ))}
@@ -212,47 +205,47 @@ export default function AccountsScreen({ onSelectAccount, onNetWorthChange, onRe
       )}
 
       {showAdd && (
-        <Modal title="Add Account" onClose={() => { setShowAdd(false); setNameError(''); setBalanceError(''); }}>
+        <Modal title={t('accounts.addModal.title')} onClose={() => { setShowAdd(false); setNameError(''); setBalanceError(''); }}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Name *</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('accounts.addModal.nameLabel')}</label>
               <input
                 autoFocus
                 value={name}
                 onChange={(e) => { setName(e.target.value); setNameError(''); }}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleAdd(); }}
-                placeholder="e.g. Chase Checking"
+                placeholder={t('accounts.addModal.namePlaceholder')}
                 className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${nameError ? 'border-red-400' : 'border-slate-300'}`}
               />
               {nameError && <p className="mt-1 text-xs text-red-500">{nameError}</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Type *</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('accounts.addModal.typeLabel')}</label>
               <select
                 value={accType}
                 onChange={(e) => setAccType(e.target.value as AccountType)}
                 className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
-                {ACCOUNT_TYPES.map((t) => (
-                  <option key={t.value} value={t.value}>{t.label}</option>
+                {ACCOUNT_TYPE_VALUES.map((v) => (
+                  <option key={v} value={v}>{t(`accounts.types.${v}`)}</option>
                 ))}
               </select>
             </div>
             <div className="flex gap-3">
               <div className="flex-1">
-                <label className="block text-sm font-medium text-slate-700 mb-1">Currency</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('accounts.addModal.currencyLabel')}</label>
                 <select
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value)}
                   className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
-                  {CURRENCY_OPTIONS.map(({ code, name }) => (
-                    <option key={code} value={code}>{code} – {name}</option>
+                  {CURRENCY_OPTIONS.map(({ code, name: cname }) => (
+                    <option key={code} value={code}>{code} – {cname}</option>
                   ))}
                 </select>
               </div>
               <div className="flex-1">
-                <label className="block text-sm font-medium text-slate-700 mb-1">Starting Balance</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('accounts.addModal.balanceLabel')}</label>
                 <input
                   type="number"
                   step="0.01"
@@ -268,38 +261,41 @@ export default function AccountsScreen({ onSelectAccount, onNetWorthChange, onRe
                 onClick={() => { setShowAdd(false); setNameError(''); setBalanceError(''); }}
                 className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleAdd}
                 disabled={saving}
                 className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {saving ? 'Saving…' : 'Add Account'}
+                {saving ? t('common.saving') : t('accounts.addModal.saveButton')}
               </button>
             </div>
           </div>
         </Modal>
       )}
 
-      {/* Confirm delete account modal */}
       {deleteTarget && (
-        <Modal title="Delete Account" onClose={() => setDeleteTarget(null)}>
+        <Modal title={t('accounts.deleteTitle')} onClose={() => setDeleteTarget(null)}>
           <p className="text-sm text-slate-600 mb-5">
-            Delete <strong>{deleteTarget.name}</strong> and all its transactions? This cannot be undone.
+            <Trans
+              i18nKey="accounts.deleteConfirm"
+              values={{ name: deleteTarget.name }}
+              components={{ bold: <strong /> }}
+            />
           </p>
           <div className="flex justify-end gap-3">
             <button
               onClick={() => setDeleteTarget(null)}
               className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               onClick={handleDelete}
               className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700"
             >
-              Delete
+              {t('common.delete')}
             </button>
           </div>
         </Modal>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer,
   LineChart, Line, XAxis, YAxis, CartesianGrid,
@@ -16,6 +17,7 @@ interface Props {
 type ReportView = 'monthly' | 'custom-range' | 'compare';
 
 export default function ReportsScreen({ month }: Props) {
+  const { t } = useTranslation();
   const { showToast } = useToast();
   const [view, setView] = useState<ReportView>('monthly');
 
@@ -114,25 +116,25 @@ export default function ReportsScreen({ month }: Props) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-800">Reports</h1>
+        <h1 className="text-2xl font-bold text-slate-800">{t('reports.title')}</h1>
         <div className="flex gap-1 bg-slate-100 p-1 rounded-xl">
-          <button className={tabClass('monthly')} onClick={() => setView('monthly')}>Monthly</button>
-          <button className={tabClass('custom-range')} onClick={() => setView('custom-range')}>Date Range</button>
-          <button className={tabClass('compare')} onClick={() => setView('compare')}>Compare Months</button>
+          <button className={tabClass('monthly')} onClick={() => setView('monthly')}>{t('reports.monthly')}</button>
+          <button className={tabClass('custom-range')} onClick={() => setView('custom-range')}>{t('reports.dateRange')}</button>
+          <button className={tabClass('compare')} onClick={() => setView('compare')}>{t('reports.compareMonths')}</button>
         </div>
       </div>
 
-      {loading && <div className="text-slate-400 text-sm">Loading…</div>}
+      {loading && <div className="text-slate-400 text-sm">{t('common.loading')}</div>}
 
       {/* ── Monthly view ── */}
       {!loading && view === 'monthly' && (
         <div className="space-y-8">
           <section className="bg-white rounded-xl border border-slate-200 p-6">
             <h2 className="text-base font-semibold text-slate-700 mb-4">
-              Spending by Category — {formatMonth(month)}
+              {t('reports.spendingByCategory', { month: formatMonth(month) })}
             </h2>
             {spendingByCategory.length === 0 ? (
-              <p className="text-slate-400 text-sm py-8 text-center">No spending data for this month.</p>
+              <p className="text-slate-400 text-sm py-8 text-center">{t('reports.noSpending')}</p>
             ) : (
               <ResponsiveContainer width="100%" height={280}>
                 <PieChart>
@@ -161,9 +163,9 @@ export default function ReportsScreen({ month }: Props) {
           </section>
 
           <section className="bg-white rounded-xl border border-slate-200 p-6">
-            <h2 className="text-base font-semibold text-slate-700 mb-4">Net Worth — Last 12 Months</h2>
+            <h2 className="text-base font-semibold text-slate-700 mb-4">{t('reports.netWorthLast12')}</h2>
             {netWorthHistory.length === 0 ? (
-              <p className="text-slate-400 text-sm py-8 text-center">No data yet.</p>
+              <p className="text-slate-400 text-sm py-8 text-center">{t('reports.noData')}</p>
             ) : (
               <ResponsiveContainer width="100%" height={240}>
                 <LineChart data={netWorthHistory} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
@@ -177,7 +179,7 @@ export default function ReportsScreen({ month }: Props) {
                     width={60}
                   />
                   <Tooltip
-                    formatter={(v) => [formatCents(Number(v)), 'Net Worth']}
+                    formatter={(v) => [formatCents(Number(v)), t('reports.netWorthLabel')]}
                     contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: 12 }}
                   />
                   <Line type="monotone" dataKey="total_cents" stroke="#6366f1" strokeWidth={2} dot={{ fill: '#6366f1', r: 3 }} activeDot={{ r: 5 }} />
@@ -187,9 +189,9 @@ export default function ReportsScreen({ month }: Props) {
           </section>
 
           <section className="bg-white rounded-xl border border-slate-200 p-6">
-            <h2 className="text-base font-semibold text-slate-700 mb-4">Net Worth Trend — Last 6 Months</h2>
+            <h2 className="text-base font-semibold text-slate-700 mb-4">{t('reports.netWorthTrend')}</h2>
             {monthlySpending.length === 0 ? (
-              <p className="text-slate-400 text-sm py-8 text-center">No data yet.</p>
+              <p className="text-slate-400 text-sm py-8 text-center">{t('reports.noData')}</p>
             ) : (
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={monthlySpending} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
@@ -220,7 +222,7 @@ export default function ReportsScreen({ month }: Props) {
           <div className="bg-white rounded-xl border border-slate-200 p-5">
             <div className="flex flex-wrap items-end gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">From</label>
+                <label className="block text-xs font-medium text-slate-500 mb-1">{t('reports.from')}</label>
                 <input
                   type="date"
                   value={rangeFrom}
@@ -229,7 +231,7 @@ export default function ReportsScreen({ month }: Props) {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">To</label>
+                <label className="block text-xs font-medium text-slate-500 mb-1">{t('reports.to')}</label>
                 <input
                   type="date"
                   value={rangeTo}
@@ -241,17 +243,17 @@ export default function ReportsScreen({ month }: Props) {
                 onClick={loadRange}
                 className="bg-indigo-600 text-white px-4 py-1.5 rounded-lg text-sm hover:bg-indigo-700"
               >
-                Apply
+                {t('reports.apply')}
               </button>
             </div>
           </div>
 
           <section className="bg-white rounded-xl border border-slate-200 p-6">
             <h2 className="text-base font-semibold text-slate-700 mb-4">
-              Spending by Category — {rangeFrom} → {rangeTo}
+              {t('reports.spendingByCategoryRange', { from: rangeFrom, to: rangeTo })}
             </h2>
             {rangeSpending.length === 0 ? (
-              <p className="text-slate-400 text-sm py-8 text-center">No spending data for this range.</p>
+              <p className="text-slate-400 text-sm py-8 text-center">{t('reports.noSpendingRange')}</p>
             ) : (
               <div className="flex flex-col gap-6">
                 <ResponsiveContainer width="100%" height={280}>
@@ -278,8 +280,8 @@ export default function ReportsScreen({ month }: Props) {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="bg-slate-50 border-b border-slate-200">
-                        <th className="text-left px-4 py-2 text-xs font-semibold text-slate-500 uppercase">Category</th>
-                        <th className="text-right px-4 py-2 text-xs font-semibold text-slate-500 uppercase">Spent</th>
+                        <th className="text-left px-4 py-2 text-xs font-semibold text-slate-500 uppercase">{t('reports.table.category')}</th>
+                        <th className="text-right px-4 py-2 text-xs font-semibold text-slate-500 uppercase">{t('reports.table.spent')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -297,7 +299,7 @@ export default function ReportsScreen({ month }: Props) {
                     </tbody>
                     <tfoot>
                       <tr className="border-t-2 border-slate-200 bg-slate-50">
-                        <td className="px-4 py-2.5 font-semibold text-slate-700">Total</td>
+                        <td className="px-4 py-2.5 font-semibold text-slate-700">{t('reports.table.total')}</td>
                         <td className="px-4 py-2.5 text-right font-bold text-red-600 tabular-nums">
                           {formatCents(rangeSpending.reduce((s, r) => s + r.spent_cents, 0))}
                         </td>
@@ -317,7 +319,7 @@ export default function ReportsScreen({ month }: Props) {
           <div className="bg-white rounded-xl border border-slate-200 p-5">
             <div className="flex flex-wrap items-end gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Month A</label>
+                <label className="block text-xs font-medium text-slate-500 mb-1">{t('reports.monthA')}</label>
                 <select
                   value={compareA}
                   onChange={(e) => setCompareA(e.target.value)}
@@ -326,9 +328,9 @@ export default function ReportsScreen({ month }: Props) {
                   {prevMonthOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
               </div>
-              <span className="text-slate-400 text-sm pb-1.5">vs.</span>
+              <span className="text-slate-400 text-sm pb-1.5">{t('reports.vs')}</span>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Month B</label>
+                <label className="block text-xs font-medium text-slate-500 mb-1">{t('reports.monthB')}</label>
                 <select
                   value={compareB}
                   onChange={(e) => setCompareB(e.target.value)}
@@ -341,7 +343,7 @@ export default function ReportsScreen({ month }: Props) {
                 onClick={loadComparison}
                 className="bg-indigo-600 text-white px-4 py-1.5 rounded-lg text-sm hover:bg-indigo-700"
               >
-                Compare
+                {t('reports.compare')}
               </button>
             </div>
           </div>
@@ -353,13 +355,13 @@ export default function ReportsScreen({ month }: Props) {
               </h2>
             </div>
             {comparison.length === 0 ? (
-              <p className="text-slate-400 text-sm p-6 text-center">No spending data for the selected months.</p>
+              <p className="text-slate-400 text-sm p-6 text-center">{t('reports.noSpendingMonths')}</p>
             ) : (
               <>
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-100">
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Category</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">{t('reports.table.category')}</th>
                       <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 uppercase">{formatMonth(compareA)}</th>
                       <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 uppercase">{formatMonth(compareB)}</th>
                       <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Δ</th>
@@ -389,7 +391,7 @@ export default function ReportsScreen({ month }: Props) {
                   </tbody>
                   <tfoot>
                     <tr className="border-t-2 border-slate-200 bg-slate-50">
-                      <td className="px-6 py-3 font-semibold text-slate-700">Total</td>
+                      <td className="px-6 py-3 font-semibold text-slate-700">{t('reports.table.total')}</td>
                       <td className="px-6 py-3 text-right font-bold tabular-nums text-slate-800">
                         {formatCents(comparison.reduce((s, r) => s + r.month_a_cents, 0))}
                       </td>

@@ -54,6 +54,7 @@ pub fn run() {
             commands::categories::add_category,
             commands::categories::update_category,
             commands::categories::delete_category,
+            commands::categories::rename_default_categories,
             commands::budgets::set_budget,
             commands::budgets::get_budget_summary,
             commands::recurring::add_recurring_item,

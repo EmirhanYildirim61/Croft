@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { api } from '../lib/tauri';
 import { formatCents } from '../lib/format';
 import { useToast } from '../context/toast';
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export default function BudgetScreen({ month }: Props) {
+  const { t } = useTranslation();
   const { showToast } = useToast();
   const [rows, setRows] = useState<BudgetSummaryRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,7 +40,7 @@ export default function BudgetScreen({ month }: Props) {
     if (val === undefined) return;
     const parsed = parseFloat(val || '0');
     if (isNaN(parsed)) {
-      showToast('Enter a valid budget amount.', 'error');
+      showToast(t('budget.budgetInvalid'), 'error');
       setEditing((prev) => { const n = { ...prev }; delete n[catId]; return n; });
       return;
     }
@@ -71,26 +73,28 @@ export default function BudgetScreen({ month }: Props) {
   const totalBudgeted = rows.reduce((s, r) => s + r.budgeted_cents, 0);
   const totalSpent = rows.reduce((s, r) => s + r.spent_cents, 0);
 
-  if (loading) return <div className="text-slate-400 text-sm p-2">Loading…</div>;
+  if (loading) return <div className="text-slate-400 text-sm p-2">{t('common.loading')}</div>;
+
+  const summaryItems = [
+    { label: t('budget.summary.budgeted'), value: formatCents(totalBudgeted), color: 'text-slate-800' },
+    { label: t('budget.summary.spent'),    value: formatCents(totalSpent),    color: 'text-red-600' },
+    {
+      label: t('budget.summary.remaining'),
+      value: formatCents(totalBudgeted - totalSpent),
+      color: totalBudgeted - totalSpent >= 0 ? 'text-emerald-600' : 'text-red-600',
+    },
+  ];
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-slate-800">Budget</h1>
-        <div className="text-sm text-slate-500">Click a budget amount to edit it</div>
+        <h1 className="text-2xl font-bold text-slate-800">{t('budget.title')}</h1>
+        <div className="text-sm text-slate-500">{t('budget.hint')}</div>
       </div>
 
       {/* Summary bar */}
       <div className="grid grid-cols-3 gap-4 mb-6">
-        {[
-          { label: 'Total Budgeted', value: formatCents(totalBudgeted), color: 'text-slate-800' },
-          { label: 'Total Spent', value: formatCents(totalSpent), color: 'text-red-600' },
-          {
-            label: 'Remaining',
-            value: formatCents(totalBudgeted - totalSpent),
-            color: totalBudgeted - totalSpent >= 0 ? 'text-emerald-600' : 'text-red-600',
-          },
-        ].map((item) => (
+        {summaryItems.map((item) => (
           <div key={item.label} className="bg-white rounded-xl border border-slate-200 p-4">
             <p className="text-xs text-slate-500 mb-1">{item.label}</p>
             <p className={`text-xl font-bold ${item.color}`}>{item.value}</p>
@@ -102,11 +106,11 @@ export default function BudgetScreen({ month }: Props) {
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-slate-50 border-b border-slate-200">
-              <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Category</th>
-              <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Budgeted</th>
-              <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Spent</th>
-              <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Remaining</th>
-              <th className="px-4 py-3 w-40 text-xs font-semibold text-slate-500 uppercase tracking-wider">Progress</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('budget.table.category')}</th>
+              <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('budget.table.budgeted')}</th>
+              <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('budget.table.spent')}</th>
+              <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('budget.table.remaining')}</th>
+              <th className="px-4 py-3 w-40 text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('budget.table.progress')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -146,7 +150,7 @@ export default function BudgetScreen({ month }: Props) {
                       <button
                         onClick={() => startEdit(row.category_id, row.budgeted_cents)}
                         className="text-indigo-600 hover:text-indigo-800 hover:underline tabular-nums"
-                        title="Click to edit budget"
+                        title={t('budget.editTooltip')}
                       >
                         {formatCents(row.budgeted_cents)}
                       </button>

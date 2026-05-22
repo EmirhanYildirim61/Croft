@@ -1,0 +1,376 @@
+{
+  "common": {
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "save": "Enregistrer les modifications",
+    "saving": "Enregistrement…",
+    "loading": "Chargement…",
+    "remove": "Retirer",
+    "skip": "Passer",
+    "markPaid": "Marquer comme payé",
+    "add": "+ Ajouter",
+    "none": "Aucun"
+  },
+  "nav": {
+    "accounts": "Comptes",
+    "transactions": "Transactions",
+    "budget": "Budget",
+    "reports": "Rapports",
+    "netWorth": "Patrimoine net",
+    "subscriptions": "Abonnements",
+    "import": "Importer CSV",
+    "settings": "Paramètres"
+  },
+  "topBar": {
+    "netWorth": "Patrimoine net",
+    "prevMonth": "Mois précédent",
+    "nextMonth": "Mois suivant"
+  },
+  "backup": {
+    "daysSince": "Cela fait {{count}} jours depuis votre dernière sauvegarde.",
+    "neverBacked": "Vous n'avez pas encore sauvegardé vos données.",
+    "reminder": " Sauvegardez régulièrement votre fichier SQLite ou exportez vos données.",
+    "exportNow": "Exporter maintenant"
+  },
+  "accounts": {
+    "title": "Comptes",
+    "addButton": "+ Ajouter un compte",
+    "emptyTitle": "Aucun compte pour l'instant",
+    "emptyBody": "Ajoutez votre premier compte pour commencer à suivre vos finances.",
+    "deleteTitle": "Supprimer le compte",
+    "deleteConfirm": "Supprimer <bold>{{name}}</bold> et toutes ses transactions ? Cette action est irréversible.",
+    "initialBalance": "Initial : {{amount}} · {{currency}}",
+    "deleteTooltip": "Supprimer le compte",
+    "addModal": {
+      "title": "Ajouter un compte",
+      "nameLabel": "Nom *",
+      "namePlaceholder": "ex. Crédit Agricole Courant",
+      "nameRequired": "Le nom du compte est obligatoire.",
+      "typeLabel": "Type *",
+      "currencyLabel": "Devise",
+      "balanceLabel": "Solde initial",
+      "balanceInvalid": "Saisissez un nombre valide.",
+      "saveButton": "Ajouter le compte"
+    },
+    "types": {
+      "bank": "Banque",
+      "credit": "Carte de crédit",
+      "cash": "Espèces",
+      "savings": "Épargne"
+    },
+    "toast": {
+      "created": "Compte créé.",
+      "deleted": "Compte supprimé."
+    }
+  },
+  "transactions": {
+    "title": "Transactions",
+    "addButton": "+ Ajouter une transaction",
+    "emptyText": "Aucune transaction trouvée.",
+    "addFirst": "Ajoutez votre première transaction",
+    "filterAllAccounts": "Tous les comptes",
+    "filterAllCategories": "Toutes les catégories",
+    "nSelected": "{{count}} sélectionné(s)",
+    "clearSelection": "Effacer la sélection",
+    "dateRange": "Plage de dates",
+    "searchPlaceholder": "Rechercher bénéficiaire, note…",
+    "noPayee": "Aucun bénéficiaire",
+    "thisTransaction": "cette transaction",
+    "table": {
+      "date": "Date",
+      "payee": "Bénéficiaire",
+      "category": "Catégorie",
+      "account": "Compte",
+      "amount": "Montant"
+    },
+    "form": {
+      "addTitle": "Ajouter une transaction",
+      "editTitle": "Modifier la transaction",
+      "typeLabel": "Type *",
+      "expense": "Dépense",
+      "income": "Revenu",
+      "dateLabel": "Date *",
+      "amountLabel": "Montant *",
+      "payeeLabel": "Bénéficiaire *",
+      "accountLabel": "Compte *",
+      "categoryLabel": "Catégorie",
+      "noteLabel": "Note",
+      "notePlaceholder": "Note facultative",
+      "selectAccount": "Sélectionner…",
+      "payeePlaceholder": "ex. Carrefour",
+      "dateRequired": "La date est obligatoire.",
+      "dateInvalid": "Saisissez une date valide (AAAA-MM-JJ).",
+      "amountRequired": "Le montant est obligatoire.",
+      "amountInvalid": "Saisissez un nombre valide.",
+      "payeeRequired": "Le bénéficiaire est obligatoire.",
+      "accountRequired": "Sélectionnez un compte.",
+      "saveButton": "Ajouter la transaction"
+    },
+    "deleteTitle": "Supprimer la transaction",
+    "deleteConfirm": "Supprimer <bold>{{payee}}</bold> ({{amount}}) ? Cette action est irréversible.",
+    "toast": {
+      "added": "Transaction ajoutée.",
+      "updated": "Transaction mise à jour.",
+      "deleted": "Transaction supprimée."
+    }
+  },
+  "budget": {
+    "title": "Budget",
+    "hint": "Cliquez sur un montant budgété pour le modifier",
+    "editTooltip": "Cliquer pour modifier le budget",
+    "budgetInvalid": "Saisissez un montant budgété valide.",
+    "summary": {
+      "budgeted": "Total budgété",
+      "spent": "Total dépensé",
+      "remaining": "Restant"
+    },
+    "table": {
+      "category": "Catégorie",
+      "budgeted": "Budgété",
+      "spent": "Dépensé",
+      "remaining": "Restant",
+      "progress": "Progression"
+    }
+  },
+  "reports": {
+    "title": "Rapports",
+    "monthly": "Mensuel",
+    "dateRange": "Plage de dates",
+    "compareMonths": "Comparer les mois",
+    "noSpending": "Aucune donnée de dépenses pour ce mois.",
+    "noData": "Aucune donnée pour l'instant.",
+    "noSpendingRange": "Aucune donnée de dépenses pour cette plage.",
+    "noSpendingMonths": "Aucune donnée de dépenses pour les mois sélectionnés.",
+    "spendingByCategory": "Dépenses par catégorie — {{month}}",
+    "netWorthLast12": "Patrimoine net — 12 derniers mois",
+    "netWorthTrend": "Évolution du patrimoine net — 6 derniers mois",
+    "netWorthLabel": "Patrimoine net",
+    "spendingByCategoryRange": "Dépenses par catégorie — {{from}} → {{to}}",
+    "from": "Du",
+    "to": "Au",
+    "apply": "Appliquer",
+    "monthA": "Mois A",
+    "monthB": "Mois B",
+    "vs": "vs.",
+    "compare": "Comparer",
+    "table": {
+      "category": "Catégorie",
+      "spent": "Dépensé",
+      "total": "Total"
+    }
+  },
+  "netWorth": {
+    "title": "Patrimoine net",
+    "totalNetWorth": "Patrimoine net total",
+    "inCurrency": "en {{currency}}",
+    "vsLastMonth": "vs. mois dernier",
+    "accountBreakdown": "Répartition par compte",
+    "noAccounts": "Aucun compte pour l'instant.",
+    "netWorthLast12": "Patrimoine net — 12 derniers mois",
+    "noData": "Aucune donnée pour l'instant.",
+    "table": {
+      "account": "Compte",
+      "type": "Type",
+      "currentBalance": "Solde actuel",
+      "vsLastMonth": "vs. mois dernier",
+      "total": "Total"
+    }
+  },
+  "subscriptions": {
+    "title": "Abonnements",
+    "annualCost": "Coût annuel",
+    "monthlyAverage": "Moyenne mensuelle",
+    "estimatedFrom": "estimé d'après les paiements récurrents",
+    "activeCount_one": "{{count}} abonnement actif",
+    "activeCount_other": "{{count}} abonnements actifs",
+    "allSubscriptions": "Tous les abonnements",
+    "empty": "Aucun paiement récurrent pour l'instant. Ajoutez-en dans Paramètres → Paiements récurrents.",
+    "table": {
+      "name": "Nom",
+      "frequency": "Fréquence",
+      "amount": "Montant",
+      "annualCost": "Coût annuel",
+      "nextDue": "Prochaine échéance",
+      "total": "Total"
+    },
+    "perMonth": "/mois",
+    "perYear": "/an",
+    "due": "Échéance",
+    "soon": "Bientôt",
+    "toast": {
+      "markedPaid": "« {{label}} » marqué comme payé.",
+      "skipped": "« {{label}} » ignoré."
+    }
+  },
+  "import": {
+    "title": "Importer CSV",
+    "idle": {
+      "title": "Importer des transactions",
+      "body": "Choisissez un format, puis sélectionnez un fichier. Les catégories et comptes peuvent être assignés avant confirmation.",
+      "chooseFile": "Choisir un fichier…",
+      "noAccount": "Vous devez avoir au moins un compte avant d'importer."
+    },
+    "preview": {
+      "info": "<bold>{{count}}</bold> lignes trouvées. Assignez les comptes et catégories, puis confirmez.",
+      "startOver": "← Recommencer",
+      "importing": "Importation…",
+      "importCount": "Importer {{count}} transactions"
+    },
+    "done": {
+      "title": "Importation terminée !",
+      "body_one": "{{count}} transaction ajoutée avec succès.",
+      "body_other": "{{count}} transactions ajoutées avec succès.",
+      "importAnother": "Importer un autre fichier"
+    },
+    "table": {
+      "date": "Date",
+      "payee": "Bénéficiaire / Description",
+      "amount": "Montant",
+      "account": "Compte",
+      "category": "Catégorie"
+    },
+    "formats": {
+      "generic": { "label": "CSV générique", "desc": "Détection automatique des colonnes (date, bénéficiaire, montant)" },
+      "ynab":    { "label": "CSV YNAB",      "desc": "Format d'export YNAB (colonnes Entrée/Sortie)" },
+      "qif":     { "label": "GnuCash QIF",   "desc": "Format d'échange Quicken (.qif)" }
+    }
+  },
+  "onboarding": {
+    "tagline": "Votre gestionnaire de finances personnelles",
+    "chooseLanguage": "Choisissez votre langue pour commencer",
+    "getStarted": "Commencer"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "export": {
+      "title": "Exporter les données",
+      "csv": "Exporter les transactions en CSV",
+      "json": "Exporter toutes les données en JSON"
+    },
+    "database": {
+      "title": "Fichier de base de données",
+      "hint": "Vos données sont stockées dans un seul fichier SQLite. Déplacez-le où vous voulez — un dossier Dropbox, iCloud Drive, etc.",
+      "copy": "Copier",
+      "copyTitle": "Copier le chemin",
+      "move": "Déplacer…",
+      "moving": "Copie en cours…"
+    },
+    "displayCurrency": {
+      "title": "Devise d'affichage par défaut",
+      "hint": "Utilisée lorsqu'aucune devise par compte n'est disponible (ex. résumé du patrimoine net)."
+    },
+    "exchangeRates": {
+      "title": "Taux de change",
+      "hint": "Définissez des taux manuels pour convertir les comptes multidevises vers votre devise de base dans le patrimoine net.",
+      "empty": "Aucun taux de change défini pour l'instant.",
+      "addModal": {
+        "title": "Ajouter un taux de change",
+        "hint": "Indiquez combien d'unités de <bold>{{to}}</bold> équivalent à 1 unité de la devise source. Exemple : 1 EUR = 1,08 USD → De : EUR, Vers : USD, Taux : 1,08",
+        "fromLabel": "Devise source *",
+        "toLabel": "Devise cible *",
+        "rateLabel": "Taux *",
+        "ratePlaceholder": "1.08",
+        "saveButton": "Enregistrer le taux",
+        "invalidFrom": "Sélectionnez une devise source.",
+        "invalidRate": "Saisissez un taux positif."
+      },
+      "toast": {
+        "saved": "Taux de change enregistré.",
+        "removed": "Taux de change supprimé."
+      }
+    },
+    "categories": {
+      "title": "Catégories",
+      "subOf": "sous-catégorie de {{parent}}",
+      "addModal": {
+        "addTitle": "Ajouter une catégorie",
+        "editTitle": "Modifier la catégorie",
+        "nameLabel": "Nom *",
+        "namePlaceholder": "ex. Sport & Fitness",
+        "nameRequired": "Le nom de la catégorie est obligatoire.",
+        "colorLabel": "Couleur",
+        "parentLabel": "Catégorie parente (facultatif)",
+        "parentNone": "Aucune (niveau supérieur)",
+        "saveButton": "Ajouter la catégorie"
+      },
+      "deleteModal": {
+        "title": "Supprimer la catégorie",
+        "confirm": "Supprimer <bold>{{name}}</bold> ? Les transactions existantes conserveront la catégorie « non catégorisé »."
+      },
+      "toast": {
+        "added": "Catégorie ajoutée.",
+        "updated": "Catégorie mise à jour.",
+        "deleted": "Catégorie supprimée."
+      }
+    },
+    "recurring": {
+      "title": "Paiements récurrents",
+      "empty": "Aucun paiement récurrent pour l'instant.",
+      "due": "Échéance",
+      "dueSoon": "Échéance prochaine",
+      "frequencyNext": "{{frequency}} · prochain : {{date}} · {{account}}",
+      "markPaidTooltip": "Enregistrer une transaction pour cet élément et avancer la date d'échéance",
+      "skipTooltip": "Ignorer cette occurrence et avancer la date d'échéance sans enregistrer de transaction",
+      "editTooltip": "Modifier le paiement récurrent",
+      "deleteTooltip": "Supprimer le paiement récurrent",
+      "addModal": {
+        "addTitle": "Ajouter un paiement récurrent",
+        "editTitle": "Modifier le paiement récurrent",
+        "labelLabel": "Libellé *",
+        "labelPlaceholder": "ex. Netflix, Loyer",
+        "labelRequired": "Le libellé est obligatoire.",
+        "amountLabel": "Montant *",
+        "amountPlaceholder": "−15.99",
+        "amountInvalid": "Saisissez un montant valide.",
+        "frequencyLabel": "Fréquence *",
+        "accountLabel": "Compte *",
+        "accountRequired": "Sélectionnez un compte.",
+        "nextDueLabel": "Prochaine date d'échéance *",
+        "categoryLabel": "Catégorie",
+        "saveButton": "Ajouter le paiement récurrent"
+      },
+      "deleteModal": {
+        "title": "Supprimer le paiement récurrent",
+        "confirm": "Supprimer <bold>{{label}}</bold> ? Cela arrête la planification mais conserve les transactions déjà générées."
+      },
+      "toast": {
+        "markedPaid": "« {{label}} » marqué comme payé.",
+        "skipped": "« {{label}} » ignoré — prochaine date avancée.",
+        "added": "Paiement récurrent ajouté.",
+        "updated": "Paiement récurrent mis à jour.",
+        "deleted": "Paiement récurrent supprimé."
+      }
+    },
+    "language": {
+      "title": "Langue",
+      "hint": "Choisissez la langue de l'interface.",
+      "changed": "Langue changée en {{label}}."
+    },
+    "toast": {
+      "csvExported": "CSV exporté avec succès.",
+      "jsonExported": "JSON exporté avec succès.",
+      "dbMoved": "Base de données copiée. Redémarrez l'application pour utiliser le nouvel emplacement.",
+      "currencySet": "Devise d'affichage définie sur {{code}}."
+    }
+  },
+  "categoryDefaults": [
+    "Alimentation & restaurants",
+    "Transport",
+    "Logement",
+    "Santé",
+    "Loisirs",
+    "Shopping",
+    "Éducation",
+    "Factures & services",
+    "Épargne",
+    "Revenus",
+    "Autres"
+  ],
+  "frequencies": {
+    "daily": "Quotidien",
+    "weekly": "Hebdomadaire",
+    "monthly": "Mensuel",
+    "yearly": "Annuel"
+  }
+}

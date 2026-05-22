@@ -74,6 +74,9 @@ export const api = {
 
   deleteCategory: (id: number) => invoke<void>('delete_category', { id }),
 
+  renameDefaultCategories: (names: string[]) =>
+    invoke<void>('rename_default_categories', { names }),
+
   // Budgets
   setBudget: (categoryId: number, month: string, amountCents: number) =>
     invoke<void>('set_budget', { categoryId, month, amountCents }),

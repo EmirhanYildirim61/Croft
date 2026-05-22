@@ -1,0 +1,376 @@
+{
+  "common": {
+    "cancel": "取消",
+    "delete": "刪除",
+    "edit": "編輯",
+    "save": "儲存變更",
+    "saving": "儲存中…",
+    "loading": "載入中…",
+    "remove": "移除",
+    "skip": "略過",
+    "markPaid": "標記為已付款",
+    "add": "+ 新增",
+    "none": "無"
+  },
+  "nav": {
+    "accounts": "帳戶",
+    "transactions": "交易記錄",
+    "budget": "預算",
+    "reports": "報表",
+    "netWorth": "淨資產",
+    "subscriptions": "訂閱",
+    "import": "匯入 CSV",
+    "settings": "設定"
+  },
+  "topBar": {
+    "netWorth": "淨資產",
+    "prevMonth": "上個月",
+    "nextMonth": "下個月"
+  },
+  "backup": {
+    "daysSince": "距上次備份已過 {{count}} 天。",
+    "neverBacked": "您尚未備份過資料。",
+    "reminder": " 請定期備份您的 SQLite 檔案或匯出資料。",
+    "exportNow": "立即匯出"
+  },
+  "accounts": {
+    "title": "帳戶",
+    "addButton": "+ 新增帳戶",
+    "emptyTitle": "尚無帳戶",
+    "emptyBody": "新增第一個帳戶，開始追蹤您的財務狀況。",
+    "deleteTitle": "刪除帳戶",
+    "deleteConfirm": "確定要刪除 <bold>{{name}}</bold> 及其所有交易記錄嗎？此操作無法復原。",
+    "initialBalance": "初始餘額：{{amount}} · {{currency}}",
+    "deleteTooltip": "刪除帳戶",
+    "addModal": {
+      "title": "新增帳戶",
+      "nameLabel": "名稱 *",
+      "namePlaceholder": "例如：台灣銀行活期帳戶",
+      "nameRequired": "帳戶名稱為必填。",
+      "typeLabel": "類型 *",
+      "currencyLabel": "貨幣",
+      "balanceLabel": "初始餘額",
+      "balanceInvalid": "請輸入有效數字。",
+      "saveButton": "新增帳戶"
+    },
+    "types": {
+      "bank": "銀行",
+      "credit": "信用卡",
+      "cash": "現金",
+      "savings": "儲蓄"
+    },
+    "toast": {
+      "created": "帳戶已建立。",
+      "deleted": "帳戶已刪除。"
+    }
+  },
+  "transactions": {
+    "title": "交易記錄",
+    "addButton": "+ 新增交易",
+    "emptyText": "找不到任何交易記錄。",
+    "addFirst": "新增第一筆交易",
+    "filterAllAccounts": "所有帳戶",
+    "filterAllCategories": "所有類別",
+    "nSelected": "已選取 {{count}} 筆",
+    "clearSelection": "取消選取",
+    "dateRange": "日期範圍",
+    "searchPlaceholder": "搜尋收款方、備註…",
+    "noPayee": "無收款方",
+    "thisTransaction": "此筆交易",
+    "table": {
+      "date": "日期",
+      "payee": "收款方",
+      "category": "類別",
+      "account": "帳戶",
+      "amount": "金額"
+    },
+    "form": {
+      "addTitle": "新增交易",
+      "editTitle": "編輯交易",
+      "typeLabel": "類型 *",
+      "expense": "支出",
+      "income": "收入",
+      "dateLabel": "日期 *",
+      "amountLabel": "金額 *",
+      "payeeLabel": "收款方 *",
+      "accountLabel": "帳戶 *",
+      "categoryLabel": "類別",
+      "noteLabel": "備註",
+      "notePlaceholder": "選填備註",
+      "selectAccount": "請選擇…",
+      "payeePlaceholder": "例如：超市",
+      "dateRequired": "日期為必填。",
+      "dateInvalid": "請輸入有效日期（YYYY-MM-DD）。",
+      "amountRequired": "金額為必填。",
+      "amountInvalid": "請輸入有效數字。",
+      "payeeRequired": "收款方為必填。",
+      "accountRequired": "請選擇帳戶。",
+      "saveButton": "新增交易"
+    },
+    "deleteTitle": "刪除交易",
+    "deleteConfirm": "確定要刪除 <bold>{{payee}}</bold>（{{amount}}）嗎？此操作無法復原。",
+    "toast": {
+      "added": "交易已新增。",
+      "updated": "交易已更新。",
+      "deleted": "交易已刪除。"
+    }
+  },
+  "budget": {
+    "title": "預算",
+    "hint": "點按預算金額即可編輯",
+    "editTooltip": "點按以編輯預算",
+    "budgetInvalid": "請輸入有效的預算金額。",
+    "summary": {
+      "budgeted": "預算總計",
+      "spent": "已花費",
+      "remaining": "剩餘"
+    },
+    "table": {
+      "category": "類別",
+      "budgeted": "預算",
+      "spent": "已花費",
+      "remaining": "剩餘",
+      "progress": "進度"
+    }
+  },
+  "reports": {
+    "title": "報表",
+    "monthly": "按月",
+    "dateRange": "日期範圍",
+    "compareMonths": "月份比較",
+    "noSpending": "本月尚無支出資料。",
+    "noData": "尚無資料。",
+    "noSpendingRange": "所選期間尚無支出資料。",
+    "noSpendingMonths": "所選月份尚無支出資料。",
+    "spendingByCategory": "按類別支出 — {{month}}",
+    "netWorthLast12": "淨資產 — 近 12 個月",
+    "netWorthTrend": "淨資產走勢 — 近 6 個月",
+    "netWorthLabel": "淨資產",
+    "spendingByCategoryRange": "按類別支出 — {{from}} → {{to}}",
+    "from": "從",
+    "to": "至",
+    "apply": "套用",
+    "monthA": "月份 A",
+    "monthB": "月份 B",
+    "vs": "對比",
+    "compare": "比較",
+    "table": {
+      "category": "類別",
+      "spent": "已花費",
+      "total": "合計"
+    }
+  },
+  "netWorth": {
+    "title": "淨資產",
+    "totalNetWorth": "淨資產總計",
+    "inCurrency": "貨幣：{{currency}}",
+    "vsLastMonth": "與上月相比",
+    "accountBreakdown": "帳戶明細",
+    "noAccounts": "尚無帳戶。",
+    "netWorthLast12": "淨資產 — 近 12 個月",
+    "noData": "尚無資料。",
+    "table": {
+      "account": "帳戶",
+      "type": "類型",
+      "currentBalance": "目前餘額",
+      "vsLastMonth": "與上月相比",
+      "total": "合計"
+    }
+  },
+  "subscriptions": {
+    "title": "訂閱",
+    "annualCost": "年度費用",
+    "monthlyAverage": "月均費用",
+    "estimatedFrom": "根據週期性項目估算",
+    "activeCount_one": "{{count}} 個有效訂閱",
+    "activeCount_other": "{{count}} 個有效訂閱",
+    "allSubscriptions": "全部訂閱",
+    "empty": "尚無週期性支出。請至設定 → 週期性項目新增。",
+    "table": {
+      "name": "名稱",
+      "frequency": "頻率",
+      "amount": "金額",
+      "annualCost": "年度費用",
+      "nextDue": "下次到期",
+      "total": "合計"
+    },
+    "perMonth": "/月",
+    "perYear": "/年",
+    "due": "待付款",
+    "soon": "即將到期",
+    "toast": {
+      "markedPaid": "「{{label}}」已標記為已付款。",
+      "skipped": "「{{label}}」已略過。"
+    }
+  },
+  "import": {
+    "title": "匯入 CSV",
+    "idle": {
+      "title": "匯入交易記錄",
+      "body": "選擇格式後選取檔案。確認前可指定類別和帳戶。",
+      "chooseFile": "選擇檔案…",
+      "noAccount": "匯入前至少需要一個帳戶。"
+    },
+    "preview": {
+      "info": "共找到 <bold>{{count}}</bold> 列。請指定帳戶和類別後確認。",
+      "startOver": "← 重新開始",
+      "importing": "匯入中…",
+      "importCount": "匯入 {{count}} 筆交易"
+    },
+    "done": {
+      "title": "匯入完成！",
+      "body_one": "已成功新增 {{count}} 筆交易。",
+      "body_other": "已成功新增 {{count}} 筆交易。",
+      "importAnother": "匯入其他檔案"
+    },
+    "table": {
+      "date": "日期",
+      "payee": "收款方 / 說明",
+      "amount": "金額",
+      "account": "帳戶",
+      "category": "類別"
+    },
+    "formats": {
+      "generic": { "label": "通用 CSV", "desc": "自動辨識欄位（日期、收款方、金額）" },
+      "ynab":    { "label": "YNAB CSV",  "desc": "YNAB 匯出格式（收入／支出欄）" },
+      "qif":     { "label": "GnuCash QIF", "desc": "Quicken 交換格式（.qif）" }
+    }
+  },
+  "onboarding": {
+    "tagline": "您的個人財務記帳工具",
+    "chooseLanguage": "選擇語言以開始使用",
+    "getStarted": "開始使用"
+  },
+  "settings": {
+    "title": "設定",
+    "export": {
+      "title": "匯出資料",
+      "csv": "將交易記錄匯出為 CSV",
+      "json": "將所有資料匯出為 JSON"
+    },
+    "database": {
+      "title": "資料庫檔案",
+      "hint": "您的資料儲存在單一 SQLite 檔案中。可將其移至任意位置——Dropbox 資料夾、iCloud Drive 等。",
+      "copy": "複製",
+      "copyTitle": "複製路徑",
+      "move": "移動…",
+      "moving": "複製中…"
+    },
+    "displayCurrency": {
+      "title": "預設顯示貨幣",
+      "hint": "在無帳戶專屬貨幣時使用（例如淨資產摘要）。"
+    },
+    "exchangeRates": {
+      "title": "匯率",
+      "hint": "設定手動匯率，以便在淨資產中將多幣種帳戶換算為基礎貨幣。",
+      "empty": "尚未設定任何匯率。",
+      "addModal": {
+        "title": "新增匯率",
+        "hint": "輸入 1 單位來源貨幣對應 <bold>{{to}}</bold> 的數量。範例：1 EUR = 1.08 USD → 從：EUR，至：USD，匯率：1.08",
+        "fromLabel": "來源貨幣 *",
+        "toLabel": "目標貨幣 *",
+        "rateLabel": "匯率 *",
+        "ratePlaceholder": "1.08",
+        "saveButton": "儲存匯率",
+        "invalidFrom": "請選擇來源貨幣。",
+        "invalidRate": "請輸入正數匯率。"
+      },
+      "toast": {
+        "saved": "匯率已儲存。",
+        "removed": "匯率已刪除。"
+      }
+    },
+    "categories": {
+      "title": "類別",
+      "subOf": "{{parent}} 的子類別",
+      "addModal": {
+        "addTitle": "新增類別",
+        "editTitle": "編輯類別",
+        "nameLabel": "名稱 *",
+        "namePlaceholder": "例如：健身房與運動",
+        "nameRequired": "類別名稱為必填。",
+        "colorLabel": "顏色",
+        "parentLabel": "上層類別（選填）",
+        "parentNone": "無（最上層）",
+        "saveButton": "新增類別"
+      },
+      "deleteModal": {
+        "title": "刪除類別",
+        "confirm": "確定要刪除 <bold>{{name}}</bold> 嗎？現有交易將保留「未分類」標籤。"
+      },
+      "toast": {
+        "added": "類別已新增。",
+        "updated": "類別已更新。",
+        "deleted": "類別已刪除。"
+      }
+    },
+    "recurring": {
+      "title": "週期性項目",
+      "empty": "尚無週期性項目。",
+      "due": "待付款",
+      "dueSoon": "即將到期",
+      "frequencyNext": "{{frequency}} · 下次：{{date}} · {{account}}",
+      "markPaidTooltip": "為此項目記錄一筆交易並更新下次到期日",
+      "skipTooltip": "略過本次並更新下次到期日，不記錄交易",
+      "editTooltip": "編輯週期性項目",
+      "deleteTooltip": "刪除週期性項目",
+      "addModal": {
+        "addTitle": "新增週期性項目",
+        "editTitle": "編輯週期性項目",
+        "labelLabel": "名稱 *",
+        "labelPlaceholder": "例如：Netflix、房租",
+        "labelRequired": "名稱為必填。",
+        "amountLabel": "金額 *",
+        "amountPlaceholder": "−15.99",
+        "amountInvalid": "請輸入有效金額。",
+        "frequencyLabel": "頻率 *",
+        "accountLabel": "帳戶 *",
+        "accountRequired": "請選擇帳戶。",
+        "nextDueLabel": "下次到期日 *",
+        "categoryLabel": "類別",
+        "saveButton": "新增週期性項目"
+      },
+      "deleteModal": {
+        "title": "刪除週期性項目",
+        "confirm": "確定要刪除 <bold>{{label}}</bold> 嗎？排程將停止，但已產生的交易記錄將予以保留。"
+      },
+      "toast": {
+        "markedPaid": "「{{label}}」已標記為已付款。",
+        "skipped": "「{{label}}」已略過，下次日期已更新。",
+        "added": "週期性項目已新增。",
+        "updated": "週期性項目已更新。",
+        "deleted": "週期性項目已刪除。"
+      }
+    },
+    "language": {
+      "title": "語言",
+      "hint": "選擇介面語言。",
+      "changed": "語言已切換為 {{label}}。"
+    },
+    "toast": {
+      "csvExported": "CSV 匯出成功。",
+      "jsonExported": "JSON 匯出成功。",
+      "dbMoved": "資料庫已複製。請重新啟動應用程式以使用新路徑。",
+      "currencySet": "顯示貨幣已設定為 {{code}}。"
+    }
+  },
+  "categoryDefaults": [
+    "餐飲",
+    "交通",
+    "住房",
+    "健康",
+    "娛樂",
+    "購物",
+    "教育",
+    "水電費",
+    "儲蓄",
+    "收入",
+    "其他"
+  ],
+  "frequencies": {
+    "daily": "每日",
+    "weekly": "每週",
+    "monthly": "每月",
+    "yearly": "每年"
+  }
+}

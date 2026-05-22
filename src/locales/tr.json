@@ -1,0 +1,376 @@
+{
+  "common": {
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "save": "Değişiklikleri Kaydet",
+    "saving": "Kaydediliyor…",
+    "loading": "Yükleniyor…",
+    "remove": "Kaldır",
+    "skip": "Atla",
+    "markPaid": "Ödendi olarak işaretle",
+    "add": "+ Ekle",
+    "none": "Yok"
+  },
+  "nav": {
+    "accounts": "Hesaplar",
+    "transactions": "İşlemler",
+    "budget": "Bütçe",
+    "reports": "Raporlar",
+    "netWorth": "Net Değer",
+    "subscriptions": "Abonelikler",
+    "import": "CSV İçe Aktar",
+    "settings": "Ayarlar"
+  },
+  "topBar": {
+    "netWorth": "Net değer",
+    "prevMonth": "Önceki ay",
+    "nextMonth": "Sonraki ay"
+  },
+  "backup": {
+    "daysSince": "Son yedeğinizin üzerinden {{count}} gün geçti.",
+    "neverBacked": "Henüz veri yedeği almadınız.",
+    "reminder": " SQLite dosyanızı düzenli olarak yedekleyin veya verilerinizi dışa aktarın.",
+    "exportNow": "Şimdi dışa aktar"
+  },
+  "accounts": {
+    "title": "Hesaplar",
+    "addButton": "+ Hesap Ekle",
+    "emptyTitle": "Henüz hesap yok",
+    "emptyBody": "Finanslarınızı takip etmeye başlamak için ilk hesabınızı ekleyin.",
+    "deleteTitle": "Hesabı Sil",
+    "deleteConfirm": "<bold>{{name}}</bold> hesabı ve tüm işlemleri silinsin mi? Bu işlem geri alınamaz.",
+    "initialBalance": "Başlangıç: {{amount}} · {{currency}}",
+    "deleteTooltip": "Hesabı sil",
+    "addModal": {
+      "title": "Hesap Ekle",
+      "nameLabel": "Ad *",
+      "namePlaceholder": "örn. Ziraat Vadesiz",
+      "nameRequired": "Hesap adı zorunludur.",
+      "typeLabel": "Tür *",
+      "currencyLabel": "Para Birimi",
+      "balanceLabel": "Başlangıç Bakiyesi",
+      "balanceInvalid": "Geçerli bir sayı girin.",
+      "saveButton": "Hesap Ekle"
+    },
+    "types": {
+      "bank": "Banka",
+      "credit": "Kredi Kartı",
+      "cash": "Nakit",
+      "savings": "Tasarruf"
+    },
+    "toast": {
+      "created": "Hesap oluşturuldu.",
+      "deleted": "Hesap silindi."
+    }
+  },
+  "transactions": {
+    "title": "İşlemler",
+    "addButton": "+ İşlem Ekle",
+    "emptyText": "İşlem bulunamadı.",
+    "addFirst": "İlk işleminizi ekleyin",
+    "filterAllAccounts": "Tüm hesaplar",
+    "filterAllCategories": "Tüm kategoriler",
+    "nSelected": "{{count}} seçildi",
+    "clearSelection": "Seçimi temizle",
+    "dateRange": "Tarih aralığı",
+    "searchPlaceholder": "Alacaklı, not ara…",
+    "noPayee": "Alacaklı yok",
+    "thisTransaction": "bu işlem",
+    "table": {
+      "date": "Tarih",
+      "payee": "Alacaklı",
+      "category": "Kategori",
+      "account": "Hesap",
+      "amount": "Tutar"
+    },
+    "form": {
+      "addTitle": "İşlem Ekle",
+      "editTitle": "İşlemi Düzenle",
+      "typeLabel": "Tür *",
+      "expense": "Gider",
+      "income": "Gelir",
+      "dateLabel": "Tarih *",
+      "amountLabel": "Tutar *",
+      "payeeLabel": "Alacaklı *",
+      "accountLabel": "Hesap *",
+      "categoryLabel": "Kategori",
+      "noteLabel": "Not",
+      "notePlaceholder": "İsteğe bağlı not",
+      "selectAccount": "Seçin…",
+      "payeePlaceholder": "örn. Migros",
+      "dateRequired": "Tarih zorunludur.",
+      "dateInvalid": "Geçerli bir tarih girin (YYYY-AA-GG).",
+      "amountRequired": "Tutar zorunludur.",
+      "amountInvalid": "Geçerli bir sayı girin.",
+      "payeeRequired": "Alacaklı zorunludur.",
+      "accountRequired": "Bir hesap seçin.",
+      "saveButton": "İşlem Ekle"
+    },
+    "deleteTitle": "İşlemi Sil",
+    "deleteConfirm": "<bold>{{payee}}</bold> ({{amount}}) işlemi silinsin mi? Bu işlem geri alınamaz.",
+    "toast": {
+      "added": "İşlem eklendi.",
+      "updated": "İşlem güncellendi.",
+      "deleted": "İşlem silindi."
+    }
+  },
+  "budget": {
+    "title": "Bütçe",
+    "hint": "Düzenlemek için bir bütçe tutarına tıklayın",
+    "editTooltip": "Bütçeyi düzenlemek için tıklayın",
+    "budgetInvalid": "Geçerli bir bütçe tutarı girin.",
+    "summary": {
+      "budgeted": "Toplam Bütçe",
+      "spent": "Toplam Harcama",
+      "remaining": "Kalan"
+    },
+    "table": {
+      "category": "Kategori",
+      "budgeted": "Bütçe",
+      "spent": "Harcanan",
+      "remaining": "Kalan",
+      "progress": "İlerleme"
+    }
+  },
+  "reports": {
+    "title": "Raporlar",
+    "monthly": "Aylık",
+    "dateRange": "Tarih Aralığı",
+    "compareMonths": "Ayları Karşılaştır",
+    "noSpending": "Bu ay için harcama verisi yok.",
+    "noData": "Henüz veri yok.",
+    "noSpendingRange": "Bu aralık için harcama verisi yok.",
+    "noSpendingMonths": "Seçilen aylar için harcama verisi yok.",
+    "spendingByCategory": "Kategoriye Göre Harcama — {{month}}",
+    "netWorthLast12": "Net Değer — Son 12 Ay",
+    "netWorthTrend": "Net Değer Trendi — Son 6 Ay",
+    "netWorthLabel": "Net Değer",
+    "spendingByCategoryRange": "Kategoriye Göre Harcama — {{from}} → {{to}}",
+    "from": "Başlangıç",
+    "to": "Bitiş",
+    "apply": "Uygula",
+    "monthA": "A Ayı",
+    "monthB": "B Ayı",
+    "vs": "vs.",
+    "compare": "Karşılaştır",
+    "table": {
+      "category": "Kategori",
+      "spent": "Harcanan",
+      "total": "Toplam"
+    }
+  },
+  "netWorth": {
+    "title": "Net Değer",
+    "totalNetWorth": "Toplam Net Değer",
+    "inCurrency": "{{currency}} cinsinden",
+    "vsLastMonth": "Geçen Aya Göre",
+    "accountBreakdown": "Hesap Dağılımı",
+    "noAccounts": "Henüz hesap yok.",
+    "netWorthLast12": "Net Değer — Son 12 Ay",
+    "noData": "Henüz veri yok.",
+    "table": {
+      "account": "Hesap",
+      "type": "Tür",
+      "currentBalance": "Güncel Bakiye",
+      "vsLastMonth": "Geçen Aya Göre",
+      "total": "Toplam"
+    }
+  },
+  "subscriptions": {
+    "title": "Abonelikler",
+    "annualCost": "Yıllık Maliyet",
+    "monthlyAverage": "Aylık Ortalama",
+    "estimatedFrom": "düzenli ödemelerden tahmin edildi",
+    "activeCount_one": "{{count}} aktif abonelik",
+    "activeCount_other": "{{count}} aktif abonelik",
+    "allSubscriptions": "Tüm Abonelikler",
+    "empty": "Henüz düzenli gider kalemi yok. Ayarlar → Düzenli Ödemeler bölümünden ekleyin.",
+    "table": {
+      "name": "Ad",
+      "frequency": "Sıklık",
+      "amount": "Tutar",
+      "annualCost": "Yıllık Maliyet",
+      "nextDue": "Sonraki Vade",
+      "total": "Toplam"
+    },
+    "perMonth": "/ay",
+    "perYear": "/yıl",
+    "due": "Vadesi geldi",
+    "soon": "Yakında",
+    "toast": {
+      "markedPaid": "\"{{label}}\" ödendi olarak işaretlendi.",
+      "skipped": "\"{{label}}\" atlandı."
+    }
+  },
+  "import": {
+    "title": "CSV İçe Aktar",
+    "idle": {
+      "title": "İşlemleri içe aktar",
+      "body": "Bir format seçin, ardından dosya belirleyin. Onaylamadan önce kategoriler ve hesaplar atanabilir.",
+      "chooseFile": "Dosya Seç…",
+      "noAccount": "İçe aktarmadan önce en az bir hesap oluşturmanız gerekiyor."
+    },
+    "preview": {
+      "info": "<bold>{{count}}</bold> satır bulundu. Hesap ve kategorileri atayın, ardından onaylayın.",
+      "startOver": "← Başa dön",
+      "importing": "İçe aktarılıyor…",
+      "importCount": "{{count}} işlemi içe aktar"
+    },
+    "done": {
+      "title": "İçe aktarma tamamlandı!",
+      "body_one": "{{count}} işlem başarıyla eklendi.",
+      "body_other": "{{count}} işlem başarıyla eklendi.",
+      "importAnother": "Başka Bir Dosya İçe Aktar"
+    },
+    "table": {
+      "date": "Tarih",
+      "payee": "Alacaklı / Açıklama",
+      "amount": "Tutar",
+      "account": "Hesap",
+      "category": "Kategori"
+    },
+    "formats": {
+      "generic": { "label": "Genel CSV", "desc": "Sütunları otomatik algıla (tarih, alacaklı, tutar)" },
+      "ynab":    { "label": "YNAB CSV",  "desc": "YNAB dışa aktarma formatı (Giriş/Çıkış sütunları)" },
+      "qif":     { "label": "GnuCash QIF", "desc": "Quicken Interchange Format (.qif)" }
+    }
+  },
+  "onboarding": {
+    "tagline": "Kişisel finans takip uygulamanız",
+    "chooseLanguage": "Başlamak için dilinizi seçin",
+    "getStarted": "Başla"
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "export": {
+      "title": "Veriyi Dışa Aktar",
+      "csv": "İşlemleri CSV olarak dışa aktar",
+      "json": "Tüm veriyi JSON olarak dışa aktar"
+    },
+    "database": {
+      "title": "Veritabanı Dosyası",
+      "hint": "Verileriniz tek bir SQLite dosyasında saklanır. İstediğiniz yere taşıyabilirsiniz — Dropbox klasörü, iCloud Drive vb.",
+      "copy": "Kopyala",
+      "copyTitle": "Yolu kopyala",
+      "move": "Taşı…",
+      "moving": "Kopyalanıyor…"
+    },
+    "displayCurrency": {
+      "title": "Varsayılan Görüntüleme Para Birimi",
+      "hint": "Hesap bazlı para birimi olmadığında kullanılır (örn. net değer özeti)."
+    },
+    "exchangeRates": {
+      "title": "Döviz Kurları",
+      "hint": "Çoklu para birimli hesapların Net Değer bölümünde temel para birimine dönüştürülmesi için manuel kur tanımlayın.",
+      "empty": "Henüz döviz kuru tanımlanmadı.",
+      "addModal": {
+        "title": "Döviz Kuru Ekle",
+        "hint": "Kaynak para biriminin 1 birimi kaç <bold>{{to}}</bold> ediyor? Örnek: 1 EUR = 1,08 USD → Kaynak: EUR, Hedef: USD, Kur: 1.08",
+        "fromLabel": "Kaynak para birimi *",
+        "toLabel": "Hedef para birimi *",
+        "rateLabel": "Kur *",
+        "ratePlaceholder": "1.08",
+        "saveButton": "Kuru Kaydet",
+        "invalidFrom": "Bir kaynak para birimi seçin.",
+        "invalidRate": "Pozitif bir kur girin."
+      },
+      "toast": {
+        "saved": "Döviz kuru kaydedildi.",
+        "removed": "Döviz kuru kaldırıldı."
+      }
+    },
+    "categories": {
+      "title": "Kategoriler",
+      "subOf": "{{parent}} alt kategorisi",
+      "addModal": {
+        "addTitle": "Kategori Ekle",
+        "editTitle": "Kategoriyi Düzenle",
+        "nameLabel": "Ad *",
+        "namePlaceholder": "örn. Spor & Fitness",
+        "nameRequired": "Kategori adı zorunludur.",
+        "colorLabel": "Renk",
+        "parentLabel": "Üst kategori (isteğe bağlı)",
+        "parentNone": "Yok (üst düzey)",
+        "saveButton": "Kategori Ekle"
+      },
+      "deleteModal": {
+        "title": "Kategoriyi Sil",
+        "confirm": "<bold>{{name}}</bold> silinsin mi? Mevcut işlemler \"kategorisiz\" olarak tutulacak."
+      },
+      "toast": {
+        "added": "Kategori eklendi.",
+        "updated": "Kategori güncellendi.",
+        "deleted": "Kategori silindi."
+      }
+    },
+    "recurring": {
+      "title": "Düzenli Ödemeler",
+      "empty": "Henüz düzenli ödeme yok.",
+      "due": "Vadesi geldi",
+      "dueSoon": "Vadesi yaklaşıyor",
+      "frequencyNext": "{{frequency}} · sonraki: {{date}} · {{account}}",
+      "markPaidTooltip": "Bu kalem için işlem kaydet ve vade tarihini ilerlet",
+      "skipTooltip": "Bu tekrarı atla ve işlem kaydetmeden vade tarihini ilerlet",
+      "editTooltip": "Düzenli ödemeyi düzenle",
+      "deleteTooltip": "Düzenli ödemeyi sil",
+      "addModal": {
+        "addTitle": "Düzenli Ödeme Ekle",
+        "editTitle": "Düzenli Ödemeyi Düzenle",
+        "labelLabel": "Etiket *",
+        "labelPlaceholder": "örn. Netflix, Kira",
+        "labelRequired": "Etiket zorunludur.",
+        "amountLabel": "Tutar *",
+        "amountPlaceholder": "−15.99",
+        "amountInvalid": "Geçerli bir tutar girin.",
+        "frequencyLabel": "Sıklık *",
+        "accountLabel": "Hesap *",
+        "accountRequired": "Bir hesap seçin.",
+        "nextDueLabel": "Sonraki Vade Tarihi *",
+        "categoryLabel": "Kategori",
+        "saveButton": "Düzenli Ödeme Ekle"
+      },
+      "deleteModal": {
+        "title": "Düzenli Ödemeyi Sil",
+        "confirm": "<bold>{{label}}</bold> silinsin mi? Bu, planı durdurur; ancak daha önce oluşturulmuş işlemler korunur."
+      },
+      "toast": {
+        "markedPaid": "\"{{label}}\" ödendi olarak işaretlendi.",
+        "skipped": "\"{{label}}\" atlandı — sonraki tarih güncellendi.",
+        "added": "Düzenli ödeme eklendi.",
+        "updated": "Düzenli ödeme güncellendi.",
+        "deleted": "Düzenli ödeme silindi."
+      }
+    },
+    "language": {
+      "title": "Dil",
+      "hint": "Arayüz dilini seçin.",
+      "changed": "Dil {{label}} olarak değiştirildi."
+    },
+    "toast": {
+      "csvExported": "CSV başarıyla dışa aktarıldı.",
+      "jsonExported": "JSON başarıyla dışa aktarıldı.",
+      "dbMoved": "Veritabanı kopyalandı. Yeni konumu kullanmak için uygulamayı yeniden başlatın.",
+      "currencySet": "Görüntüleme para birimi {{code}} olarak ayarlandı."
+    }
+  },
+  "categoryDefaults": [
+    "Yiyecek & İçecek",
+    "Ulaşım",
+    "Konut",
+    "Sağlık",
+    "Eğlence",
+    "Alışveriş",
+    "Eğitim",
+    "Faturalar",
+    "Tasarruf",
+    "Gelir",
+    "Diğer"
+  ],
+  "frequencies": {
+    "daily": "Günlük",
+    "weekly": "Haftalık",
+    "monthly": "Aylık",
+    "yearly": "Yıllık"
+  }
+}

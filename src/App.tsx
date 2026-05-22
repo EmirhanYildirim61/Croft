@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import Sidebar, { type Screen } from './components/Sidebar';
 import TopBar from './components/TopBar';
 import AccountsScreen from './screens/AccountsScreen';
@@ -9,6 +10,7 @@ import NetWorthScreen from './screens/NetWorthScreen';
 import SubscriptionsScreen from './screens/SubscriptionsScreen';
 import ImportScreen from './screens/ImportScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import OnboardingScreen, { ONBOARDING_KEY } from './screens/OnboardingScreen';
 import { ToastProvider } from './context/toast';
 import { api } from './lib/tauri';
 import { currentYearMonth } from './lib/format';
@@ -37,6 +39,10 @@ function convertCents(
 }
 
 export default function App() {
+  const { t } = useTranslation();
+  const [onboardingDone, setOnboardingDone] = useState(
+    () => !!localStorage.getItem(ONBOARDING_KEY),
+  );
   const [screen, setScreen] = useState<Screen>('accounts');
   const [month, setMonth] = useState(currentYearMonth());
   const [netWorthCents, setNetWorthCents] = useState(0);
@@ -123,6 +129,14 @@ export default function App() {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
+  if (!onboardingDone) {
+    return (
+      <ToastProvider>
+        <OnboardingScreen onComplete={() => setOnboardingDone(true)} />
+      </ToastProvider>
+    );
+  }
+
   return (
     <ToastProvider>
       <div className="flex h-screen overflow-hidden bg-slate-50" style={{ minWidth: 900 }}>
@@ -139,15 +153,15 @@ export default function App() {
               <span className="text-amber-500">⚠</span>
               <span className="flex-1">
                 {localStorage.getItem(BACKUP_DATE_KEY)
-                  ? `It's been ${daysSince(localStorage.getItem(BACKUP_DATE_KEY)!)} days since your last backup.`
-                  : "You haven't backed up your data yet."}
-                {' '}Back up your SQLite file or export your data regularly.
+                  ? t('backup.daysSince', { count: daysSince(localStorage.getItem(BACKUP_DATE_KEY)!) })
+                  : t('backup.neverBacked')}
+                {t('backup.reminder')}
               </span>
               <button
                 onClick={() => dismissBackupBanner(true)}
                 className="text-xs font-medium underline underline-offset-2 hover:text-amber-900"
               >
-                Export now
+                {t('backup.exportNow')}
               </button>
               <button
                 onClick={() => {
@@ -155,7 +169,7 @@ export default function App() {
                   dismissBackupBanner();
                 }}
                 className="text-xs text-amber-600 hover:text-amber-800 ml-1"
-                title="Dismiss for 30 days"
+                title={t('backup.exportNow')}
               >
                 ✕
               </button>

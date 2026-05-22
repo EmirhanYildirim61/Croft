@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-See [ROADMAP.md](ROADMAP.md) for the full feature plan and current phase status. Phases 1A–2, the Phase 3 features that are in scope (multi-currency, subscriptions tracker, backup reminder), and the Phase 2.5 QoL pass are complete. The only remaining items are out-of-scope Phase 3 ones (plugin/theme system, mobile) and the launch checklist.
+See [ROADMAP.md](ROADMAP.md) for the full feature plan and current phase status. Phases 1A–2, the Phase 3 features that are in scope (multi-currency, subscriptions tracker, backup reminder, localisation / first-run onboarding), and the Phase 2.5 QoL pass are complete. The only remaining items are out-of-scope Phase 3 ones (plugin/theme system, mobile) and the launch checklist.
 
 ## Commands
 
@@ -29,13 +29,22 @@ This is a **local-first, server-less** desktop app: no backend server, no networ
 
 ```
 src/                         React + TypeScript UI (Vite, Tailwind CSS v4)
-  App.tsx                    Root: shared state (accounts, categories), screen routing
+  App.tsx                    Root: shared state (accounts, categories), screen routing,
+                             first-run onboarding gate
+  main.tsx                   ReactDOM bootstrap; imports `./lib/i18n` for side-effects
   types.ts                   Shared TypeScript interfaces mirroring Rust models
   lib/tauri.ts               Single API object — all invoke() calls live here
   lib/format.ts              Currency formatting and YYYY-MM date helpers
+  lib/i18n.ts                i18next + react-i18next init; bundles all locales
+  lib/languages.ts           Language registry (code, label, flag path, dir)
+  locales/                   Translation JSON per locale (en, tr, es, fr, br, pt, de, ru,
+                             ar, hi, ja, zh-CN, zh-TW)
   context/toast.tsx          useToast() hook for error/success notifications
   components/                Sidebar, TopBar, Modal (reusable shell components)
-  screens/                   One file per navigation screen
+  screens/                   One file per navigation screen — includes OnboardingScreen
+                             (first launch only)
+
+public/flags/                Flag SVGs referenced by `lib/languages.ts`
 
 src-tauri/
   src/lib.rs                 Tauri setup, DB init, command registration
@@ -77,6 +86,16 @@ All data access goes through **Tauri commands** (Rust functions tagged `#[tauri:
 ### Tailwind CSS
 
 Version 4, configured via the `@tailwindcss/vite` plugin in `vite.config.ts`. No `tailwind.config.js` needed. The import lives in `src/App.css`.
+
+### Localisation (i18n)
+
+`src/lib/i18n.ts` initialises `i18next` + `react-i18next` with every locale JSON statically imported from `src/locales/`. Resources are bundled at build time — no runtime fetch. The active language is read from `localStorage.language` on init and falls back to `en`.
+
+`src/lib/languages.ts` is the single source of truth for the language list (code, display label, flag path under `public/flags/`, optional `dir: 'rtl'`). Adding a language means: (1) drop `src/locales/<code>.json`, (2) drop `public/flags/<code>.svg`, (3) register it in `LANGUAGES`, (4) import + map it in `i18n.ts`. Document direction is auto-applied via the `languageChanged` listener in `i18n.ts`.
+
+### First-run onboarding
+
+`App.tsx` checks `localStorage.onboarding_complete` and renders `OnboardingScreen` until set. The onboarding screen lets the user pick a language, then calls the `rename_default_categories` Tauri command (exposed as `api.renameDefaultCategories` in `src/lib/tauri.ts`) to translate the seeded categories. After that it writes `onboarding_complete=1` and the main app mounts.
 
 ## Key constraints
 

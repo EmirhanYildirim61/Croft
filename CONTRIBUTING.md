@@ -25,9 +25,12 @@ The app window will open automatically. Hot-reload works for the React frontend;
 
 ```
 src/                     React + TypeScript frontend (Vite, Tailwind CSS v4)
-src/screens/             One file per navigation screen
+src/screens/             One file per navigation screen (incl. OnboardingScreen)
 src/components/          Sidebar, TopBar, Modal (shared shell components)
-src/lib/                 tauri.ts (all IPC calls), format.ts (currency helpers)
+src/lib/                 tauri.ts (all IPC calls), format.ts (currency helpers),
+                         i18n.ts (i18next init), languages.ts (language registry)
+src/locales/             Translation JSON per language (en, tr, es, fr, …)
+public/flags/            Flag SVGs used by the language switcher
 src-tauri/src/           Rust backend
 src-tauri/src/commands/  One module per domain (accounts, transactions, budgets, …)
 src-tauri/migrations/    SQLx migration files (append-only, versioned SQL)
@@ -46,6 +49,16 @@ src-tauri/migrations/    SQLx migration files (append-only, versioned SQL)
 - Add a new default category to the seed list (`src-tauri/src/db.rs`)
 - Improve an empty-state message in the UI (`src/screens/`)
 - Fix a typo in README or docs
+- Add or improve a translation in `src/locales/` (see "Adding a language" below)
+
+## Adding a language
+
+1. Copy `src/locales/en.json` to `src/locales/<code>.json` and translate the values.
+2. Drop a flag SVG at `public/flags/<code>.svg` (the existing ones are ~roughly 16:11).
+3. Add an entry to `LANGUAGES` in `src/lib/languages.ts` — set `dir: 'rtl'` if applicable.
+4. Import the JSON in `src/lib/i18n.ts` and add it to the `resources` map.
+5. Verify the first-run onboarding picker shows your flag and that
+   `categoryDefaults` localises the seeded categories correctly.
 
 ## Pull Requests
 

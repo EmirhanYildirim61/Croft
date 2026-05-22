@@ -12,6 +12,14 @@ dist
 dist-ssr
 *.local
 
+# Local SQLite databases (dev / accidental copies — real DB lives in app_data_dir)
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+db_location.cfg
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

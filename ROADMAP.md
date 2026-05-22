@@ -2,6 +2,11 @@
 
 > A free, open-source, server-less desktop budget tracker built with Tauri + React + SQLite.
 > Work through each task one at a time. Check off items as you go.
+>
+> **Current release:** [v0.1.1 pre-release](https://github.com/EmirhanYildirim61/Croft/releases/tag/v0.1.1).
+> Phases 1A–2, the in-scope Phase 3 items (multi-currency, subscription tracker, backup
+> reminder, i18n + onboarding), and the Phase 2.5 QoL pass are all complete. The remaining
+> items are the out-of-scope Phase 3 ones (plugin/theme system, mobile) and the launch checklist.
 
 ---
 
@@ -171,6 +176,13 @@
 - [x] **Subscription tracker module**
   - [x] Dedicated panel listing all recurring subscriptions
   - [x] Annual cost summary ("you're spending X/year on subscriptions")
+- [x] **Localisation / i18n**
+  - [x] i18next + react-i18next wired up in `src/lib/i18n.ts`
+  - [x] 13 bundled languages: en, tr, es, fr, br, pt, de, ru, ar (RTL), hi, ja, zh-CN, zh-TW
+  - [x] Document direction auto-syncs with language (`dir="rtl"` for Arabic)
+  - [x] Language registry in `src/lib/languages.ts`; flag SVGs in `public/flags/`
+  - [x] First-run `OnboardingScreen` for language pick; `renameDefaultCategories` Tauri command localises the seeded categories
+  - [x] Language switcher in Settings; choice persisted in `localStorage` under `language`
 - [ ] **Plugin / theme system** (if community demand warrants it)
 - [ ] **Mobile app** (Tauri 2.0 iOS/Android — post-MVP)
 - [x] **Automatic backup reminder** (prompt every 30 days to back up SQLite file)

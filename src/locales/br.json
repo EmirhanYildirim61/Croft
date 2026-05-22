@@ -1,0 +1,376 @@
+{
+  "common": {
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "save": "Salvar alterações",
+    "saving": "Salvando…",
+    "loading": "Carregando…",
+    "remove": "Remover",
+    "skip": "Pular",
+    "markPaid": "Marcar como pago",
+    "add": "+ Adicionar",
+    "none": "Nenhum"
+  },
+  "nav": {
+    "accounts": "Contas",
+    "transactions": "Transações",
+    "budget": "Orçamento",
+    "reports": "Relatórios",
+    "netWorth": "Patrimônio líquido",
+    "subscriptions": "Assinaturas",
+    "import": "Importar CSV",
+    "settings": "Configurações"
+  },
+  "topBar": {
+    "netWorth": "Patrimônio líquido",
+    "prevMonth": "Mês anterior",
+    "nextMonth": "Próximo mês"
+  },
+  "backup": {
+    "daysSince": "Faz {{count}} dias desde o último backup.",
+    "neverBacked": "Você ainda não fez backup dos seus dados.",
+    "reminder": " Faça backup do seu arquivo SQLite ou exporte seus dados regularmente.",
+    "exportNow": "Exportar agora"
+  },
+  "accounts": {
+    "title": "Contas",
+    "addButton": "+ Adicionar conta",
+    "emptyTitle": "Nenhuma conta ainda",
+    "emptyBody": "Adicione sua primeira conta para começar a controlar suas finanças.",
+    "deleteTitle": "Excluir conta",
+    "deleteConfirm": "Excluir <bold>{{name}}</bold> e todas as suas transações? Esta ação não pode ser desfeita.",
+    "initialBalance": "Inicial: {{amount}} · {{currency}}",
+    "deleteTooltip": "Excluir conta",
+    "addModal": {
+      "title": "Adicionar conta",
+      "nameLabel": "Nome *",
+      "namePlaceholder": "ex.: Conta corrente Bradesco",
+      "nameRequired": "O nome da conta é obrigatório.",
+      "typeLabel": "Tipo *",
+      "currencyLabel": "Moeda",
+      "balanceLabel": "Saldo inicial",
+      "balanceInvalid": "Insira um número válido.",
+      "saveButton": "Adicionar conta"
+    },
+    "types": {
+      "bank": "Banco",
+      "credit": "Cartão de crédito",
+      "cash": "Dinheiro",
+      "savings": "Poupança"
+    },
+    "toast": {
+      "created": "Conta criada.",
+      "deleted": "Conta excluída."
+    }
+  },
+  "transactions": {
+    "title": "Transações",
+    "addButton": "+ Adicionar transação",
+    "emptyText": "Nenhuma transação encontrada.",
+    "addFirst": "Adicione sua primeira transação",
+    "filterAllAccounts": "Todas as contas",
+    "filterAllCategories": "Todas as categorias",
+    "nSelected": "{{count}} selecionado(s)",
+    "clearSelection": "Limpar seleção",
+    "dateRange": "Intervalo de datas",
+    "searchPlaceholder": "Buscar beneficiário, nota…",
+    "noPayee": "Sem beneficiário",
+    "thisTransaction": "esta transação",
+    "table": {
+      "date": "Data",
+      "payee": "Beneficiário",
+      "category": "Categoria",
+      "account": "Conta",
+      "amount": "Valor"
+    },
+    "form": {
+      "addTitle": "Adicionar transação",
+      "editTitle": "Editar transação",
+      "typeLabel": "Tipo *",
+      "expense": "Despesa",
+      "income": "Receita",
+      "dateLabel": "Data *",
+      "amountLabel": "Valor *",
+      "payeeLabel": "Beneficiário *",
+      "accountLabel": "Conta *",
+      "categoryLabel": "Categoria",
+      "noteLabel": "Nota",
+      "notePlaceholder": "Nota opcional",
+      "selectAccount": "Selecionar…",
+      "payeePlaceholder": "ex.: Supermercado Pão de Açúcar",
+      "dateRequired": "A data é obrigatória.",
+      "dateInvalid": "Insira uma data válida (AAAA-MM-DD).",
+      "amountRequired": "O valor é obrigatório.",
+      "amountInvalid": "Insira um número válido.",
+      "payeeRequired": "O beneficiário é obrigatório.",
+      "accountRequired": "Selecione uma conta.",
+      "saveButton": "Adicionar transação"
+    },
+    "deleteTitle": "Excluir transação",
+    "deleteConfirm": "Excluir <bold>{{payee}}</bold> ({{amount}})? Esta ação não pode ser desfeita.",
+    "toast": {
+      "added": "Transação adicionada.",
+      "updated": "Transação atualizada.",
+      "deleted": "Transação excluída."
+    }
+  },
+  "budget": {
+    "title": "Orçamento",
+    "hint": "Clique em um valor de orçamento para editá-lo",
+    "editTooltip": "Clique para editar o orçamento",
+    "budgetInvalid": "Insira um valor de orçamento válido.",
+    "summary": {
+      "budgeted": "Total orçado",
+      "spent": "Total gasto",
+      "remaining": "Restante"
+    },
+    "table": {
+      "category": "Categoria",
+      "budgeted": "Orçado",
+      "spent": "Gasto",
+      "remaining": "Restante",
+      "progress": "Progresso"
+    }
+  },
+  "reports": {
+    "title": "Relatórios",
+    "monthly": "Mensal",
+    "dateRange": "Intervalo de datas",
+    "compareMonths": "Comparar meses",
+    "noSpending": "Sem dados de gastos para este mês.",
+    "noData": "Sem dados ainda.",
+    "noSpendingRange": "Sem dados de gastos para este intervalo.",
+    "noSpendingMonths": "Sem dados de gastos para os meses selecionados.",
+    "spendingByCategory": "Gastos por categoria — {{month}}",
+    "netWorthLast12": "Patrimônio líquido — Últimos 12 meses",
+    "netWorthTrend": "Tendência do patrimônio — Últimos 6 meses",
+    "netWorthLabel": "Patrimônio líquido",
+    "spendingByCategoryRange": "Gastos por categoria — {{from}} → {{to}}",
+    "from": "De",
+    "to": "Até",
+    "apply": "Aplicar",
+    "monthA": "Mês A",
+    "monthB": "Mês B",
+    "vs": "vs.",
+    "compare": "Comparar",
+    "table": {
+      "category": "Categoria",
+      "spent": "Gasto",
+      "total": "Total"
+    }
+  },
+  "netWorth": {
+    "title": "Patrimônio líquido",
+    "totalNetWorth": "Patrimônio líquido total",
+    "inCurrency": "em {{currency}}",
+    "vsLastMonth": "vs. mês anterior",
+    "accountBreakdown": "Detalhamento por conta",
+    "noAccounts": "Nenhuma conta ainda.",
+    "netWorthLast12": "Patrimônio líquido — Últimos 12 meses",
+    "noData": "Sem dados ainda.",
+    "table": {
+      "account": "Conta",
+      "type": "Tipo",
+      "currentBalance": "Saldo atual",
+      "vsLastMonth": "vs. mês anterior",
+      "total": "Total"
+    }
+  },
+  "subscriptions": {
+    "title": "Assinaturas",
+    "annualCost": "Custo anual",
+    "monthlyAverage": "Média mensal",
+    "estimatedFrom": "estimado com base nos itens recorrentes",
+    "activeCount_one": "{{count}} assinatura ativa",
+    "activeCount_other": "{{count}} assinaturas ativas",
+    "allSubscriptions": "Todas as assinaturas",
+    "empty": "Nenhum item recorrente de despesa ainda. Adicione-os em Configurações → Itens recorrentes.",
+    "table": {
+      "name": "Nome",
+      "frequency": "Frequência",
+      "amount": "Valor",
+      "annualCost": "Custo anual",
+      "nextDue": "Próximo vencimento",
+      "total": "Total"
+    },
+    "perMonth": "/mês",
+    "perYear": "/ano",
+    "due": "Vence",
+    "soon": "Em breve",
+    "toast": {
+      "markedPaid": "\"{{label}}\" marcado como pago.",
+      "skipped": "\"{{label}}\" ignorado."
+    }
+  },
+  "import": {
+    "title": "Importar CSV",
+    "idle": {
+      "title": "Importar transações",
+      "body": "Escolha um formato e selecione um arquivo. Contas e categorias podem ser atribuídas antes de confirmar.",
+      "chooseFile": "Escolher arquivo…",
+      "noAccount": "Você precisa de pelo menos uma conta antes de importar."
+    },
+    "preview": {
+      "info": "Encontradas <bold>{{count}}</bold> linhas. Atribua contas e categorias e confirme.",
+      "startOver": "← Recomeçar",
+      "importing": "Importando…",
+      "importCount": "Importar {{count}} transações"
+    },
+    "done": {
+      "title": "Importação concluída!",
+      "body_one": "{{count}} transação adicionada com sucesso.",
+      "body_other": "{{count}} transações adicionadas com sucesso.",
+      "importAnother": "Importar outro arquivo"
+    },
+    "table": {
+      "date": "Data",
+      "payee": "Beneficiário / Descrição",
+      "amount": "Valor",
+      "account": "Conta",
+      "category": "Categoria"
+    },
+    "formats": {
+      "generic": { "label": "CSV genérico",   "desc": "Detectar colunas automaticamente (data, beneficiário, valor)" },
+      "ynab":    { "label": "CSV do YNAB",    "desc": "Formato de exportação do YNAB (colunas Entrada/Saída)" },
+      "qif":     { "label": "GnuCash QIF",    "desc": "Formato Quicken Interchange (.qif)" }
+    }
+  },
+  "onboarding": {
+    "tagline": "Seu controle financeiro pessoal",
+    "chooseLanguage": "Escolha seu idioma para começar",
+    "getStarted": "Começar"
+  },
+  "settings": {
+    "title": "Configurações",
+    "export": {
+      "title": "Exportar dados",
+      "csv": "Exportar transações como CSV",
+      "json": "Exportar todos os dados como JSON"
+    },
+    "database": {
+      "title": "Arquivo do banco de dados",
+      "hint": "Seus dados são armazenados em um único arquivo SQLite. Mova-o para onde quiser — uma pasta do Dropbox, iCloud Drive, etc.",
+      "copy": "Copiar",
+      "copyTitle": "Copiar caminho",
+      "move": "Mover…",
+      "moving": "Copiando…"
+    },
+    "displayCurrency": {
+      "title": "Moeda de exibição padrão",
+      "hint": "Usada quando não há moeda definida por conta (ex.: resumo do patrimônio líquido)."
+    },
+    "exchangeRates": {
+      "title": "Taxas de câmbio",
+      "hint": "Defina taxas manuais para que contas em múltiplas moedas sejam convertidas para sua moeda base no Patrimônio líquido.",
+      "empty": "Nenhuma taxa de câmbio definida ainda.",
+      "addModal": {
+        "title": "Adicionar taxa de câmbio",
+        "hint": "Informe quantas unidades de <bold>{{to}}</bold> equivalem a 1 unidade da moeda de origem. Exemplo: 1 EUR = 1,08 USD → De: EUR, Para: USD, Taxa: 1,08",
+        "fromLabel": "Moeda de origem *",
+        "toLabel": "Moeda de destino *",
+        "rateLabel": "Taxa *",
+        "ratePlaceholder": "1,08",
+        "saveButton": "Salvar taxa",
+        "invalidFrom": "Selecione uma moeda de origem.",
+        "invalidRate": "Insira uma taxa positiva."
+      },
+      "toast": {
+        "saved": "Taxa de câmbio salva.",
+        "removed": "Taxa de câmbio removida."
+      }
+    },
+    "categories": {
+      "title": "Categorias",
+      "subOf": "subcategoria de {{parent}}",
+      "addModal": {
+        "addTitle": "Adicionar categoria",
+        "editTitle": "Editar categoria",
+        "nameLabel": "Nome *",
+        "namePlaceholder": "ex.: Academia e esportes",
+        "nameRequired": "O nome da categoria é obrigatório.",
+        "colorLabel": "Cor",
+        "parentLabel": "Categoria pai (opcional)",
+        "parentNone": "Nenhuma (nível superior)",
+        "saveButton": "Adicionar categoria"
+      },
+      "deleteModal": {
+        "title": "Excluir categoria",
+        "confirm": "Excluir <bold>{{name}}</bold>? As transações existentes manterão a categoria como \"sem categoria\"."
+      },
+      "toast": {
+        "added": "Categoria adicionada.",
+        "updated": "Categoria atualizada.",
+        "deleted": "Categoria excluída."
+      }
+    },
+    "recurring": {
+      "title": "Itens recorrentes",
+      "empty": "Nenhum item recorrente ainda.",
+      "due": "Vence",
+      "dueSoon": "Vence em breve",
+      "frequencyNext": "{{frequency}} · próximo: {{date}} · {{account}}",
+      "markPaidTooltip": "Registrar uma transação para este item e avançar a data de vencimento",
+      "skipTooltip": "Pular esta ocorrência e avançar a data de vencimento sem registrar uma transação",
+      "editTooltip": "Editar item recorrente",
+      "deleteTooltip": "Excluir item recorrente",
+      "addModal": {
+        "addTitle": "Adicionar item recorrente",
+        "editTitle": "Editar item recorrente",
+        "labelLabel": "Rótulo *",
+        "labelPlaceholder": "ex.: Netflix, Aluguel",
+        "labelRequired": "O rótulo é obrigatório.",
+        "amountLabel": "Valor *",
+        "amountPlaceholder": "−15,99",
+        "amountInvalid": "Insira um valor válido.",
+        "frequencyLabel": "Frequência *",
+        "accountLabel": "Conta *",
+        "accountRequired": "Selecione uma conta.",
+        "nextDueLabel": "Próxima data de vencimento *",
+        "categoryLabel": "Categoria",
+        "saveButton": "Adicionar item recorrente"
+      },
+      "deleteModal": {
+        "title": "Excluir item recorrente",
+        "confirm": "Excluir <bold>{{label}}</bold>? Isso encerra o agendamento, mas mantém as transações já geradas para este item."
+      },
+      "toast": {
+        "markedPaid": "\"{{label}}\" marcado como pago.",
+        "skipped": "\"{{label}}\" ignorado — próxima data avançada.",
+        "added": "Item recorrente adicionado.",
+        "updated": "Item recorrente atualizado.",
+        "deleted": "Item recorrente excluído."
+      }
+    },
+    "language": {
+      "title": "Idioma",
+      "hint": "Escolha o idioma da interface.",
+      "changed": "Idioma alterado para {{label}}."
+    },
+    "toast": {
+      "csvExported": "CSV exportado com sucesso.",
+      "jsonExported": "JSON exportado com sucesso.",
+      "dbMoved": "Banco de dados copiado. Reinicie o aplicativo para usar o novo local.",
+      "currencySet": "Moeda de exibição definida como {{code}}."
+    }
+  },
+  "categoryDefaults": [
+    "Alimentação",
+    "Transporte",
+    "Moradia",
+    "Saúde",
+    "Entretenimento",
+    "Compras",
+    "Educação",
+    "Serviços públicos",
+    "Poupança",
+    "Receita",
+    "Outros"
+  ],
+  "frequencies": {
+    "daily": "Diariamente",
+    "weekly": "Semanalmente",
+    "monthly": "Mensalmente",
+    "yearly": "Anualmente"
+  }
+}

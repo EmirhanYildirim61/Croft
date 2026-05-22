@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { formatCents, formatMonth, prevMonth, nextMonth } from '../lib/format';
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export default function TopBar({ month, onMonthChange, netWorthCents, currency = 'USD' }: Props) {
+  const { t } = useTranslation();
   const isPositive = netWorthCents >= 0;
 
   return (
@@ -16,7 +18,7 @@ export default function TopBar({ month, onMonthChange, netWorthCents, currency =
         <button
           onClick={() => onMonthChange(prevMonth(month))}
           className="p-1 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-800"
-          aria-label="Previous month"
+          aria-label={t('topBar.prevMonth')}
         >
           ‹
         </button>
@@ -26,13 +28,13 @@ export default function TopBar({ month, onMonthChange, netWorthCents, currency =
         <button
           onClick={() => onMonthChange(nextMonth(month))}
           className="p-1 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-800"
-          aria-label="Next month"
+          aria-label={t('topBar.nextMonth')}
         >
           ›
         </button>
       </div>
       <div className="flex items-center gap-2 text-sm">
-        <span className="text-slate-500">Net worth</span>
+        <span className="text-slate-500">{t('topBar.netWorth')}</span>
         <span className={`font-semibold ${isPositive ? 'text-emerald-600' : 'text-red-600'}`}>
           {formatCents(netWorthCents, currency)}
         </span>

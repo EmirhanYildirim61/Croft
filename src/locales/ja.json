@@ -1,0 +1,376 @@
+{
+  "common": {
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "save": "変更を保存",
+    "saving": "保存中…",
+    "loading": "読み込み中…",
+    "remove": "削除",
+    "skip": "スキップ",
+    "markPaid": "支払い済みにする",
+    "add": "+ 追加",
+    "none": "なし"
+  },
+  "nav": {
+    "accounts": "口座",
+    "transactions": "取引",
+    "budget": "予算",
+    "reports": "レポート",
+    "netWorth": "純資産",
+    "subscriptions": "サブスクリプション",
+    "import": "CSVインポート",
+    "settings": "設定"
+  },
+  "topBar": {
+    "netWorth": "純資産",
+    "prevMonth": "前の月",
+    "nextMonth": "次の月"
+  },
+  "backup": {
+    "daysSince": "前回のバックアップから{{count}}日が経過しています。",
+    "neverBacked": "まだデータのバックアップが行われていません。",
+    "reminder": " SQLiteファイルのバックアップ、またはデータのエクスポートを定期的に行ってください。",
+    "exportNow": "今すぐエクスポート"
+  },
+  "accounts": {
+    "title": "口座",
+    "addButton": "+ 口座を追加",
+    "emptyTitle": "口座がありません",
+    "emptyBody": "最初の口座を追加して、家計の管理を始めましょう。",
+    "deleteTitle": "口座を削除",
+    "deleteConfirm": "<bold>{{name}}</bold> とそのすべての取引を削除しますか？この操作は元に戻せません。",
+    "initialBalance": "初期残高：{{amount}} · {{currency}}",
+    "deleteTooltip": "口座を削除",
+    "addModal": {
+      "title": "口座を追加",
+      "nameLabel": "名前 *",
+      "namePlaceholder": "例：三菱UFJ銀行 普通預金",
+      "nameRequired": "口座名は必須です。",
+      "typeLabel": "種類 *",
+      "currencyLabel": "通貨",
+      "balanceLabel": "初期残高",
+      "balanceInvalid": "有効な数値を入力してください。",
+      "saveButton": "口座を追加"
+    },
+    "types": {
+      "bank": "銀行",
+      "credit": "クレジットカード",
+      "cash": "現金",
+      "savings": "貯蓄"
+    },
+    "toast": {
+      "created": "口座を作成しました。",
+      "deleted": "口座を削除しました。"
+    }
+  },
+  "transactions": {
+    "title": "取引",
+    "addButton": "+ 取引を追加",
+    "emptyText": "取引が見つかりません。",
+    "addFirst": "最初の取引を追加",
+    "filterAllAccounts": "すべての口座",
+    "filterAllCategories": "すべてのカテゴリ",
+    "nSelected": "{{count}}件選択中",
+    "clearSelection": "選択を解除",
+    "dateRange": "期間",
+    "searchPlaceholder": "支払先・メモを検索…",
+    "noPayee": "支払先なし",
+    "thisTransaction": "この取引",
+    "table": {
+      "date": "日付",
+      "payee": "支払先",
+      "category": "カテゴリ",
+      "account": "口座",
+      "amount": "金額"
+    },
+    "form": {
+      "addTitle": "取引を追加",
+      "editTitle": "取引を編集",
+      "typeLabel": "種類 *",
+      "expense": "支出",
+      "income": "収入",
+      "dateLabel": "日付 *",
+      "amountLabel": "金額 *",
+      "payeeLabel": "支払先 *",
+      "accountLabel": "口座 *",
+      "categoryLabel": "カテゴリ",
+      "noteLabel": "メモ",
+      "notePlaceholder": "任意のメモ",
+      "selectAccount": "選択してください…",
+      "payeePlaceholder": "例：スーパーマーケット",
+      "dateRequired": "日付は必須です。",
+      "dateInvalid": "有効な日付を入力してください（YYYY-MM-DD）。",
+      "amountRequired": "金額は必須です。",
+      "amountInvalid": "有効な数値を入力してください。",
+      "payeeRequired": "支払先は必須です。",
+      "accountRequired": "口座を選択してください。",
+      "saveButton": "取引を追加"
+    },
+    "deleteTitle": "取引を削除",
+    "deleteConfirm": "<bold>{{payee}}</bold>（{{amount}}）を削除しますか？この操作は元に戻せません。",
+    "toast": {
+      "added": "取引を追加しました。",
+      "updated": "取引を更新しました。",
+      "deleted": "取引を削除しました。"
+    }
+  },
+  "budget": {
+    "title": "予算",
+    "hint": "予算金額をクリックして編集できます",
+    "editTooltip": "クリックして予算を編集",
+    "budgetInvalid": "有効な予算金額を入力してください。",
+    "summary": {
+      "budgeted": "予算合計",
+      "spent": "支出合計",
+      "remaining": "残り"
+    },
+    "table": {
+      "category": "カテゴリ",
+      "budgeted": "予算",
+      "spent": "支出",
+      "remaining": "残り",
+      "progress": "進捗"
+    }
+  },
+  "reports": {
+    "title": "レポート",
+    "monthly": "月別",
+    "dateRange": "期間",
+    "compareMonths": "月を比較",
+    "noSpending": "今月の支出データがありません。",
+    "noData": "データがありません。",
+    "noSpendingRange": "選択した期間の支出データがありません。",
+    "noSpendingMonths": "選択した月の支出データがありません。",
+    "spendingByCategory": "カテゴリ別支出 — {{month}}",
+    "netWorthLast12": "純資産 — 直近12か月",
+    "netWorthTrend": "純資産の推移 — 直近6か月",
+    "netWorthLabel": "純資産",
+    "spendingByCategoryRange": "カテゴリ別支出 — {{from}} → {{to}}",
+    "from": "開始",
+    "to": "終了",
+    "apply": "適用",
+    "monthA": "月A",
+    "monthB": "月B",
+    "vs": "vs.",
+    "compare": "比較",
+    "table": {
+      "category": "カテゴリ",
+      "spent": "支出",
+      "total": "合計"
+    }
+  },
+  "netWorth": {
+    "title": "純資産",
+    "totalNetWorth": "純資産合計",
+    "inCurrency": "{{currency}}建て",
+    "vsLastMonth": "先月比",
+    "accountBreakdown": "口座別内訳",
+    "noAccounts": "口座がありません。",
+    "netWorthLast12": "純資産 — 直近12か月",
+    "noData": "データがありません。",
+    "table": {
+      "account": "口座",
+      "type": "種類",
+      "currentBalance": "現在の残高",
+      "vsLastMonth": "先月比",
+      "total": "合計"
+    }
+  },
+  "subscriptions": {
+    "title": "サブスクリプション",
+    "annualCost": "年間費用",
+    "monthlyAverage": "月平均費用",
+    "estimatedFrom": "定期支払いから算出",
+    "activeCount_one": "有効なサブスクリプション{{count}}件",
+    "activeCount_other": "有効なサブスクリプション{{count}}件",
+    "allSubscriptions": "すべてのサブスクリプション",
+    "empty": "定期支出がまだありません。設定 → 定期支払いから追加してください。",
+    "table": {
+      "name": "名前",
+      "frequency": "頻度",
+      "amount": "金額",
+      "annualCost": "年間費用",
+      "nextDue": "次回支払日",
+      "total": "合計"
+    },
+    "perMonth": "/月",
+    "perYear": "/年",
+    "due": "支払い期限",
+    "soon": "もうすぐ",
+    "toast": {
+      "markedPaid": "「{{label}}」を支払い済みにしました。",
+      "skipped": "「{{label}}」をスキップしました。"
+    }
+  },
+  "import": {
+    "title": "CSVインポート",
+    "idle": {
+      "title": "取引をインポート",
+      "body": "フォーマットを選択してファイルを選んでください。確認前にカテゴリと口座を設定できます。",
+      "chooseFile": "ファイルを選択…",
+      "noAccount": "インポートの前に口座を1つ以上作成してください。"
+    },
+    "preview": {
+      "info": "<bold>{{count}}</bold>行が見つかりました。口座とカテゴリを設定して確認してください。",
+      "startOver": "← やり直す",
+      "importing": "インポート中…",
+      "importCount": "{{count}}件の取引をインポート"
+    },
+    "done": {
+      "title": "インポート完了！",
+      "body_one": "{{count}}件の取引を追加しました。",
+      "body_other": "{{count}}件の取引を追加しました。",
+      "importAnother": "別のファイルをインポート"
+    },
+    "table": {
+      "date": "日付",
+      "payee": "支払先 / 説明",
+      "amount": "金額",
+      "account": "口座",
+      "category": "カテゴリ"
+    },
+    "formats": {
+      "generic": { "label": "汎用CSV", "desc": "列を自動検出（日付・支払先・金額）" },
+      "ynab":    { "label": "YNAB CSV", "desc": "YNABエクスポート形式（収入/支出列）" },
+      "qif":     { "label": "GnuCash QIF", "desc": "Quickenインターチェンジ形式（.qif）" }
+    }
+  },
+  "onboarding": {
+    "tagline": "あなたの個人財務管理ツール",
+    "chooseLanguage": "言語を選択して始めましょう",
+    "getStarted": "始める"
+  },
+  "settings": {
+    "title": "設定",
+    "export": {
+      "title": "データをエクスポート",
+      "csv": "取引をCSVでエクスポート",
+      "json": "すべてのデータをJSONでエクスポート"
+    },
+    "database": {
+      "title": "データベースファイル",
+      "hint": "データは1つのSQLiteファイルに保存されます。Dropboxフォルダ、iCloud Driveなど、任意の場所に移動できます。",
+      "copy": "コピー",
+      "copyTitle": "パスをコピー",
+      "move": "移動…",
+      "moving": "コピー中…"
+    },
+    "displayCurrency": {
+      "title": "デフォルト表示通貨",
+      "hint": "口座ごとの通貨が設定されていない場合に使用されます（純資産サマリーなど）。"
+    },
+    "exchangeRates": {
+      "title": "為替レート",
+      "hint": "手動でレートを設定することで、複数通貨の口座を純資産で基準通貨に換算できます。",
+      "empty": "為替レートがまだ設定されていません。",
+      "addModal": {
+        "title": "為替レートを追加",
+        "hint": "基準通貨1単位に対する <bold>{{to}}</bold> の数量を入力してください。例：1 EUR = 1.08 USD → 元通貨：EUR、換算先：USD、レート：1.08",
+        "fromLabel": "元通貨 *",
+        "toLabel": "換算先通貨 *",
+        "rateLabel": "レート *",
+        "ratePlaceholder": "1.08",
+        "saveButton": "レートを保存",
+        "invalidFrom": "元通貨を選択してください。",
+        "invalidRate": "正の数値を入力してください。"
+      },
+      "toast": {
+        "saved": "為替レートを保存しました。",
+        "removed": "為替レートを削除しました。"
+      }
+    },
+    "categories": {
+      "title": "カテゴリ",
+      "subOf": "{{parent}} のサブカテゴリ",
+      "addModal": {
+        "addTitle": "カテゴリを追加",
+        "editTitle": "カテゴリを編集",
+        "nameLabel": "名前 *",
+        "namePlaceholder": "例：スポーツ・フィットネス",
+        "nameRequired": "カテゴリ名は必須です。",
+        "colorLabel": "色",
+        "parentLabel": "親カテゴリ（任意）",
+        "parentNone": "なし（最上位）",
+        "saveButton": "カテゴリを追加"
+      },
+      "deleteModal": {
+        "title": "カテゴリを削除",
+        "confirm": "<bold>{{name}}</bold> を削除しますか？既存の取引のカテゴリは「未分類」になります。"
+      },
+      "toast": {
+        "added": "カテゴリを追加しました。",
+        "updated": "カテゴリを更新しました。",
+        "deleted": "カテゴリを削除しました。"
+      }
+    },
+    "recurring": {
+      "title": "定期支払い",
+      "empty": "定期支払いがまだありません。",
+      "due": "支払い期限",
+      "dueSoon": "もうすぐ期限",
+      "frequencyNext": "{{frequency}} · 次回：{{date}} · {{account}}",
+      "markPaidTooltip": "この項目の取引を記録し、次回日付を更新する",
+      "skipTooltip": "今回をスキップして取引を記録せずに次回日付を更新する",
+      "editTooltip": "定期支払いを編集",
+      "deleteTooltip": "定期支払いを削除",
+      "addModal": {
+        "addTitle": "定期支払いを追加",
+        "editTitle": "定期支払いを編集",
+        "labelLabel": "ラベル *",
+        "labelPlaceholder": "例：Netflix、家賃",
+        "labelRequired": "ラベルは必須です。",
+        "amountLabel": "金額 *",
+        "amountPlaceholder": "−1,599",
+        "amountInvalid": "有効な金額を入力してください。",
+        "frequencyLabel": "頻度 *",
+        "accountLabel": "口座 *",
+        "accountRequired": "口座を選択してください。",
+        "nextDueLabel": "次回支払日 *",
+        "categoryLabel": "カテゴリ",
+        "saveButton": "定期支払いを追加"
+      },
+      "deleteModal": {
+        "title": "定期支払いを削除",
+        "confirm": "<bold>{{label}}</bold> を削除しますか？スケジュールは停止されますが、すでに作成された取引は保持されます。"
+      },
+      "toast": {
+        "markedPaid": "「{{label}}」を支払い済みにしました。",
+        "skipped": "「{{label}}」をスキップし、次回日付を更新しました。",
+        "added": "定期支払いを追加しました。",
+        "updated": "定期支払いを更新しました。",
+        "deleted": "定期支払いを削除しました。"
+      }
+    },
+    "language": {
+      "title": "言語",
+      "hint": "インターフェースの言語を選択してください。",
+      "changed": "言語を{{label}}に変更しました。"
+    },
+    "toast": {
+      "csvExported": "CSVのエクスポートが完了しました。",
+      "jsonExported": "JSONのエクスポートが完了しました。",
+      "dbMoved": "データベースをコピーしました。新しい場所を使用するにはアプリを再起動してください。",
+      "currencySet": "表示通貨を{{code}}に設定しました。"
+    }
+  },
+  "categoryDefaults": [
+    "食費",
+    "交通費",
+    "住居費",
+    "医療・健康",
+    "娯楽",
+    "買い物",
+    "教育",
+    "水道光熱費",
+    "貯蓄",
+    "収入",
+    "その他"
+  ],
+  "frequencies": {
+    "daily": "毎日",
+    "weekly": "毎週",
+    "monthly": "毎月",
+    "yearly": "毎年"
+  }
+}

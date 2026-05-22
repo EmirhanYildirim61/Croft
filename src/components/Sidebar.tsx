@@ -1,8 +1,10 @@
+import { useTranslation } from 'react-i18next';
+
 export type Screen = 'accounts' | 'transactions' | 'budget' | 'reports' | 'net-worth' | 'subscriptions' | 'import' | 'settings';
 
 interface NavItem {
   id: Screen;
-  label: string;
+  labelKey: string;
   icon: React.ReactNode;
 }
 
@@ -84,14 +86,14 @@ function IconSettings() {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { id: 'accounts',      label: 'Accounts',      icon: <IconAccounts /> },
-  { id: 'transactions',  label: 'Transactions',  icon: <IconTransactions /> },
-  { id: 'budget',        label: 'Budget',        icon: <IconBudget /> },
-  { id: 'reports',       label: 'Reports',       icon: <IconReports /> },
-  { id: 'net-worth',     label: 'Net Worth',     icon: <IconNetWorth /> },
-  { id: 'subscriptions', label: 'Subscriptions', icon: <IconSubscriptions /> },
-  { id: 'import',        label: 'CSV Import',    icon: <IconImport /> },
-  { id: 'settings',      label: 'Settings',      icon: <IconSettings /> },
+  { id: 'accounts',      labelKey: 'nav.accounts',      icon: <IconAccounts /> },
+  { id: 'transactions',  labelKey: 'nav.transactions',  icon: <IconTransactions /> },
+  { id: 'budget',        labelKey: 'nav.budget',        icon: <IconBudget /> },
+  { id: 'reports',       labelKey: 'nav.reports',       icon: <IconReports /> },
+  { id: 'net-worth',     labelKey: 'nav.netWorth',      icon: <IconNetWorth /> },
+  { id: 'subscriptions', labelKey: 'nav.subscriptions', icon: <IconSubscriptions /> },
+  { id: 'import',        labelKey: 'nav.import',        icon: <IconImport /> },
+  { id: 'settings',      labelKey: 'nav.settings',      icon: <IconSettings /> },
 ];
 
 interface Props {
@@ -100,6 +102,7 @@ interface Props {
 }
 
 export default function Sidebar({ active, onNavigate }: Props) {
+  const { t } = useTranslation();
   return (
     <aside className="w-56 bg-slate-900 flex flex-col shrink-0">
       <div className="px-5 py-5 border-b border-slate-700">
@@ -117,7 +120,7 @@ export default function Sidebar({ active, onNavigate }: Props) {
             }`}
           >
             {item.icon}
-            {item.label}
+            {t(item.labelKey)}
           </button>
         ))}
       </nav>

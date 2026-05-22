@@ -1,0 +1,376 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "save": "Save Changes",
+    "saving": "Saving…",
+    "loading": "Loading…",
+    "remove": "Remove",
+    "skip": "Skip",
+    "markPaid": "Mark paid",
+    "add": "+ Add",
+    "none": "None"
+  },
+  "nav": {
+    "accounts": "Accounts",
+    "transactions": "Transactions",
+    "budget": "Budget",
+    "reports": "Reports",
+    "netWorth": "Net Worth",
+    "subscriptions": "Subscriptions",
+    "import": "CSV Import",
+    "settings": "Settings"
+  },
+  "topBar": {
+    "netWorth": "Net worth",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month"
+  },
+  "backup": {
+    "daysSince": "It's been {{count}} days since your last backup.",
+    "neverBacked": "You haven't backed up your data yet.",
+    "reminder": " Back up your SQLite file or export your data regularly.",
+    "exportNow": "Export now"
+  },
+  "accounts": {
+    "title": "Accounts",
+    "addButton": "+ Add Account",
+    "emptyTitle": "No accounts yet",
+    "emptyBody": "Add your first account to start tracking your finances.",
+    "deleteTitle": "Delete Account",
+    "deleteConfirm": "Delete <bold>{{name}}</bold> and all its transactions? This cannot be undone.",
+    "initialBalance": "Initial: {{amount}} · {{currency}}",
+    "deleteTooltip": "Delete account",
+    "addModal": {
+      "title": "Add Account",
+      "nameLabel": "Name *",
+      "namePlaceholder": "e.g. Chase Checking",
+      "nameRequired": "Account name is required.",
+      "typeLabel": "Type *",
+      "currencyLabel": "Currency",
+      "balanceLabel": "Starting Balance",
+      "balanceInvalid": "Enter a valid number.",
+      "saveButton": "Add Account"
+    },
+    "types": {
+      "bank": "Bank",
+      "credit": "Credit Card",
+      "cash": "Cash",
+      "savings": "Savings"
+    },
+    "toast": {
+      "created": "Account created.",
+      "deleted": "Account deleted."
+    }
+  },
+  "transactions": {
+    "title": "Transactions",
+    "addButton": "+ Add Transaction",
+    "emptyText": "No transactions found.",
+    "addFirst": "Add your first transaction",
+    "filterAllAccounts": "All accounts",
+    "filterAllCategories": "All categories",
+    "nSelected": "{{count}} selected",
+    "clearSelection": "Clear selection",
+    "dateRange": "Date range",
+    "searchPlaceholder": "Search payee, note…",
+    "noPayee": "No payee",
+    "thisTransaction": "this transaction",
+    "table": {
+      "date": "Date",
+      "payee": "Payee",
+      "category": "Category",
+      "account": "Account",
+      "amount": "Amount"
+    },
+    "form": {
+      "addTitle": "Add Transaction",
+      "editTitle": "Edit Transaction",
+      "typeLabel": "Type *",
+      "expense": "Expense",
+      "income": "Income",
+      "dateLabel": "Date *",
+      "amountLabel": "Amount *",
+      "payeeLabel": "Payee *",
+      "accountLabel": "Account *",
+      "categoryLabel": "Category",
+      "noteLabel": "Note",
+      "notePlaceholder": "Optional note",
+      "selectAccount": "Select…",
+      "payeePlaceholder": "e.g. Whole Foods",
+      "dateRequired": "Date is required.",
+      "dateInvalid": "Enter a valid date (YYYY-MM-DD).",
+      "amountRequired": "Amount is required.",
+      "amountInvalid": "Enter a valid number.",
+      "payeeRequired": "Payee is required.",
+      "accountRequired": "Select an account.",
+      "saveButton": "Add Transaction"
+    },
+    "deleteTitle": "Delete Transaction",
+    "deleteConfirm": "Delete <bold>{{payee}}</bold> ({{amount}})? This cannot be undone.",
+    "toast": {
+      "added": "Transaction added.",
+      "updated": "Transaction updated.",
+      "deleted": "Transaction deleted."
+    }
+  },
+  "budget": {
+    "title": "Budget",
+    "hint": "Click a budget amount to edit it",
+    "editTooltip": "Click to edit budget",
+    "budgetInvalid": "Enter a valid budget amount.",
+    "summary": {
+      "budgeted": "Total Budgeted",
+      "spent": "Total Spent",
+      "remaining": "Remaining"
+    },
+    "table": {
+      "category": "Category",
+      "budgeted": "Budgeted",
+      "spent": "Spent",
+      "remaining": "Remaining",
+      "progress": "Progress"
+    }
+  },
+  "reports": {
+    "title": "Reports",
+    "monthly": "Monthly",
+    "dateRange": "Date Range",
+    "compareMonths": "Compare Months",
+    "noSpending": "No spending data for this month.",
+    "noData": "No data yet.",
+    "noSpendingRange": "No spending data for this range.",
+    "noSpendingMonths": "No spending data for the selected months.",
+    "spendingByCategory": "Spending by Category — {{month}}",
+    "netWorthLast12": "Net Worth — Last 12 Months",
+    "netWorthTrend": "Net Worth Trend — Last 6 Months",
+    "netWorthLabel": "Net Worth",
+    "spendingByCategoryRange": "Spending by Category — {{from}} → {{to}}",
+    "from": "From",
+    "to": "To",
+    "apply": "Apply",
+    "monthA": "Month A",
+    "monthB": "Month B",
+    "vs": "vs.",
+    "compare": "Compare",
+    "table": {
+      "category": "Category",
+      "spent": "Spent",
+      "total": "Total"
+    }
+  },
+  "netWorth": {
+    "title": "Net Worth",
+    "totalNetWorth": "Total Net Worth",
+    "inCurrency": "in {{currency}}",
+    "vsLastMonth": "vs. Last Month",
+    "accountBreakdown": "Account Breakdown",
+    "noAccounts": "No accounts yet.",
+    "netWorthLast12": "Net Worth — Last 12 Months",
+    "noData": "No data yet.",
+    "table": {
+      "account": "Account",
+      "type": "Type",
+      "currentBalance": "Current Balance",
+      "vsLastMonth": "vs. Last Month",
+      "total": "Total"
+    }
+  },
+  "subscriptions": {
+    "title": "Subscriptions",
+    "annualCost": "Annual Cost",
+    "monthlyAverage": "Monthly Average",
+    "estimatedFrom": "estimated from recurring items",
+    "activeCount_one": "{{count}} active subscription",
+    "activeCount_other": "{{count}} active subscriptions",
+    "allSubscriptions": "All Subscriptions",
+    "empty": "No expense recurring items yet. Add them in Settings → Recurring Items.",
+    "table": {
+      "name": "Name",
+      "frequency": "Frequency",
+      "amount": "Amount",
+      "annualCost": "Annual Cost",
+      "nextDue": "Next Due",
+      "total": "Total"
+    },
+    "perMonth": "/mo",
+    "perYear": "/yr",
+    "due": "Due",
+    "soon": "Soon",
+    "toast": {
+      "markedPaid": "Marked \"{{label}}\" as paid.",
+      "skipped": "Skipped \"{{label}}\"."
+    }
+  },
+  "import": {
+    "title": "CSV Import",
+    "idle": {
+      "title": "Import transactions",
+      "body": "Choose a format, then pick a file. Categories and accounts can be assigned before confirming.",
+      "chooseFile": "Choose File…",
+      "noAccount": "You need at least one account before importing."
+    },
+    "preview": {
+      "info": "Found <bold>{{count}}</bold> rows. Assign accounts and categories, then confirm.",
+      "startOver": "← Start over",
+      "importing": "Importing…",
+      "importCount": "Import {{count}} transactions"
+    },
+    "done": {
+      "title": "Import complete!",
+      "body_one": "{{count}} transaction added successfully.",
+      "body_other": "{{count}} transactions added successfully.",
+      "importAnother": "Import Another File"
+    },
+    "table": {
+      "date": "Date",
+      "payee": "Payee / Description",
+      "amount": "Amount",
+      "account": "Account",
+      "category": "Category"
+    },
+    "formats": {
+      "generic": { "label": "Generic CSV", "desc": "Auto-detect columns (date, payee, amount)" },
+      "ynab":    { "label": "YNAB CSV",    "desc": "YNAB export format (Inflow/Outflow columns)" },
+      "qif":     { "label": "GnuCash QIF", "desc": "Quicken Interchange Format (.qif)" }
+    }
+  },
+  "onboarding": {
+    "tagline": "Your personal finance tracker",
+    "chooseLanguage": "Choose your language to get started",
+    "getStarted": "Get Started"
+  },
+  "settings": {
+    "title": "Settings",
+    "export": {
+      "title": "Export Data",
+      "csv": "Export transactions as CSV",
+      "json": "Export all data as JSON"
+    },
+    "database": {
+      "title": "Database File",
+      "hint": "Your data is stored in a single SQLite file. Move it anywhere — a Dropbox folder, iCloud Drive, etc.",
+      "copy": "Copy",
+      "copyTitle": "Copy path",
+      "move": "Move…",
+      "moving": "Copying…"
+    },
+    "displayCurrency": {
+      "title": "Default Display Currency",
+      "hint": "Used where no per-account currency is available (e.g. net worth summary)."
+    },
+    "exchangeRates": {
+      "title": "Exchange Rates",
+      "hint": "Define manual rates so multi-currency accounts are converted to your base currency in Net Worth.",
+      "empty": "No exchange rates defined yet.",
+      "addModal": {
+        "title": "Add Exchange Rate",
+        "hint": "Enter how many units of <bold>{{to}}</bold> equal 1 unit of the source currency. Example: 1 EUR = 1.08 USD → From: EUR, To: USD, Rate: 1.08",
+        "fromLabel": "From currency *",
+        "toLabel": "To currency *",
+        "rateLabel": "Rate *",
+        "ratePlaceholder": "1.08",
+        "saveButton": "Save Rate",
+        "invalidFrom": "Select a source currency.",
+        "invalidRate": "Enter a positive rate."
+      },
+      "toast": {
+        "saved": "Exchange rate saved.",
+        "removed": "Exchange rate removed."
+      }
+    },
+    "categories": {
+      "title": "Categories",
+      "subOf": "sub of {{parent}}",
+      "addModal": {
+        "addTitle": "Add Category",
+        "editTitle": "Edit Category",
+        "nameLabel": "Name *",
+        "namePlaceholder": "e.g. Gym & Fitness",
+        "nameRequired": "Category name is required.",
+        "colorLabel": "Color",
+        "parentLabel": "Parent (optional)",
+        "parentNone": "None (top-level)",
+        "saveButton": "Add Category"
+      },
+      "deleteModal": {
+        "title": "Delete Category",
+        "confirm": "Delete <bold>{{name}}</bold>? Existing transactions will keep their category as \"uncategorized\"."
+      },
+      "toast": {
+        "added": "Category added.",
+        "updated": "Category updated.",
+        "deleted": "Category deleted."
+      }
+    },
+    "recurring": {
+      "title": "Recurring Items",
+      "empty": "No recurring items yet.",
+      "due": "Due",
+      "dueSoon": "Due soon",
+      "frequencyNext": "{{frequency}} · next: {{date}} · {{account}}",
+      "markPaidTooltip": "Record a transaction for this item and advance the due date",
+      "skipTooltip": "Skip this occurrence and advance the due date without recording a transaction",
+      "editTooltip": "Edit recurring item",
+      "deleteTooltip": "Delete recurring item",
+      "addModal": {
+        "addTitle": "Add Recurring Item",
+        "editTitle": "Edit Recurring Item",
+        "labelLabel": "Label *",
+        "labelPlaceholder": "e.g. Netflix, Rent",
+        "labelRequired": "Label is required.",
+        "amountLabel": "Amount *",
+        "amountPlaceholder": "−15.99",
+        "amountInvalid": "Enter a valid amount.",
+        "frequencyLabel": "Frequency *",
+        "accountLabel": "Account *",
+        "accountRequired": "Select an account.",
+        "nextDueLabel": "Next Due Date *",
+        "categoryLabel": "Category",
+        "saveButton": "Add Recurring Item"
+      },
+      "deleteModal": {
+        "title": "Delete Recurring Item",
+        "confirm": "Delete <bold>{{label}}</bold>? This stops the schedule but keeps any transactions already generated for it."
+      },
+      "toast": {
+        "markedPaid": "Marked \"{{label}}\" as paid.",
+        "skipped": "Skipped \"{{label}}\" — next date advanced.",
+        "added": "Recurring item added.",
+        "updated": "Recurring item updated.",
+        "deleted": "Recurring item deleted."
+      }
+    },
+    "language": {
+      "title": "Language",
+      "hint": "Choose the language for the interface.",
+      "changed": "Language changed to {{label}}."
+    },
+    "toast": {
+      "csvExported": "CSV exported successfully.",
+      "jsonExported": "JSON exported successfully.",
+      "dbMoved": "Database copied. Restart the app to use the new location.",
+      "currencySet": "Display currency set to {{code}}."
+    }
+  },
+  "categoryDefaults": [
+    "Food & Dining",
+    "Transport",
+    "Housing",
+    "Health",
+    "Entertainment",
+    "Shopping",
+    "Education",
+    "Utilities",
+    "Savings",
+    "Income",
+    "Other"
+  ],
+  "frequencies": {
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "yearly": "Yearly"
+  }
+}

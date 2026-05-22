@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import { api } from '../lib/tauri';
 import { formatCents } from '../lib/format';
 import { useToast } from '../context/toast';
@@ -31,20 +32,20 @@ function validateForm(
 ): FormErrors {
   const errors: FormErrors = {};
   if (!fDate) {
-    errors.date = 'Date is required.';
+    errors.date = 'transactions.form.dateRequired';
   } else if (!/^\d{4}-\d{2}-\d{2}$/.test(fDate)) {
-    errors.date = 'Enter a valid date (YYYY-MM-DD).';
+    errors.date = 'transactions.form.dateInvalid';
   }
   if (!fAmount.trim()) {
-    errors.amount = 'Amount is required.';
+    errors.amount = 'transactions.form.amountRequired';
   } else if (isNaN(parseFloat(fAmount))) {
-    errors.amount = 'Enter a valid number.';
+    errors.amount = 'transactions.form.amountInvalid';
   }
   if (!fPayee.trim()) {
-    errors.payee = 'Payee is required.';
+    errors.payee = 'transactions.form.payeeRequired';
   }
   if (fAccId === null) {
-    errors.account = 'Select an account.';
+    errors.account = 'transactions.form.accountRequired';
   }
   return errors;
 }
@@ -58,6 +59,7 @@ export default function TransactionsScreen({
   categories,
   onRefresh,
 }: Props) {
+  const { t } = useTranslation();
   const { showToast } = useToast();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,7 +70,6 @@ export default function TransactionsScreen({
   const [dateTo, setDateTo] = useState('');
   const [showDateRange, setShowDateRange] = useState(false);
 
-  // Add/edit modal
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Transaction | null>(null);
   const [fDate, setFDate] = useState(new Date().toISOString().slice(0, 10));
@@ -81,17 +82,13 @@ export default function TransactionsScreen({
   const [saving, setSaving] = useState(false);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
 
-  // Confirm-delete modal
   const [deleteTarget, setDeleteTarget] = useState<Transaction | null>(null);
 
-  // Category checkbox dropdown
   const [showCatPicker, setShowCatPicker] = useState(false);
   const catPickerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => { setFilterAccId(filterAccountId); }, [filterAccountId]);
 
-  // If the local filter references an account that disappeared (deleted while we
-  // weren't looking), drop it so the chip and form seed don't go stale.
   useEffect(() => {
     if (filterAccId !== null && accounts.length > 0 && !accounts.some((a) => a.id === filterAccId)) {
       setFilterAccId(null);
@@ -99,7 +96,6 @@ export default function TransactionsScreen({
     }
   }, [filterAccId, accounts, onClearAccount]);
 
-  // Close the category dropdown on outside click
   useEffect(() => {
     if (!showCatPicker) return;
     const handler = (e: MouseEvent) => {
@@ -133,12 +129,10 @@ export default function TransactionsScreen({
 
   useEffect(() => { load(); }, [load]);
 
-  // Open add form when triggered externally (N shortcut from App.tsx)
   useEffect(() => {
     if (openNewTxTrigger > 0 && !showForm) {
       openAdd();
     }
-    // intentionally omitting showForm to avoid re-triggering on form open
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openNewTxTrigger]);
 
@@ -148,8 +142,6 @@ export default function TransactionsScreen({
     setFAmount('');
     setFPayee('');
     setFCatId(null);
-    // Only seed from filterAccId if it still resolves to a real account,
-    // otherwise the FK insert will fail when the user clicks Save.
     const seededAccId =
       filterAccId !== null && accounts.some((a) => a.id === filterAccId)
         ? filterAccId
@@ -186,10 +178,10 @@ export default function TransactionsScreen({
     try {
       if (editing) {
         await api.updateTransaction(editing.id, fDate, cents, fPayee.trim(), fCatId, fNote);
-        showToast('Transaction updated.', 'success');
+        showToast(t('transactions.toast.updated'), 'success');
       } else {
         await api.addTransaction(fAccId!, fDate, cents, fPayee.trim(), fCatId, fNote);
-        showToast('Transaction added.', 'success');
+        showToast(t('transactions.toast.added'), 'success');
       }
       setShowForm(false);
       await load();
@@ -206,7 +198,7 @@ export default function TransactionsScreen({
     try {
       await api.deleteTransaction(deleteTarget.id);
       setDeleteTarget(null);
-      showToast('Transaction deleted.', 'success');
+      showToast(t('transactions.toast.deleted'), 'success');
       await load();
       onRefresh();
     } catch (e) {
@@ -225,13 +217,13 @@ export default function TransactionsScreen({
 
   const visible = transactions;
 
-  if (loading) return <div className="text-slate-400 text-sm p-2">Loading…</div>;
+  if (loading) return <div className="text-slate-400 text-sm p-2">{t('common.loading')}</div>;
 
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold text-slate-800">Transactions</h1>
+          <h1 className="text-2xl font-bold text-slate-800">{t('transactions.title')}</h1>
           {filterAccId !== null && accounts.some((a) => a.id === filterAccId) && (
             <span className="flex items-center gap-1 bg-indigo-100 text-indigo-700 text-xs font-medium px-2.5 py-1 rounded-full">
               {accName(filterAccId)}
@@ -243,7 +235,7 @@ export default function TransactionsScreen({
           onClick={openAdd}
           className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
         >
-          + Add Transaction
+          {t('transactions.addButton')}
         </button>
       </div>
 
@@ -252,7 +244,7 @@ export default function TransactionsScreen({
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search payee, note…"
+          placeholder={t('transactions.searchPlaceholder')}
           className="border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-48"
         />
         <select
@@ -260,10 +252,9 @@ export default function TransactionsScreen({
           onChange={(e) => { setFilterAccId(e.target.value ? Number(e.target.value) : null); onClearAccount(); }}
           className="border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
-          <option value="">All accounts</option>
+          <option value="">{t('transactions.filterAllAccounts')}</option>
           {accounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
         </select>
-        {/* Multi-category filter (checkbox dropdown) */}
         <div className="relative" ref={catPickerRef}>
           <button
             type="button"
@@ -272,17 +263,17 @@ export default function TransactionsScreen({
           >
             <span className={filterCatIds.length === 0 ? 'text-slate-500' : 'text-slate-700'}>
               {filterCatIds.length === 0
-                ? 'All categories'
+                ? t('transactions.filterAllCategories')
                 : filterCatIds.length === 1
-                  ? (categories.find((c) => c.id === filterCatIds[0])?.name ?? '1 selected')
-                  : `${filterCatIds.length} selected`}
+                  ? (categories.find((c) => c.id === filterCatIds[0])?.name ?? t('transactions.nSelected', { count: 1 }))
+                  : t('transactions.nSelected', { count: filterCatIds.length })}
             </span>
             <span className="text-slate-400 text-xs">▾</span>
           </button>
           {showCatPicker && (
             <div className="absolute left-0 top-full mt-1 z-10 bg-white border border-slate-200 rounded-lg shadow-lg w-56 max-h-72 overflow-y-auto py-1">
               {categories.length === 0 ? (
-                <p className="text-xs text-slate-400 px-3 py-2">No categories.</p>
+                <p className="text-xs text-slate-400 px-3 py-2">{t('common.none')}.</p>
               ) : (
                 categories.map((c) => {
                   const checked = filterCatIds.includes(c.id);
@@ -314,13 +305,12 @@ export default function TransactionsScreen({
                   onClick={() => setFilterCatIds([])}
                   className="w-full text-left text-xs text-indigo-600 hover:bg-slate-50 px-3 py-1.5 border-t border-slate-100"
                 >
-                  Clear selection
+                  {t('transactions.clearSelection')}
                 </button>
               )}
             </div>
           )}
         </div>
-        {/* Date range toggle */}
         <button
           onClick={() => { setShowDateRange((v) => !v); setDateFrom(''); setDateTo(''); }}
           className={`text-sm px-3 py-1.5 rounded-lg border transition-colors ${
@@ -329,7 +319,7 @@ export default function TransactionsScreen({
               : 'border-slate-300 text-slate-600 hover:bg-slate-50'
           }`}
         >
-          Date range
+          {t('transactions.dateRange')}
         </button>
         {showDateRange && (
           <>
@@ -353,10 +343,10 @@ export default function TransactionsScreen({
       {visible.length === 0 ? (
         <div className="flex flex-col items-center py-16 text-center">
           <div className="text-5xl mb-3">📋</div>
-          <p className="text-slate-500">No transactions found.</p>
+          <p className="text-slate-500">{t('transactions.emptyText')}</p>
           {transactions.length === 0 && (
             <button onClick={openAdd} className="mt-4 bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700">
-              Add your first transaction
+              {t('transactions.addFirst')}
             </button>
           )}
         </div>
@@ -365,11 +355,11 @@ export default function TransactionsScreen({
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Payee</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Category</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Account</th>
-                <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Amount</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('transactions.table.date')}</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('transactions.table.payee')}</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('transactions.table.category')}</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('transactions.table.account')}</th>
+                <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('transactions.table.amount')}</th>
                 <th className="w-16"></th>
               </tr>
             </thead>
@@ -382,7 +372,7 @@ export default function TransactionsScreen({
                 >
                   <td className="px-4 py-3 text-slate-500">{tx.date}</td>
                   <td className="px-4 py-3 font-medium text-slate-800">
-                    {tx.payee || <span className="text-slate-400 italic">No payee</span>}
+                    {tx.payee || <span className="text-slate-400 italic">{t('transactions.noPayee')}</span>}
                     {tx.is_recurring && (
                       <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">↻</span>
                     )}
@@ -420,40 +410,40 @@ export default function TransactionsScreen({
 
       {/* Add/Edit modal */}
       {showForm && (
-        <Modal title={editing ? 'Edit Transaction' : 'Add Transaction'} onClose={() => setShowForm(false)}>
+        <Modal title={editing ? t('transactions.form.editTitle') : t('transactions.form.addTitle')} onClose={() => setShowForm(false)}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Type *</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('transactions.form.typeLabel')}</label>
               <div className="flex rounded-lg overflow-hidden border border-slate-300">
                 <button
                   type="button"
                   onClick={() => setFType('expense')}
                   className={`flex-1 py-2 text-sm font-medium transition-colors ${fType === 'expense' ? 'bg-red-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
                 >
-                  Expense
+                  {t('transactions.form.expense')}
                 </button>
                 <button
                   type="button"
                   onClick={() => setFType('income')}
                   className={`flex-1 py-2 text-sm font-medium transition-colors ${fType === 'income' ? 'bg-emerald-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
                 >
-                  Income
+                  {t('transactions.form.income')}
                 </button>
               </div>
             </div>
             <div className="flex gap-3">
               <div className="flex-1">
-                <label className="block text-sm font-medium text-slate-700 mb-1">Date *</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('transactions.form.dateLabel')}</label>
                 <input
                   type="date"
                   value={fDate}
                   onChange={(e) => { setFDate(e.target.value); setFormErrors((p) => ({ ...p, date: undefined })); }}
                   className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${formErrors.date ? 'border-red-400' : 'border-slate-300'}`}
                 />
-                {formErrors.date && <p className="mt-1 text-xs text-red-500">{formErrors.date}</p>}
+                {formErrors.date && <p className="mt-1 text-xs text-red-500">{t(formErrors.date)}</p>}
               </div>
               <div className="flex-1">
-                <label className="block text-sm font-medium text-slate-700 mb-1">Amount *</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('transactions.form.amountLabel')}</label>
                 <input
                   type="number"
                   step="0.01"
@@ -464,51 +454,51 @@ export default function TransactionsScreen({
                   placeholder="50.00"
                   className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${formErrors.amount ? 'border-red-400' : 'border-slate-300'}`}
                 />
-                {formErrors.amount && <p className="mt-1 text-xs text-red-500">{formErrors.amount}</p>}
+                {formErrors.amount && <p className="mt-1 text-xs text-red-500">{t(formErrors.amount)}</p>}
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Payee *</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('transactions.form.payeeLabel')}</label>
               <input
                 value={fPayee}
                 onChange={(e) => { setFPayee(e.target.value); setFormErrors((p) => ({ ...p, payee: undefined })); }}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleSave(); }}
-                placeholder="e.g. Whole Foods"
+                placeholder={t('transactions.form.payeePlaceholder')}
                 className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${formErrors.payee ? 'border-red-400' : 'border-slate-300'}`}
               />
-              {formErrors.payee && <p className="mt-1 text-xs text-red-500">{formErrors.payee}</p>}
+              {formErrors.payee && <p className="mt-1 text-xs text-red-500">{t(formErrors.payee)}</p>}
             </div>
             <div className="flex gap-3">
               <div className="flex-1">
-                <label className="block text-sm font-medium text-slate-700 mb-1">Account *</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('transactions.form.accountLabel')}</label>
                 <select
                   value={fAccId ?? ''}
                   onChange={(e) => { setFAccId(Number(e.target.value)); setFormErrors((p) => ({ ...p, account: undefined })); }}
                   className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${formErrors.account ? 'border-red-400' : 'border-slate-300'}`}
                 >
-                  <option value="" disabled>Select…</option>
+                  <option value="" disabled>{t('transactions.form.selectAccount')}</option>
                   {accounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
                 </select>
-                {formErrors.account && <p className="mt-1 text-xs text-red-500">{formErrors.account}</p>}
+                {formErrors.account && <p className="mt-1 text-xs text-red-500">{t(formErrors.account)}</p>}
               </div>
               <div className="flex-1">
-                <label className="block text-sm font-medium text-slate-700 mb-1">Category</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('transactions.form.categoryLabel')}</label>
                 <select
                   value={fCatId ?? ''}
                   onChange={(e) => setFCatId(e.target.value ? Number(e.target.value) : null)}
                   className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
-                  <option value="">None</option>
+                  <option value="">{t('common.none')}</option>
                   {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Note</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('transactions.form.noteLabel')}</label>
               <input
                 value={fNote}
                 onChange={(e) => setFNote(e.target.value)}
-                placeholder="Optional note"
+                placeholder={t('transactions.form.notePlaceholder')}
                 className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
@@ -517,14 +507,14 @@ export default function TransactionsScreen({
                 onClick={() => setShowForm(false)}
                 className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleSave}
                 disabled={saving}
                 className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {saving ? 'Saving…' : editing ? 'Save Changes' : 'Add Transaction'}
+                {saving ? t('common.saving') : editing ? t('common.save') : t('transactions.form.saveButton')}
               </button>
             </div>
           </div>
@@ -533,23 +523,29 @@ export default function TransactionsScreen({
 
       {/* Confirm delete modal */}
       {deleteTarget && (
-        <Modal title="Delete Transaction" onClose={() => setDeleteTarget(null)}>
+        <Modal title={t('transactions.deleteTitle')} onClose={() => setDeleteTarget(null)}>
           <p className="text-sm text-slate-600 mb-5">
-            Delete <strong>{deleteTarget.payee || 'this transaction'}</strong> ({formatCents(deleteTarget.amount_cents)})?
-            This cannot be undone.
+            <Trans
+              i18nKey="transactions.deleteConfirm"
+              values={{
+                payee: deleteTarget.payee || t('transactions.thisTransaction'),
+                amount: formatCents(deleteTarget.amount_cents),
+              }}
+              components={{ bold: <strong /> }}
+            />
           </p>
           <div className="flex justify-end gap-3">
             <button
               onClick={() => setDeleteTarget(null)}
               className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               onClick={handleDelete}
               className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700"
             >
-              Delete
+              {t('common.delete')}
             </button>
           </div>
         </Modal>

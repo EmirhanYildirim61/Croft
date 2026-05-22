@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
@@ -17,6 +18,7 @@ function convertCents(cents: number, fromCurrency: string, baseCurrency: string,
 }
 
 export default function NetWorthScreen() {
+  const { t } = useTranslation();
   const { showToast } = useToast();
   const [accounts, setAccounts] = useState<AccountNetWorthRow[]>([]);
   const [history, setHistory] = useState<NetWorthPoint[]>([]);
@@ -54,20 +56,20 @@ export default function NetWorthScreen() {
   );
   const delta = totalCurrent - totalPrev;
 
-  if (loading) return <div className="text-slate-400 text-sm p-2">Loading…</div>;
+  if (loading) return <div className="text-slate-400 text-sm p-2">{t('common.loading')}</div>;
 
   return (
     <div className="space-y-8 max-w-4xl">
-      <h1 className="text-2xl font-bold text-slate-800">Net Worth</h1>
+      <h1 className="text-2xl font-bold text-slate-800">{t('netWorth.title')}</h1>
 
       {/* Summary header */}
       <div className="bg-white rounded-xl border border-slate-200 p-6 flex items-center gap-8">
         <div>
           <p className="text-sm text-slate-500 mb-1">
-            Total Net Worth
+            {t('netWorth.totalNetWorth')}
             {hasMultiCurrency && (
               <span className="ml-2 text-xs bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full">
-                in {baseCurrency}
+                {t('netWorth.inCurrency', { currency: baseCurrency })}
               </span>
             )}
           </p>
@@ -76,7 +78,7 @@ export default function NetWorthScreen() {
           </p>
         </div>
         <div className="border-l border-slate-200 pl-8">
-          <p className="text-sm text-slate-500 mb-1">vs. Last Month</p>
+          <p className="text-sm text-slate-500 mb-1">{t('netWorth.vsLastMonth')}</p>
           <p className={`text-xl font-semibold tabular-nums ${delta >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
             {delta >= 0 ? '+' : ''}{formatCents(delta, baseCurrency)}
           </p>
@@ -86,18 +88,18 @@ export default function NetWorthScreen() {
       {/* Account breakdown */}
       <section className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-100">
-          <h2 className="text-base font-semibold text-slate-700">Account Breakdown</h2>
+          <h2 className="text-base font-semibold text-slate-700">{t('netWorth.accountBreakdown')}</h2>
         </div>
         {accounts.length === 0 ? (
-          <p className="text-slate-400 text-sm p-6">No accounts yet.</p>
+          <p className="text-slate-400 text-sm p-6">{t('netWorth.noAccounts')}</p>
         ) : (
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-100">
-                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Account</th>
-                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Type</th>
-                <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Current Balance</th>
-                <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">vs. Last Month</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('netWorth.table.account')}</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('netWorth.table.type')}</th>
+                <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('netWorth.table.currentBalance')}</th>
+                <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('netWorth.table.vsLastMonth')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -123,7 +125,7 @@ export default function NetWorthScreen() {
             </tbody>
             <tfoot>
               <tr className="bg-slate-50 border-t-2 border-slate-200">
-                <td colSpan={2} className="px-6 py-3 text-sm font-semibold text-slate-700">Total</td>
+                <td colSpan={2} className="px-6 py-3 text-sm font-semibold text-slate-700">{t('netWorth.table.total')}</td>
                 <td className={`px-6 py-3 text-right font-bold tabular-nums ${totalCurrent >= 0 ? 'text-slate-800' : 'text-red-600'}`}>
                   {formatCents(totalCurrent)}
                 </td>
@@ -138,9 +140,9 @@ export default function NetWorthScreen() {
 
       {/* Net worth history */}
       <section className="bg-white rounded-xl border border-slate-200 p-6">
-        <h2 className="text-base font-semibold text-slate-700 mb-4">Net Worth — Last 12 Months</h2>
+        <h2 className="text-base font-semibold text-slate-700 mb-4">{t('netWorth.netWorthLast12')}</h2>
         {history.length === 0 ? (
-          <p className="text-slate-400 text-sm py-8 text-center">No data yet.</p>
+          <p className="text-slate-400 text-sm py-8 text-center">{t('netWorth.noData')}</p>
         ) : (
           <ResponsiveContainer width="100%" height={240}>
             <LineChart data={history} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
@@ -159,7 +161,7 @@ export default function NetWorthScreen() {
                 width={60}
               />
               <Tooltip
-                formatter={(v) => [formatCents(Number(v)), 'Net Worth']}
+                formatter={(v) => [formatCents(Number(v)), t('netWorth.title')]}
                 contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: 12 }}
               />
               <Line

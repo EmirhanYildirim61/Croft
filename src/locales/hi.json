@@ -1,0 +1,376 @@
+{
+  "common": {
+    "cancel": "रद्द करें",
+    "delete": "हटाएँ",
+    "edit": "संपादित करें",
+    "save": "बदलाव सहेजें",
+    "saving": "सहेजा जा रहा है…",
+    "loading": "लोड हो रहा है…",
+    "remove": "हटाएँ",
+    "skip": "छोड़ें",
+    "markPaid": "भुगतान किया हुआ चिह्नित करें",
+    "add": "+ जोड़ें",
+    "none": "कोई नहीं"
+  },
+  "nav": {
+    "accounts": "खाते",
+    "transactions": "लेन-देन",
+    "budget": "बजट",
+    "reports": "रिपोर्ट",
+    "netWorth": "कुल संपत्ति",
+    "subscriptions": "सदस्यताएँ",
+    "import": "CSV आयात",
+    "settings": "सेटिंग्स"
+  },
+  "topBar": {
+    "netWorth": "कुल संपत्ति",
+    "prevMonth": "पिछला महीना",
+    "nextMonth": "अगला महीना"
+  },
+  "backup": {
+    "daysSince": "आपके अंतिम बैकअप को {{count}} दिन हो गए हैं।",
+    "neverBacked": "आपने अभी तक अपना डेटा बैकअप नहीं किया है।",
+    "reminder": " अपनी SQLite फ़ाइल का बैकअप लें या नियमित रूप से डेटा निर्यात करें।",
+    "exportNow": "अभी निर्यात करें"
+  },
+  "accounts": {
+    "title": "खाते",
+    "addButton": "+ खाता जोड़ें",
+    "emptyTitle": "अभी कोई खाता नहीं है",
+    "emptyBody": "अपने वित्त को ट्रैक करना शुरू करने के लिए पहला खाता जोड़ें।",
+    "deleteTitle": "खाता हटाएँ",
+    "deleteConfirm": "<bold>{{name}}</bold> और इसके सभी लेन-देन हटाएँ? यह क्रिया पूर्ववत नहीं की जा सकती।",
+    "initialBalance": "प्रारंभिक शेष: {{amount}} · {{currency}}",
+    "deleteTooltip": "खाता हटाएँ",
+    "addModal": {
+      "title": "खाता जोड़ें",
+      "nameLabel": "नाम *",
+      "namePlaceholder": "जैसे: SBI बचत खाता",
+      "nameRequired": "खाते का नाम आवश्यक है।",
+      "typeLabel": "प्रकार *",
+      "currencyLabel": "मुद्रा",
+      "balanceLabel": "प्रारंभिक शेष",
+      "balanceInvalid": "कृपया एक वैध संख्या दर्ज करें।",
+      "saveButton": "खाता जोड़ें"
+    },
+    "types": {
+      "bank": "बैंक",
+      "credit": "क्रेडिट कार्ड",
+      "cash": "नकद",
+      "savings": "बचत"
+    },
+    "toast": {
+      "created": "खाता बना दिया गया।",
+      "deleted": "खाता हटा दिया गया।"
+    }
+  },
+  "transactions": {
+    "title": "लेन-देन",
+    "addButton": "+ लेन-देन जोड़ें",
+    "emptyText": "कोई लेन-देन नहीं मिला।",
+    "addFirst": "पहला लेन-देन जोड़ें",
+    "filterAllAccounts": "सभी खाते",
+    "filterAllCategories": "सभी श्रेणियाँ",
+    "nSelected": "{{count}} चुने गए",
+    "clearSelection": "चयन हटाएँ",
+    "dateRange": "तारीख की सीमा",
+    "searchPlaceholder": "प्राप्तकर्ता, नोट खोजें…",
+    "noPayee": "कोई प्राप्तकर्ता नहीं",
+    "thisTransaction": "यह लेन-देन",
+    "table": {
+      "date": "तारीख",
+      "payee": "प्राप्तकर्ता",
+      "category": "श्रेणी",
+      "account": "खाता",
+      "amount": "राशि"
+    },
+    "form": {
+      "addTitle": "लेन-देन जोड़ें",
+      "editTitle": "लेन-देन संपादित करें",
+      "typeLabel": "प्रकार *",
+      "expense": "खर्च",
+      "income": "आय",
+      "dateLabel": "तारीख *",
+      "amountLabel": "राशि *",
+      "payeeLabel": "प्राप्तकर्ता *",
+      "accountLabel": "खाता *",
+      "categoryLabel": "श्रेणी",
+      "noteLabel": "नोट",
+      "notePlaceholder": "वैकल्पिक नोट",
+      "selectAccount": "चुनें…",
+      "payeePlaceholder": "जैसे: सुपरमार्केट",
+      "dateRequired": "तारीख आवश्यक है।",
+      "dateInvalid": "कृपया एक वैध तारीख दर्ज करें (YYYY-MM-DD)।",
+      "amountRequired": "राशि आवश्यक है।",
+      "amountInvalid": "कृपया एक वैध संख्या दर्ज करें।",
+      "payeeRequired": "प्राप्तकर्ता आवश्यक है।",
+      "accountRequired": "कृपया एक खाता चुनें।",
+      "saveButton": "लेन-देन जोड़ें"
+    },
+    "deleteTitle": "लेन-देन हटाएँ",
+    "deleteConfirm": "<bold>{{payee}}</bold> ({{amount}}) हटाएँ? यह क्रिया पूर्ववत नहीं की जा सकती।",
+    "toast": {
+      "added": "लेन-देन जोड़ा गया।",
+      "updated": "लेन-देन अपडेट किया गया।",
+      "deleted": "लेन-देन हटा दिया गया।"
+    }
+  },
+  "budget": {
+    "title": "बजट",
+    "hint": "संपादित करने के लिए बजट राशि पर क्लिक करें",
+    "editTooltip": "बजट संपादित करने के लिए क्लिक करें",
+    "budgetInvalid": "कृपया एक वैध बजट राशि दर्ज करें।",
+    "summary": {
+      "budgeted": "कुल बजट",
+      "spent": "कुल खर्च",
+      "remaining": "शेष"
+    },
+    "table": {
+      "category": "श्रेणी",
+      "budgeted": "बजट",
+      "spent": "खर्च",
+      "remaining": "शेष",
+      "progress": "प्रगति"
+    }
+  },
+  "reports": {
+    "title": "रिपोर्ट",
+    "monthly": "मासिक",
+    "dateRange": "तारीख की सीमा",
+    "compareMonths": "महीनों की तुलना करें",
+    "noSpending": "इस महीने के लिए कोई खर्च डेटा नहीं है।",
+    "noData": "अभी कोई डेटा नहीं है।",
+    "noSpendingRange": "इस अवधि के लिए कोई खर्च डेटा नहीं है।",
+    "noSpendingMonths": "चुने गए महीनों के लिए कोई खर्च डेटा नहीं है।",
+    "spendingByCategory": "श्रेणी अनुसार खर्च — {{month}}",
+    "netWorthLast12": "कुल संपत्ति — पिछले 12 महीने",
+    "netWorthTrend": "कुल संपत्ति का रुझान — पिछले 6 महीने",
+    "netWorthLabel": "कुल संपत्ति",
+    "spendingByCategoryRange": "श्रेणी अनुसार खर्च — {{from}} → {{to}}",
+    "from": "से",
+    "to": "तक",
+    "apply": "लागू करें",
+    "monthA": "महीना A",
+    "monthB": "महीना B",
+    "vs": "बनाम",
+    "compare": "तुलना करें",
+    "table": {
+      "category": "श्रेणी",
+      "spent": "खर्च",
+      "total": "कुल"
+    }
+  },
+  "netWorth": {
+    "title": "कुल संपत्ति",
+    "totalNetWorth": "कुल शुद्ध संपत्ति",
+    "inCurrency": "{{currency}} में",
+    "vsLastMonth": "पिछले महीने की तुलना में",
+    "accountBreakdown": "खाता विवरण",
+    "noAccounts": "अभी कोई खाता नहीं है।",
+    "netWorthLast12": "कुल संपत्ति — पिछले 12 महीने",
+    "noData": "अभी कोई डेटा नहीं है।",
+    "table": {
+      "account": "खाता",
+      "type": "प्रकार",
+      "currentBalance": "वर्तमान शेष",
+      "vsLastMonth": "पिछले महीने की तुलना में",
+      "total": "कुल"
+    }
+  },
+  "subscriptions": {
+    "title": "सदस्यताएँ",
+    "annualCost": "वार्षिक लागत",
+    "monthlyAverage": "मासिक औसत",
+    "estimatedFrom": "आवर्ती भुगतानों के आधार पर अनुमानित",
+    "activeCount_one": "{{count}} सक्रिय सदस्यता",
+    "activeCount_other": "{{count}} सक्रिय सदस्यताएँ",
+    "allSubscriptions": "सभी सदस्यताएँ",
+    "empty": "अभी कोई आवर्ती खर्च नहीं है। सेटिंग्स → आवर्ती भुगतान में जोड़ें।",
+    "table": {
+      "name": "नाम",
+      "frequency": "आवृत्ति",
+      "amount": "राशि",
+      "annualCost": "वार्षिक लागत",
+      "nextDue": "अगली देय तारीख",
+      "total": "कुल"
+    },
+    "perMonth": "/माह",
+    "perYear": "/वर्ष",
+    "due": "देय",
+    "soon": "जल्द ही",
+    "toast": {
+      "markedPaid": "«{{label}}» को भुगतान किया हुआ चिह्नित किया गया।",
+      "skipped": "«{{label}}» को छोड़ दिया गया।"
+    }
+  },
+  "import": {
+    "title": "CSV आयात",
+    "idle": {
+      "title": "लेन-देन आयात करें",
+      "body": "फॉर्मेट चुनें, फिर फ़ाइल चुनें। पुष्टि करने से पहले श्रेणियाँ और खाते असाइन किए जा सकते हैं।",
+      "chooseFile": "फ़ाइल चुनें…",
+      "noAccount": "आयात करने से पहले कम से कम एक खाता होना चाहिए।"
+    },
+    "preview": {
+      "info": "<bold>{{count}}</bold> पंक्तियाँ मिलीं। खाते और श्रेणियाँ असाइन करें, फिर पुष्टि करें।",
+      "startOver": "← फिर से शुरू करें",
+      "importing": "आयात हो रहा है…",
+      "importCount": "{{count}} लेन-देन आयात करें"
+    },
+    "done": {
+      "title": "आयात पूर्ण!",
+      "body_one": "{{count}} लेन-देन सफलतापूर्वक जोड़ा गया।",
+      "body_other": "{{count}} लेन-देन सफलतापूर्वक जोड़े गए।",
+      "importAnother": "दूसरी फ़ाइल आयात करें"
+    },
+    "table": {
+      "date": "तारीख",
+      "payee": "प्राप्तकर्ता / विवरण",
+      "amount": "राशि",
+      "account": "खाता",
+      "category": "श्रेणी"
+    },
+    "formats": {
+      "generic": { "label": "सामान्य CSV", "desc": "कॉलम स्वतः पहचानें (तारीख, प्राप्तकर्ता, राशि)" },
+      "ynab":    { "label": "YNAB CSV",    "desc": "YNAB निर्यात फॉर्मेट (आवक/जावक कॉलम)" },
+      "qif":     { "label": "GnuCash QIF", "desc": "Quicken इंटरचेंज फॉर्मेट (.qif)" }
+    }
+  },
+  "onboarding": {
+    "tagline": "आपका व्यक्तिगत वित्त ट्रैकर",
+    "chooseLanguage": "शुरू करने के लिए अपनी भाषा चुनें",
+    "getStarted": "शुरू करें"
+  },
+  "settings": {
+    "title": "सेटिंग्स",
+    "export": {
+      "title": "डेटा निर्यात करें",
+      "csv": "लेन-देन को CSV में निर्यात करें",
+      "json": "सभी डेटा को JSON में निर्यात करें"
+    },
+    "database": {
+      "title": "डेटाबेस फ़ाइल",
+      "hint": "आपका डेटा एक SQLite फ़ाइल में संग्रहीत है। इसे कहीं भी ले जाएँ — Dropbox फ़ोल्डर, iCloud Drive आदि।",
+      "copy": "कॉपी करें",
+      "copyTitle": "पाथ कॉपी करें",
+      "move": "स्थानांतरित करें…",
+      "moving": "कॉपी हो रहा है…"
+    },
+    "displayCurrency": {
+      "title": "डिफ़ॉल्ट प्रदर्शन मुद्रा",
+      "hint": "जब कोई खाता-विशिष्ट मुद्रा उपलब्ध न हो तब उपयोग की जाती है (जैसे कुल संपत्ति सारांश)।"
+    },
+    "exchangeRates": {
+      "title": "विनिमय दरें",
+      "hint": "मैन्युअल दरें सेट करें ताकि कई मुद्राओं वाले खातों को कुल संपत्ति में आपकी आधार मुद्रा में बदला जा सके।",
+      "empty": "अभी कोई विनिमय दर नहीं है।",
+      "addModal": {
+        "title": "विनिमय दर जोड़ें",
+        "hint": "दर्ज करें कि स्रोत मुद्रा की 1 इकाई के बराबर <bold>{{to}}</bold> की कितनी इकाइयाँ हैं। उदाहरण: 1 EUR = 1.08 USD → से: EUR, को: USD, दर: 1.08",
+        "fromLabel": "स्रोत मुद्रा *",
+        "toLabel": "लक्ष्य मुद्रा *",
+        "rateLabel": "दर *",
+        "ratePlaceholder": "1.08",
+        "saveButton": "दर सहेजें",
+        "invalidFrom": "स्रोत मुद्रा चुनें।",
+        "invalidRate": "एक धनात्मक दर दर्ज करें।"
+      },
+      "toast": {
+        "saved": "विनिमय दर सहेजी गई।",
+        "removed": "विनिमय दर हटाई गई।"
+      }
+    },
+    "categories": {
+      "title": "श्रेणियाँ",
+      "subOf": "{{parent}} की उप-श्रेणी",
+      "addModal": {
+        "addTitle": "श्रेणी जोड़ें",
+        "editTitle": "श्रेणी संपादित करें",
+        "nameLabel": "नाम *",
+        "namePlaceholder": "जैसे: जिम और फिटनेस",
+        "nameRequired": "श्रेणी का नाम आवश्यक है।",
+        "colorLabel": "रंग",
+        "parentLabel": "मूल श्रेणी (वैकल्पिक)",
+        "parentNone": "कोई नहीं (शीर्ष स्तर)",
+        "saveButton": "श्रेणी जोड़ें"
+      },
+      "deleteModal": {
+        "title": "श्रेणी हटाएँ",
+        "confirm": "<bold>{{name}}</bold> हटाएँ? मौजूदा लेन-देन की श्रेणी \"अवर्गीकृत\" हो जाएगी।"
+      },
+      "toast": {
+        "added": "श्रेणी जोड़ी गई।",
+        "updated": "श्रेणी अपडेट की गई।",
+        "deleted": "श्रेणी हटाई गई।"
+      }
+    },
+    "recurring": {
+      "title": "आवर्ती भुगतान",
+      "empty": "अभी कोई आवर्ती भुगतान नहीं है।",
+      "due": "देय",
+      "dueSoon": "जल्द देय",
+      "frequencyNext": "{{frequency}} · अगला: {{date}} · {{account}}",
+      "markPaidTooltip": "इस भुगतान के लिए एक लेन-देन दर्ज करें और अगली देय तारीख आगे बढ़ाएँ",
+      "skipTooltip": "इस बार छोड़ें और बिना लेन-देन दर्ज किए अगली देय तारीख आगे बढ़ाएँ",
+      "editTooltip": "आवर्ती भुगतान संपादित करें",
+      "deleteTooltip": "आवर्ती भुगतान हटाएँ",
+      "addModal": {
+        "addTitle": "आवर्ती भुगतान जोड़ें",
+        "editTitle": "आवर्ती भुगतान संपादित करें",
+        "labelLabel": "लेबल *",
+        "labelPlaceholder": "जैसे: Netflix, किराया",
+        "labelRequired": "लेबल आवश्यक है।",
+        "amountLabel": "राशि *",
+        "amountPlaceholder": "−499",
+        "amountInvalid": "कृपया एक वैध राशि दर्ज करें।",
+        "frequencyLabel": "आवृत्ति *",
+        "accountLabel": "खाता *",
+        "accountRequired": "कृपया एक खाता चुनें।",
+        "nextDueLabel": "अगली देय तारीख *",
+        "categoryLabel": "श्रेणी",
+        "saveButton": "आवर्ती भुगतान जोड़ें"
+      },
+      "deleteModal": {
+        "title": "आवर्ती भुगतान हटाएँ",
+        "confirm": "<bold>{{label}}</bold> हटाएँ? यह शेड्यूल बंद हो जाएगा लेकिन पहले से बने लेन-देन बने रहेंगे।"
+      },
+      "toast": {
+        "markedPaid": "«{{label}}» को भुगतान किया हुआ चिह्नित किया गया।",
+        "skipped": "«{{label}}» को छोड़ दिया गया — अगली तारीख आगे बढ़ाई गई।",
+        "added": "आवर्ती भुगतान जोड़ा गया।",
+        "updated": "आवर्ती भुगतान अपडेट किया गया।",
+        "deleted": "आवर्ती भुगतान हटाया गया।"
+      }
+    },
+    "language": {
+      "title": "भाषा",
+      "hint": "इंटरफ़ेस की भाषा चुनें।",
+      "changed": "भाषा {{label}} में बदल दी गई।"
+    },
+    "toast": {
+      "csvExported": "CSV सफलतापूर्वक निर्यात किया गया।",
+      "jsonExported": "JSON सफलतापूर्वक निर्यात किया गया।",
+      "dbMoved": "डेटाबेस कॉपी हो गया। नई जगह का उपयोग करने के लिए ऐप पुनः प्रारंभ करें।",
+      "currencySet": "प्रदर्शन मुद्रा {{code}} पर सेट की गई।"
+    }
+  },
+  "categoryDefaults": [
+    "खाना-पीना",
+    "यातायात",
+    "आवास",
+    "स्वास्थ्य",
+    "मनोरंजन",
+    "खरीदारी",
+    "शिक्षा",
+    "बिजली-पानी",
+    "बचत",
+    "आय",
+    "अन्य"
+  ],
+  "frequencies": {
+    "daily": "दैनिक",
+    "weekly": "साप्ताहिक",
+    "monthly": "मासिक",
+    "yearly": "वार्षिक"
+  }
+}

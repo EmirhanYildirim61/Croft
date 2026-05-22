@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import { open } from '@tauri-apps/plugin-dialog';
 import { api } from '../lib/tauri';
 import { formatCents } from '../lib/format';
@@ -13,13 +14,14 @@ interface Props {
 
 type ImportFormat = 'generic' | 'ynab' | 'qif';
 
-const FORMAT_OPTIONS: { value: ImportFormat; label: string; desc: string; exts: string[] }[] = [
-  { value: 'generic', label: 'Generic CSV', desc: 'Auto-detect columns (date, payee, amount)', exts: ['csv'] },
-  { value: 'ynab',    label: 'YNAB CSV',    desc: 'YNAB export format (Inflow/Outflow columns)', exts: ['csv'] },
-  { value: 'qif',     label: 'GnuCash QIF', desc: 'Quicken Interchange Format (.qif)', exts: ['qif'] },
+const FORMAT_OPTIONS: { value: ImportFormat; exts: string[] }[] = [
+  { value: 'generic', exts: ['csv'] },
+  { value: 'ynab',    exts: ['csv'] },
+  { value: 'qif',     exts: ['qif'] },
 ];
 
 export default function ImportScreen({ accounts, categories, onRefresh }: Props) {
+  const { t } = useTranslation();
   const { showToast } = useToast();
   const [format, setFormat] = useState<ImportFormat>('generic');
   const [preview, setPreview] = useState<CsvPreviewRow[]>([]);
@@ -32,7 +34,7 @@ export default function ImportScreen({ accounts, categories, onRefresh }: Props)
     const fmt = FORMAT_OPTIONS.find((f) => f.value === format)!;
     try {
       const path = await open({
-        filters: [{ name: fmt.label, extensions: fmt.exts }],
+        filters: [{ name: t(`import.formats.${format}.label`), extensions: fmt.exts }],
         multiple: false,
       });
       if (!path) return;
@@ -92,15 +94,13 @@ export default function ImportScreen({ accounts, categories, onRefresh }: Props)
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-slate-800 mb-6">CSV Import</h1>
+      <h1 className="text-2xl font-bold text-slate-800 mb-6">{t('import.title')}</h1>
 
       {step === 'idle' && (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="text-6xl mb-4">📂</div>
-          <h2 className="text-xl font-semibold text-slate-700 mb-2">Import transactions</h2>
-          <p className="text-slate-500 mb-6 max-w-sm">
-            Choose a format, then pick a file. Categories and accounts can be assigned before confirming.
-          </p>
+          <h2 className="text-xl font-semibold text-slate-700 mb-2">{t('import.idle.title')}</h2>
+          <p className="text-slate-500 mb-6 max-w-sm">{t('import.idle.body')}</p>
 
           {/* Format selector */}
           <div className="flex gap-3 mb-6">
@@ -114,9 +114,9 @@ export default function ImportScreen({ accounts, categories, onRefresh }: Props)
                     : 'border-slate-300 text-slate-600 hover:bg-slate-50'
                 }`}
               >
-                <div className="font-semibold">{opt.label}</div>
+                <div className="font-semibold">{t(`import.formats.${opt.value}.label`)}</div>
                 <div className={`text-xs mt-0.5 ${format === opt.value ? 'text-indigo-200' : 'text-slate-400'}`}>
-                  {opt.desc}
+                  {t(`import.formats.${opt.value}.desc`)}
                 </div>
               </button>
             ))}
@@ -124,14 +124,14 @@ export default function ImportScreen({ accounts, categories, onRefresh }: Props)
 
           {accounts.length === 0 ? (
             <p className="text-amber-600 text-sm bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
-              You need at least one account before importing.
+              {t('import.idle.noAccount')}
             </p>
           ) : (
             <button
               onClick={handlePickFile}
               className="bg-indigo-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
             >
-              Choose File…
+              {t('import.idle.chooseFile')}
             </button>
           )}
         </div>
@@ -141,18 +141,22 @@ export default function ImportScreen({ accounts, categories, onRefresh }: Props)
         <div>
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm text-slate-600">
-              Found <strong>{preview.length}</strong> rows. Assign accounts and categories, then confirm.
+              <Trans
+                i18nKey="import.preview.info"
+                values={{ count: preview.length }}
+                components={{ bold: <strong /> }}
+              />
             </p>
             <div className="flex gap-3">
               <button onClick={reset} className="text-sm text-slate-500 hover:text-slate-800">
-                ← Start over
+                {t('import.preview.startOver')}
               </button>
               <button
                 onClick={handleConfirm}
                 disabled={importing || accounts.length === 0}
                 className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-50"
               >
-                {importing ? 'Importing…' : `Import ${preview.length} transactions`}
+                {importing ? t('import.preview.importing') : t('import.preview.importCount', { count: preview.length })}
               </button>
             </div>
           </div>
@@ -161,11 +165,11 @@ export default function ImportScreen({ accounts, categories, onRefresh }: Props)
             <table className="w-full text-sm">
               <thead className="sticky top-0 bg-slate-50 border-b border-slate-200">
                 <tr>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Date</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Payee / Description</th>
-                  <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Amount</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Account</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Category</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">{t('import.table.date')}</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">{t('import.table.payee')}</th>
+                  <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500 uppercase">{t('import.table.amount')}</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">{t('import.table.account')}</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">{t('import.table.category')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -204,7 +208,7 @@ export default function ImportScreen({ accounts, categories, onRefresh }: Props)
                         }
                         className="border border-slate-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500"
                       >
-                        <option value="">None</option>
+                        <option value="">{t('common.none')}</option>
                         {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                       </select>
                     </td>
@@ -219,12 +223,10 @@ export default function ImportScreen({ accounts, categories, onRefresh }: Props)
       {step === 'done' && (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="text-6xl mb-4">✅</div>
-          <h2 className="text-xl font-semibold text-slate-700 mb-2">Import complete!</h2>
-          <p className="text-slate-500 mb-6">
-            {importedCount} transaction{importedCount !== 1 ? 's' : ''} added successfully.
-          </p>
+          <h2 className="text-xl font-semibold text-slate-700 mb-2">{t('import.done.title')}</h2>
+          <p className="text-slate-500 mb-6">{t('import.done.body', { count: importedCount })}</p>
           <button onClick={reset} className="bg-indigo-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-indigo-700">
-            Import Another File
+            {t('import.done.importAnother')}
           </button>
         </div>
       )}

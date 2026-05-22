@@ -1,0 +1,376 @@
+{
+  "common": {
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "save": "حفظ التغييرات",
+    "saving": "جارٍ الحفظ…",
+    "loading": "جارٍ التحميل…",
+    "remove": "إزالة",
+    "skip": "تخطّي",
+    "markPaid": "تحديد كمدفوع",
+    "add": "+ إضافة",
+    "none": "لا شيء"
+  },
+  "nav": {
+    "accounts": "الحسابات",
+    "transactions": "المعاملات",
+    "budget": "الميزانية",
+    "reports": "التقارير",
+    "netWorth": "صافي الثروة",
+    "subscriptions": "الاشتراكات",
+    "import": "استيراد CSV",
+    "settings": "الإعدادات"
+  },
+  "topBar": {
+    "netWorth": "صافي الثروة",
+    "prevMonth": "الشهر السابق",
+    "nextMonth": "الشهر التالي"
+  },
+  "backup": {
+    "daysSince": "مضت {{count}} أيام منذ آخر نسخة احتياطية.",
+    "neverBacked": "لم تقم بإنشاء أي نسخة احتياطية لبياناتك بعد.",
+    "reminder": " احرص على نسخ ملف SQLite احتياطيًا أو تصدير بياناتك بانتظام.",
+    "exportNow": "تصدير الآن"
+  },
+  "accounts": {
+    "title": "الحسابات",
+    "addButton": "+ إضافة حساب",
+    "emptyTitle": "لا توجد حسابات بعد",
+    "emptyBody": "أضف حسابك الأول لبدء تتبع أموالك.",
+    "deleteTitle": "حذف الحساب",
+    "deleteConfirm": "هل تريد حذف <bold>{{name}}</bold> وجميع معاملاته؟ لا يمكن التراجع عن هذا الإجراء.",
+    "initialBalance": "الرصيد الافتتاحي: {{amount}} · {{currency}}",
+    "deleteTooltip": "حذف الحساب",
+    "addModal": {
+      "title": "إضافة حساب",
+      "nameLabel": "الاسم *",
+      "namePlaceholder": "مثال: الحساب الجاري",
+      "nameRequired": "اسم الحساب مطلوب.",
+      "typeLabel": "النوع *",
+      "currencyLabel": "العملة",
+      "balanceLabel": "الرصيد الافتتاحي",
+      "balanceInvalid": "أدخل رقمًا صحيحًا.",
+      "saveButton": "إضافة حساب"
+    },
+    "types": {
+      "bank": "بنك",
+      "credit": "بطاقة ائتمان",
+      "cash": "نقد",
+      "savings": "توفير"
+    },
+    "toast": {
+      "created": "تم إنشاء الحساب.",
+      "deleted": "تم حذف الحساب."
+    }
+  },
+  "transactions": {
+    "title": "المعاملات",
+    "addButton": "+ إضافة معاملة",
+    "emptyText": "لم يتم العثور على أي معاملات.",
+    "addFirst": "أضف معاملتك الأولى",
+    "filterAllAccounts": "جميع الحسابات",
+    "filterAllCategories": "جميع الفئات",
+    "nSelected": "{{count}} محدد",
+    "clearSelection": "إلغاء التحديد",
+    "dateRange": "نطاق التاريخ",
+    "searchPlaceholder": "البحث في المستفيد أو الملاحظة…",
+    "noPayee": "لا يوجد مستفيد",
+    "thisTransaction": "هذه المعاملة",
+    "table": {
+      "date": "التاريخ",
+      "payee": "المستفيد",
+      "category": "الفئة",
+      "account": "الحساب",
+      "amount": "المبلغ"
+    },
+    "form": {
+      "addTitle": "إضافة معاملة",
+      "editTitle": "تعديل المعاملة",
+      "typeLabel": "النوع *",
+      "expense": "مصروف",
+      "income": "دخل",
+      "dateLabel": "التاريخ *",
+      "amountLabel": "المبلغ *",
+      "payeeLabel": "المستفيد *",
+      "accountLabel": "الحساب *",
+      "categoryLabel": "الفئة",
+      "noteLabel": "ملاحظة",
+      "notePlaceholder": "ملاحظة اختيارية",
+      "selectAccount": "اختر…",
+      "payeePlaceholder": "مثال: السوبرماركت",
+      "dateRequired": "التاريخ مطلوب.",
+      "dateInvalid": "أدخل تاريخًا صحيحًا (YYYY-MM-DD).",
+      "amountRequired": "المبلغ مطلوب.",
+      "amountInvalid": "أدخل رقمًا صحيحًا.",
+      "payeeRequired": "المستفيد مطلوب.",
+      "accountRequired": "اختر حسابًا.",
+      "saveButton": "إضافة معاملة"
+    },
+    "deleteTitle": "حذف المعاملة",
+    "deleteConfirm": "هل تريد حذف <bold>{{payee}}</bold> ({{amount}})؟ لا يمكن التراجع عن هذا الإجراء.",
+    "toast": {
+      "added": "تمت إضافة المعاملة.",
+      "updated": "تم تحديث المعاملة.",
+      "deleted": "تم حذف المعاملة."
+    }
+  },
+  "budget": {
+    "title": "الميزانية",
+    "hint": "انقر على مبلغ الميزانية لتعديله",
+    "editTooltip": "انقر لتعديل الميزانية",
+    "budgetInvalid": "أدخل مبلغ ميزانية صحيحًا.",
+    "summary": {
+      "budgeted": "إجمالي المخطط",
+      "spent": "إجمالي المنفق",
+      "remaining": "المتبقي"
+    },
+    "table": {
+      "category": "الفئة",
+      "budgeted": "المخطط",
+      "spent": "المنفق",
+      "remaining": "المتبقي",
+      "progress": "التقدم"
+    }
+  },
+  "reports": {
+    "title": "التقارير",
+    "monthly": "شهري",
+    "dateRange": "نطاق التاريخ",
+    "compareMonths": "مقارنة الأشهر",
+    "noSpending": "لا توجد بيانات إنفاق لهذا الشهر.",
+    "noData": "لا توجد بيانات بعد.",
+    "noSpendingRange": "لا توجد بيانات إنفاق لهذه الفترة.",
+    "noSpendingMonths": "لا توجد بيانات إنفاق للأشهر المحددة.",
+    "spendingByCategory": "الإنفاق حسب الفئة — {{month}}",
+    "netWorthLast12": "صافي الثروة — آخر 12 شهرًا",
+    "netWorthTrend": "اتجاه صافي الثروة — آخر 6 أشهر",
+    "netWorthLabel": "صافي الثروة",
+    "spendingByCategoryRange": "الإنفاق حسب الفئة — {{from}} → {{to}}",
+    "from": "من",
+    "to": "إلى",
+    "apply": "تطبيق",
+    "monthA": "الشهر أ",
+    "monthB": "الشهر ب",
+    "vs": "مقابل",
+    "compare": "مقارنة",
+    "table": {
+      "category": "الفئة",
+      "spent": "المنفق",
+      "total": "الإجمالي"
+    }
+  },
+  "netWorth": {
+    "title": "صافي الثروة",
+    "totalNetWorth": "إجمالي صافي الثروة",
+    "inCurrency": "بـ {{currency}}",
+    "vsLastMonth": "مقارنةً بالشهر الماضي",
+    "accountBreakdown": "تفصيل الحسابات",
+    "noAccounts": "لا توجد حسابات بعد.",
+    "netWorthLast12": "صافي الثروة — آخر 12 شهرًا",
+    "noData": "لا توجد بيانات بعد.",
+    "table": {
+      "account": "الحساب",
+      "type": "النوع",
+      "currentBalance": "الرصيد الحالي",
+      "vsLastMonth": "مقارنةً بالشهر الماضي",
+      "total": "الإجمالي"
+    }
+  },
+  "subscriptions": {
+    "title": "الاشتراكات",
+    "annualCost": "التكلفة السنوية",
+    "monthlyAverage": "المتوسط الشهري",
+    "estimatedFrom": "مقدَّر من المدفوعات المتكررة",
+    "activeCount_one": "اشتراك نشط واحد",
+    "activeCount_other": "{{count}} اشتراكات نشطة",
+    "allSubscriptions": "جميع الاشتراكات",
+    "empty": "لا توجد مصروفات متكررة بعد. أضفها من الإعدادات ← المدفوعات المتكررة.",
+    "table": {
+      "name": "الاسم",
+      "frequency": "التكرار",
+      "amount": "المبلغ",
+      "annualCost": "التكلفة السنوية",
+      "nextDue": "الاستحقاق التالي",
+      "total": "الإجمالي"
+    },
+    "perMonth": "/شهر",
+    "perYear": "/سنة",
+    "due": "مستحق",
+    "soon": "قريبًا",
+    "toast": {
+      "markedPaid": "تم تحديد «{{label}}» كمدفوع.",
+      "skipped": "تم تخطّي «{{label}}»."
+    }
+  },
+  "import": {
+    "title": "استيراد CSV",
+    "idle": {
+      "title": "استيراد المعاملات",
+      "body": "اختر التنسيق ثم حدد الملف. يمكن تعيين الفئات والحسابات قبل التأكيد.",
+      "chooseFile": "اختر ملفًا…",
+      "noAccount": "تحتاج إلى حساب واحد على الأقل قبل الاستيراد."
+    },
+    "preview": {
+      "info": "تم العثور على <bold>{{count}}</bold> صف. عيّن الحسابات والفئات ثم أكّد.",
+      "startOver": "→ البدء من جديد",
+      "importing": "جارٍ الاستيراد…",
+      "importCount": "استيراد {{count}} معاملة"
+    },
+    "done": {
+      "title": "اكتمل الاستيراد!",
+      "body_one": "تمت إضافة {{count}} معاملة بنجاح.",
+      "body_other": "تمت إضافة {{count}} معاملات بنجاح.",
+      "importAnother": "استيراد ملف آخر"
+    },
+    "table": {
+      "date": "التاريخ",
+      "payee": "المستفيد / الوصف",
+      "amount": "المبلغ",
+      "account": "الحساب",
+      "category": "الفئة"
+    },
+    "formats": {
+      "generic": { "label": "CSV عام", "desc": "اكتشاف تلقائي للأعمدة (التاريخ، المستفيد، المبلغ)" },
+      "ynab":    { "label": "CSV YNAB",  "desc": "تنسيق تصدير YNAB (أعمدة الوارد/الصادر)" },
+      "qif":     { "label": "GnuCash QIF", "desc": "تنسيق Quicken Interchange ‏(.qif)" }
+    }
+  },
+  "onboarding": {
+    "tagline": "متتبّع أموالك الشخصية",
+    "chooseLanguage": "اختر لغتك للبدء",
+    "getStarted": "ابدأ الآن"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "export": {
+      "title": "تصدير البيانات",
+      "csv": "تصدير المعاملات بتنسيق CSV",
+      "json": "تصدير جميع البيانات بتنسيق JSON"
+    },
+    "database": {
+      "title": "ملف قاعدة البيانات",
+      "hint": "تُخزَّن بياناتك في ملف SQLite واحد. انقله إلى أي مكان تشاء — مجلد Dropbox أو iCloud Drive وغيرها.",
+      "copy": "نسخ",
+      "copyTitle": "نسخ المسار",
+      "move": "نقل…",
+      "moving": "جارٍ النسخ…"
+    },
+    "displayCurrency": {
+      "title": "عملة العرض الافتراضية",
+      "hint": "تُستخدم عند عدم توفر عملة خاصة بالحساب (مثلاً في ملخص صافي الثروة)."
+    },
+    "exchangeRates": {
+      "title": "أسعار الصرف",
+      "hint": "حدد أسعارًا يدوية لتحويل الحسابات بعملات متعددة إلى عملتك الأساسية في قسم صافي الثروة.",
+      "empty": "لم يتم تحديد أي أسعار صرف بعد.",
+      "addModal": {
+        "title": "إضافة سعر صرف",
+        "hint": "أدخل عدد وحدات <bold>{{to}}</bold> المقابلة لوحدة واحدة من العملة المصدر. مثال: 1 EUR = 1.08 USD ← من: EUR، إلى: USD، السعر: 1.08",
+        "fromLabel": "العملة المصدر *",
+        "toLabel": "العملة الهدف *",
+        "rateLabel": "السعر *",
+        "ratePlaceholder": "1.08",
+        "saveButton": "حفظ السعر",
+        "invalidFrom": "اختر عملة مصدر.",
+        "invalidRate": "أدخل سعرًا موجبًا."
+      },
+      "toast": {
+        "saved": "تم حفظ سعر الصرف.",
+        "removed": "تم حذف سعر الصرف."
+      }
+    },
+    "categories": {
+      "title": "الفئات",
+      "subOf": "فئة فرعية من {{parent}}",
+      "addModal": {
+        "addTitle": "إضافة فئة",
+        "editTitle": "تعديل الفئة",
+        "nameLabel": "الاسم *",
+        "namePlaceholder": "مثال: الرياضة واللياقة",
+        "nameRequired": "اسم الفئة مطلوب.",
+        "colorLabel": "اللون",
+        "parentLabel": "الفئة الرئيسية (اختياري)",
+        "parentNone": "لا شيء (مستوى أعلى)",
+        "saveButton": "إضافة فئة"
+      },
+      "deleteModal": {
+        "title": "حذف الفئة",
+        "confirm": "هل تريد حذف <bold>{{name}}</bold>؟ ستحتفظ المعاملات الموجودة بفئة «غير مصنّف»."
+      },
+      "toast": {
+        "added": "تمت إضافة الفئة.",
+        "updated": "تم تحديث الفئة.",
+        "deleted": "تم حذف الفئة."
+      }
+    },
+    "recurring": {
+      "title": "المدفوعات المتكررة",
+      "empty": "لا توجد مدفوعات متكررة بعد.",
+      "due": "مستحق",
+      "dueSoon": "مستحق قريبًا",
+      "frequencyNext": "{{frequency}} · التالي: {{date}} · {{account}}",
+      "markPaidTooltip": "تسجيل معاملة لهذا البند وتحديث تاريخ الاستحقاق",
+      "skipTooltip": "تخطّي هذه الدورة وتحديث تاريخ الاستحقاق دون تسجيل معاملة",
+      "editTooltip": "تعديل المدفوعة المتكررة",
+      "deleteTooltip": "حذف المدفوعة المتكررة",
+      "addModal": {
+        "addTitle": "إضافة مدفوعة متكررة",
+        "editTitle": "تعديل المدفوعة المتكررة",
+        "labelLabel": "التسمية *",
+        "labelPlaceholder": "مثال: Netflix، الإيجار",
+        "labelRequired": "التسمية مطلوبة.",
+        "amountLabel": "المبلغ *",
+        "amountPlaceholder": "‏−15.99",
+        "amountInvalid": "أدخل مبلغًا صحيحًا.",
+        "frequencyLabel": "التكرار *",
+        "accountLabel": "الحساب *",
+        "accountRequired": "اختر حسابًا.",
+        "nextDueLabel": "تاريخ الاستحقاق التالي *",
+        "categoryLabel": "الفئة",
+        "saveButton": "إضافة مدفوعة متكررة"
+      },
+      "deleteModal": {
+        "title": "حذف المدفوعة المتكررة",
+        "confirm": "هل تريد حذف <bold>{{label}}</bold>؟ سيتوقف الجدول الزمني لكن ستبقى المعاملات التي تم إنشاؤها مسبقًا."
+      },
+      "toast": {
+        "markedPaid": "تم تحديد «{{label}}» كمدفوع.",
+        "skipped": "تم تخطّي «{{label}}» — تم تحديث التاريخ التالي.",
+        "added": "تمت إضافة المدفوعة المتكررة.",
+        "updated": "تم تحديث المدفوعة المتكررة.",
+        "deleted": "تم حذف المدفوعة المتكررة."
+      }
+    },
+    "language": {
+      "title": "اللغة",
+      "hint": "اختر لغة الواجهة.",
+      "changed": "تم تغيير اللغة إلى {{label}}."
+    },
+    "toast": {
+      "csvExported": "تم تصدير CSV بنجاح.",
+      "jsonExported": "تم تصدير JSON بنجاح.",
+      "dbMoved": "تم نسخ قاعدة البيانات. أعد تشغيل التطبيق لاستخدام الموقع الجديد.",
+      "currencySet": "تم تعيين عملة العرض إلى {{code}}."
+    }
+  },
+  "categoryDefaults": [
+    "الطعام والمطاعم",
+    "المواصلات",
+    "السكن",
+    "الصحة",
+    "الترفيه",
+    "التسوق",
+    "التعليم",
+    "الفواتير والخدمات",
+    "المدخرات",
+    "الدخل",
+    "أخرى"
+  ],
+  "frequencies": {
+    "daily": "يومي",
+    "weekly": "أسبوعي",
+    "monthly": "شهري",
+    "yearly": "سنوي"
+  }
+}
