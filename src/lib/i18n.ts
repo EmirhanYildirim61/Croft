@@ -11,6 +11,7 @@ import ru from '../locales/ru.json';
 import ar from '../locales/ar.json';
 import hi from '../locales/hi.json';
 import ja from '../locales/ja.json';
+import it from '../locales/it.json';
 import zhCn from '../locales/zh-cn.json';
 import zhTw from '../locales/zh-tw.json';
 import { LANGUAGES } from './languages';
@@ -32,6 +33,7 @@ i18n
       ar: { translation: ar },
       hi: { translation: hi },
       ja: { translation: ja },
+      it: { translation: it },
       'zh-CN': { translation: zhCn },
       'zh-TW': { translation: zhTw },
     },

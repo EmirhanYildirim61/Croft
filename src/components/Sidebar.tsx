@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-export type Screen = 'accounts' | 'transactions' | 'budget' | 'reports' | 'net-worth' | 'subscriptions' | 'import' | 'settings';
+export type Screen = 'accounts' | 'transactions' | 'budget' | 'reports' | 'net-worth' | 'subscriptions' | 'recurring' | 'import' | 'settings';
 
 interface NavItem {
   id: Screen;
@@ -76,6 +76,17 @@ function IconImport() {
   );
 }
 
+function IconRecurring() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+      <path d="M17 2l4 4-4 4" />
+      <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+      <path d="M7 22l-4-4 4-4" />
+      <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+    </svg>
+  );
+}
+
 function IconSettings() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
@@ -92,6 +103,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'reports',       labelKey: 'nav.reports',       icon: <IconReports /> },
   { id: 'net-worth',     labelKey: 'nav.netWorth',      icon: <IconNetWorth /> },
   { id: 'subscriptions', labelKey: 'nav.subscriptions', icon: <IconSubscriptions /> },
+  { id: 'recurring',    labelKey: 'nav.recurring',     icon: <IconRecurring /> },
   { id: 'import',        labelKey: 'nav.import',        icon: <IconImport /> },
   { id: 'settings',      labelKey: 'nav.settings',      icon: <IconSettings /> },
 ];

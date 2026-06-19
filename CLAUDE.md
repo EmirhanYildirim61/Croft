@@ -104,3 +104,43 @@ Version 4, configured via the `@tailwindcss/vite` plugin in `vite.config.ts`. No
 - **Migrations are append-only** — add `000N_description.sql`, never modify existing files.
 - **Integer money everywhere in Rust/SQL** — floats for money are a bug.
 - **All invoke() calls go through `src/lib/tauri.ts`** — keeps the IPC surface in one place.
+
+## Subagent delegation policy
+
+This project's coding work is split between two systems: Claude Code
+(this session) and a set of specialized OpenCode agents, reached
+through the `opencode-bridge` subagent.
+
+**Delegate to `opencode-bridge` — mandatory — for anything that adds or
+changes meaningful functionality:**
+- A new or modified Tauri command, migration, or `financial.rs` logic
+- A new or modified screen, component, or piece of UI state
+- A new or modified IPC bridge entry (`tauri.ts` / `types.ts` /
+  `capabilities/default.json`)
+- A new or changed i18n key, or any locale/language work
+- A version bump, release, or CI/CD change
+
+Do not implement these directly in this session, even if the change
+looks small in isolation (e.g. "just one new command") — route it
+through `opencode-bridge`, which will pick the matching OpenCode agent
+(`rust-backend`, `react-frontend`, `ipc-bridge`, `i18n-locales`,
+`release-manager`).
+
+**Handle directly in this session — no delegation required — for
+small, contained fixes:**
+- Single-line bug fixes, typo corrections, comment/doc tweaks
+- Anything that doesn't add a new command, screen, locale key, or
+  change behavior — just corrects something already there
+
+When unsure which bucket a task falls into, treat it as meaningful and
+delegate. Under-delegating risks bypassing the project's "never
+violate" rules (integer money, zero network, append-only migrations,
+single IPC entry point, i18n completeness) that the OpenCode agents and
+`code-reviewer` are specifically built to enforce.
+
+**Mandatory review:** any work that went through `opencode-bridge` must
+be followed by a `code-reviewer` pass (via `opencode-bridge`, agent
+`code-reviewer`) before it's considered done or shown to the user as
+finished — this is not optional and not left to judgment per task.
+Work handled directly in this session under the "small fix" bucket
+above does not require a `code-reviewer` pass.

@@ -1,6 +1,6 @@
 [package]
 name = "croft"
-version = "0.1.0"
+version = "0.1.2"
 description = "A local-first personal finance tracker"
 authors = ["you"]
 edition = "2021"

@@ -19,6 +19,7 @@
     "reports": "レポート",
     "netWorth": "純資産",
     "subscriptions": "サブスクリプション",
+    "recurring": "定期支払い",
     "import": "CSVインポート",
     "settings": "設定"
   },

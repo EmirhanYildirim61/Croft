@@ -19,6 +19,7 @@ export const LANGUAGES: Language[] = [
   { code: 'ar', label: 'العربية', flag: '/flags/ar.svg', dir: 'rtl' },
   { code: 'hi', label: 'हिन्दी', flag: '/flags/hi.svg' },
   { code: 'ja', label: '日本語', flag: '/flags/ja.svg' },
+  { code: 'it', label: 'Italiano', flag: '/flags/it.svg' },
   { code: 'zh-CN', label: '中文(简体)', flag: '/flags/zh-cn.svg' },
   { code: 'zh-TW', label: '中文(繁體)', flag: '/flags/zh-tw.svg' },
 ];

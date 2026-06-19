@@ -19,6 +19,7 @@
     "reports": "Отчёты",
     "netWorth": "Чистый капитал",
     "subscriptions": "Подписки",
+    "recurring": "Регулярные платежи",
     "import": "Импорт CSV",
     "settings": "Настройки"
   },

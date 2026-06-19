@@ -8,6 +8,7 @@ import BudgetScreen from './screens/BudgetScreen';
 import ReportsScreen from './screens/ReportsScreen';
 import NetWorthScreen from './screens/NetWorthScreen';
 import SubscriptionsScreen from './screens/SubscriptionsScreen';
+import RecurringScreen from './screens/RecurringScreen';
 import ImportScreen from './screens/ImportScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import OnboardingScreen, { ONBOARDING_KEY } from './screens/OnboardingScreen';
@@ -200,6 +201,9 @@ export default function App() {
             {screen === 'subscriptions' && (
               <SubscriptionsScreen accounts={accounts} onRefresh={loadShared} />
             )}
+            {screen === 'recurring' && (
+              <RecurringScreen accounts={accounts} onRefresh={loadShared} />
+            )}
             {screen === 'import' && (
               <ImportScreen
                 accounts={accounts}
@@ -209,7 +213,6 @@ export default function App() {
             )}
             {screen === 'settings' && (
               <SettingsScreen
-                accounts={accounts}
                 onRefresh={loadShared}
               />
             )}

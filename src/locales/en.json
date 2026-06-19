@@ -19,6 +19,7 @@
     "reports": "Reports",
     "netWorth": "Net Worth",
     "subscriptions": "Subscriptions",
+    "recurring": "Recurring Items",
     "import": "CSV Import",
     "settings": "Settings"
   },
