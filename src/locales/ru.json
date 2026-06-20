@@ -10,7 +10,8 @@
     "skip": "Пропустить",
     "markPaid": "Отметить оплаченным",
     "add": "+ Добавить",
-    "none": "Нет"
+    "none": "Нет",
+    "uncategorized": "Без категории"
   },
   "nav": {
     "accounts": "Счета",
@@ -159,7 +160,13 @@
       "category": "Категория",
       "spent": "Потрачено",
       "total": "Итого"
-    }
+    },
+    "categoryTrend": "Тренд по категории",
+    "selectCategory": "Выбрать категорию",
+    "categoryTrendTitle": "Месячный тренд — {{category}}",
+    "income": "Доходы",
+    "spending": "Расходы",
+    "noCategorySelected": "Выберите категорию выше, чтобы увидеть её месячный тренд."
   },
   "netWorth": {
     "title": "Чистый капитал",
@@ -232,9 +239,18 @@
       "category": "Категория"
     },
     "formats": {
-      "generic": { "label": "Обычный CSV", "desc": "Автоопределение столбцов (дата, получатель, сумма)" },
-      "ynab":    { "label": "YNAB CSV",    "desc": "Формат экспорта YNAB (столбцы «Приход»/«Расход»)" },
-      "qif":     { "label": "GnuCash QIF", "desc": "Формат Quicken Interchange (.qif)" }
+      "generic": {
+        "label": "Обычный CSV",
+        "desc": "Автоопределение столбцов (дата, получатель, сумма)"
+      },
+      "ynab": {
+        "label": "YNAB CSV",
+        "desc": "Формат экспорта YNAB (столбцы «Приход»/«Расход»)"
+      },
+      "qif": {
+        "label": "GnuCash QIF",
+        "desc": "Формат Quicken Interchange (.qif)"
+      }
     }
   },
   "onboarding": {

@@ -10,7 +10,8 @@
     "skip": "略過",
     "markPaid": "標記為已付款",
     "add": "+ 新增",
-    "none": "無"
+    "none": "無",
+    "uncategorized": "未分類"
   },
   "nav": {
     "accounts": "帳戶",
@@ -159,7 +160,13 @@
       "category": "類別",
       "spent": "已花費",
       "total": "合計"
-    }
+    },
+    "categoryTrend": "類別趨勢",
+    "selectCategory": "選擇類別",
+    "categoryTrendTitle": "月度趨勢 — {{category}}",
+    "income": "收入",
+    "spending": "支出",
+    "noCategorySelected": "請在上方選擇類別以查看其月度趨勢。"
   },
   "netWorth": {
     "title": "淨資產",
@@ -232,9 +239,18 @@
       "category": "類別"
     },
     "formats": {
-      "generic": { "label": "通用 CSV", "desc": "自動辨識欄位（日期、收款方、金額）" },
-      "ynab":    { "label": "YNAB CSV",  "desc": "YNAB 匯出格式（收入／支出欄）" },
-      "qif":     { "label": "GnuCash QIF", "desc": "Quicken 交換格式（.qif）" }
+      "generic": {
+        "label": "通用 CSV",
+        "desc": "自動辨識欄位（日期、收款方、金額）"
+      },
+      "ynab": {
+        "label": "YNAB CSV",
+        "desc": "YNAB 匯出格式（收入／支出欄）"
+      },
+      "qif": {
+        "label": "GnuCash QIF",
+        "desc": "Quicken 交換格式（.qif）"
+      }
     }
   },
   "onboarding": {

@@ -10,7 +10,8 @@
     "skip": "تخطّي",
     "markPaid": "تحديد كمدفوع",
     "add": "+ إضافة",
-    "none": "لا شيء"
+    "none": "لا شيء",
+    "uncategorized": "غير مصنف"
   },
   "nav": {
     "accounts": "الحسابات",
@@ -159,7 +160,13 @@
       "category": "الفئة",
       "spent": "المنفق",
       "total": "الإجمالي"
-    }
+    },
+    "categoryTrend": "اتجاه الفئة",
+    "selectCategory": "اختر فئة",
+    "categoryTrendTitle": "الاتجاه الشهري — {{category}}",
+    "income": "الدخل",
+    "spending": "الإنفاق",
+    "noCategorySelected": "اختر فئة من الأعلى لعرض اتجاهها الشهري."
   },
   "netWorth": {
     "title": "صافي الثروة",
@@ -232,9 +239,18 @@
       "category": "الفئة"
     },
     "formats": {
-      "generic": { "label": "CSV عام", "desc": "اكتشاف تلقائي للأعمدة (التاريخ، المستفيد، المبلغ)" },
-      "ynab":    { "label": "CSV YNAB",  "desc": "تنسيق تصدير YNAB (أعمدة الوارد/الصادر)" },
-      "qif":     { "label": "GnuCash QIF", "desc": "تنسيق Quicken Interchange ‏(.qif)" }
+      "generic": {
+        "label": "CSV عام",
+        "desc": "اكتشاف تلقائي للأعمدة (التاريخ، المستفيد، المبلغ)"
+      },
+      "ynab": {
+        "label": "CSV YNAB",
+        "desc": "تنسيق تصدير YNAB (أعمدة الوارد/الصادر)"
+      },
+      "qif": {
+        "label": "GnuCash QIF",
+        "desc": "تنسيق Quicken Interchange ‏(.qif)"
+      }
     }
   },
   "onboarding": {

@@ -105,6 +105,12 @@ export interface SpendingRow {
   spent_cents: number;
 }
 
+export interface CategoryMonthlyPoint {
+  month: string;
+  income_cents: number;
+  spent_cents: number;
+}
+
 export interface ExchangeRate {
   id: number;
   from_currency: string;

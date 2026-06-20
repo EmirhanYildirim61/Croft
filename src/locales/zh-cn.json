@@ -10,7 +10,8 @@
     "skip": "跳过",
     "markPaid": "标记为已付",
     "add": "+ 添加",
-    "none": "无"
+    "none": "无",
+    "uncategorized": "未分类"
   },
   "nav": {
     "accounts": "账户",
@@ -159,7 +160,13 @@
       "category": "类别",
       "spent": "已花费",
       "total": "合计"
-    }
+    },
+    "categoryTrend": "类别趋势",
+    "selectCategory": "选择类别",
+    "categoryTrendTitle": "月度趋势 — {{category}}",
+    "income": "收入",
+    "spending": "支出",
+    "noCategorySelected": "请在上方选择类别以查看其月度趋势。"
   },
   "netWorth": {
     "title": "净资产",
@@ -232,9 +239,18 @@
       "category": "类别"
     },
     "formats": {
-      "generic": { "label": "通用 CSV", "desc": "自动识别列（日期、收款方、金额）" },
-      "ynab":    { "label": "YNAB CSV",  "desc": "YNAB 导出格式（收入/支出列）" },
-      "qif":     { "label": "GnuCash QIF", "desc": "Quicken 交换格式（.qif）" }
+      "generic": {
+        "label": "通用 CSV",
+        "desc": "自动识别列（日期、收款方、金额）"
+      },
+      "ynab": {
+        "label": "YNAB CSV",
+        "desc": "YNAB 导出格式（收入/支出列）"
+      },
+      "qif": {
+        "label": "GnuCash QIF",
+        "desc": "Quicken 交换格式（.qif）"
+      }
     }
   },
   "onboarding": {

@@ -1,5 +1,5 @@
 use crate::db::AppState;
-use crate::models::{AccountNetWorthRow, MonthComparisonRow, NetWorthPoint, SpendingRow};
+use crate::models::{AccountNetWorthRow, CategoryMonthlyPoint, MonthComparisonRow, NetWorthPoint, SpendingRow};
 use chrono::{Datelike, Local, Months};
 use tauri::State;
 
@@ -52,8 +52,19 @@ pub async fn get_spending_by_date_range(
                                   AND t.date >= ? AND t.date <= ?
          GROUP BY c.id, c.name, c.color
          HAVING COALESCE(ABS(SUM(CASE WHEN t.amount_cents < 0 THEN t.amount_cents ELSE 0 END)), 0) > 0
+
+         UNION ALL
+
+         SELECT -1, '__uncategorized__', '#94a3b8',
+                COALESCE(ABS(SUM(CASE WHEN amount_cents < 0 THEN amount_cents ELSE 0 END)), 0)
+         FROM transactions
+         WHERE category_id IS NULL AND date >= ? AND date <= ?
+         HAVING COALESCE(ABS(SUM(CASE WHEN amount_cents < 0 THEN amount_cents ELSE 0 END)), 0) > 0
+
          ORDER BY 4 DESC",
     )
+    .bind(&date_from)
+    .bind(&date_to)
     .bind(&date_from)
     .bind(&date_to)
     .fetch_all(&state.db)
@@ -112,8 +123,22 @@ pub async fn get_month_comparison(
                                   AND strftime('%Y-%m', t.date) IN (?, ?)
          GROUP BY c.id, c.name, c.color
          HAVING month_a_cents > 0 OR month_b_cents > 0
-         ORDER BY c.name",
+
+         UNION ALL
+
+         SELECT -1, '__uncategorized__', '#94a3b8',
+                COALESCE(ABS(SUM(CASE WHEN strftime('%Y-%m', date) = ? AND amount_cents < 0 THEN amount_cents ELSE 0 END)), 0) AS month_a_cents,
+                COALESCE(ABS(SUM(CASE WHEN strftime('%Y-%m', date) = ? AND amount_cents < 0 THEN amount_cents ELSE 0 END)), 0) AS month_b_cents
+         FROM transactions
+         WHERE category_id IS NULL AND strftime('%Y-%m', date) IN (?, ?)
+         HAVING month_a_cents > 0 OR month_b_cents > 0
+
+         ORDER BY 2",
     )
+    .bind(&month_a)
+    .bind(&month_b)
+    .bind(&month_a)
+    .bind(&month_b)
     .bind(&month_a)
     .bind(&month_b)
     .bind(&month_a)
@@ -132,4 +157,49 @@ pub async fn get_month_comparison(
             .collect()
     })
     .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub async fn get_category_monthly_trend(
+    state: State<'_, AppState>,
+    category_id: Option<i64>,
+) -> Result<Vec<CategoryMonthlyPoint>, String> {
+    let today = Local::now().date_naive();
+    let mut results = Vec::with_capacity(12);
+
+    for i in (0..12u32).rev() {
+        let month_date = today
+            .checked_sub_months(Months::new(i))
+            .ok_or_else(|| "date underflow".to_string())?;
+        let month_str = format!("{}-{:02}", month_date.year(), month_date.month());
+
+        let (income_cents, spent_cents): (i64, i64) = if let Some(cid) = category_id {
+            sqlx::query_as::<_, (i64, i64)>(
+                "SELECT COALESCE(SUM(CASE WHEN amount_cents > 0 THEN amount_cents ELSE 0 END), 0),
+                        COALESCE(ABS(SUM(CASE WHEN amount_cents < 0 THEN amount_cents ELSE 0 END)), 0)
+                 FROM transactions
+                 WHERE strftime('%Y-%m', date) = ? AND category_id = ?",
+            )
+            .bind(&month_str)
+            .bind(cid)
+            .fetch_one(&state.db)
+            .await
+            .map_err(|e| e.to_string())?
+        } else {
+            sqlx::query_as::<_, (i64, i64)>(
+                "SELECT COALESCE(SUM(CASE WHEN amount_cents > 0 THEN amount_cents ELSE 0 END), 0),
+                        COALESCE(ABS(SUM(CASE WHEN amount_cents < 0 THEN amount_cents ELSE 0 END)), 0)
+                 FROM transactions
+                 WHERE strftime('%Y-%m', date) = ? AND category_id IS NULL",
+            )
+            .bind(&month_str)
+            .fetch_one(&state.db)
+            .await
+            .map_err(|e| e.to_string())?
+        };
+
+        results.push(CategoryMonthlyPoint { month: month_str, income_cents, spent_cents });
+    }
+
+    Ok(results)
 }

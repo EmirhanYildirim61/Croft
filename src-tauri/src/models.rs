@@ -138,6 +138,13 @@ pub struct SpendingRow {
     pub spent_cents: i64,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CategoryMonthlyPoint {
+    pub month: String,
+    pub income_cents: i64,
+    pub spent_cents: i64,
+}
+
 #[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
 pub struct ExchangeRate {
     pub id: i64,

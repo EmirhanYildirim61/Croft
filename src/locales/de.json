@@ -10,7 +10,8 @@
     "skip": "Überspringen",
     "markPaid": "Als bezahlt markieren",
     "add": "+ Hinzufügen",
-    "none": "Keine"
+    "none": "Keine",
+    "uncategorized": "Unkategorisiert"
   },
   "nav": {
     "accounts": "Konten",
@@ -159,7 +160,13 @@
       "category": "Kategorie",
       "spent": "Ausgegeben",
       "total": "Gesamt"
-    }
+    },
+    "categoryTrend": "Kategorietrend",
+    "selectCategory": "Kategorie auswählen",
+    "categoryTrendTitle": "Monatlicher Trend — {{category}}",
+    "income": "Einnahmen",
+    "spending": "Ausgaben",
+    "noCategorySelected": "Wählen Sie oben eine Kategorie, um ihren monatlichen Trend zu sehen."
   },
   "netWorth": {
     "title": "Nettovermögen",
@@ -232,9 +239,18 @@
       "category": "Kategorie"
     },
     "formats": {
-      "generic": { "label": "Generisches CSV", "desc": "Spalten automatisch erkennen (Datum, Empfänger, Betrag)" },
-      "ynab":    { "label": "YNAB CSV",        "desc": "YNAB-Exportformat (Eingang-/Ausgang-Spalten)" },
-      "qif":     { "label": "GnuCash QIF",     "desc": "Quicken Interchange Format (.qif)" }
+      "generic": {
+        "label": "Generisches CSV",
+        "desc": "Spalten automatisch erkennen (Datum, Empfänger, Betrag)"
+      },
+      "ynab": {
+        "label": "YNAB CSV",
+        "desc": "YNAB-Exportformat (Eingang-/Ausgang-Spalten)"
+      },
+      "qif": {
+        "label": "GnuCash QIF",
+        "desc": "Quicken Interchange Format (.qif)"
+      }
     }
   },
   "onboarding": {

@@ -10,7 +10,8 @@
     "skip": "Passer",
     "markPaid": "Marquer comme payé",
     "add": "+ Ajouter",
-    "none": "Aucun"
+    "none": "Aucun",
+    "uncategorized": "Sans catégorie"
   },
   "nav": {
     "accounts": "Comptes",
@@ -159,7 +160,13 @@
       "category": "Catégorie",
       "spent": "Dépensé",
       "total": "Total"
-    }
+    },
+    "categoryTrend": "Tendance par catégorie",
+    "selectCategory": "Sélectionner une catégorie",
+    "categoryTrendTitle": "Tendance mensuelle — {{category}}",
+    "income": "Revenus",
+    "spending": "Dépenses",
+    "noCategorySelected": "Sélectionnez une catégorie ci-dessus pour voir sa tendance mensuelle."
   },
   "netWorth": {
     "title": "Patrimoine net",
@@ -232,9 +239,18 @@
       "category": "Catégorie"
     },
     "formats": {
-      "generic": { "label": "CSV générique", "desc": "Détection automatique des colonnes (date, bénéficiaire, montant)" },
-      "ynab":    { "label": "CSV YNAB",      "desc": "Format d'export YNAB (colonnes Entrée/Sortie)" },
-      "qif":     { "label": "GnuCash QIF",   "desc": "Format d'échange Quicken (.qif)" }
+      "generic": {
+        "label": "CSV générique",
+        "desc": "Détection automatique des colonnes (date, bénéficiaire, montant)"
+      },
+      "ynab": {
+        "label": "CSV YNAB",
+        "desc": "Format d'export YNAB (colonnes Entrée/Sortie)"
+      },
+      "qif": {
+        "label": "GnuCash QIF",
+        "desc": "Format d'échange Quicken (.qif)"
+      }
     }
   },
   "onboarding": {

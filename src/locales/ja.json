@@ -10,7 +10,8 @@
     "skip": "スキップ",
     "markPaid": "支払い済みにする",
     "add": "+ 追加",
-    "none": "なし"
+    "none": "なし",
+    "uncategorized": "未分類"
   },
   "nav": {
     "accounts": "口座",
@@ -159,7 +160,13 @@
       "category": "カテゴリ",
       "spent": "支出",
       "total": "合計"
-    }
+    },
+    "categoryTrend": "カテゴリートレンド",
+    "selectCategory": "カテゴリーを選択",
+    "categoryTrendTitle": "月次トレンド — {{category}}",
+    "income": "収入",
+    "spending": "支出",
+    "noCategorySelected": "上でカテゴリーを選択して月次トレンドを確認してください。"
   },
   "netWorth": {
     "title": "純資産",
@@ -232,9 +239,18 @@
       "category": "カテゴリ"
     },
     "formats": {
-      "generic": { "label": "汎用CSV", "desc": "列を自動検出（日付・支払先・金額）" },
-      "ynab":    { "label": "YNAB CSV", "desc": "YNABエクスポート形式（収入/支出列）" },
-      "qif":     { "label": "GnuCash QIF", "desc": "Quickenインターチェンジ形式（.qif）" }
+      "generic": {
+        "label": "汎用CSV",
+        "desc": "列を自動検出（日付・支払先・金額）"
+      },
+      "ynab": {
+        "label": "YNAB CSV",
+        "desc": "YNABエクスポート形式（収入/支出列）"
+      },
+      "qif": {
+        "label": "GnuCash QIF",
+        "desc": "Quickenインターチェンジ形式（.qif）"
+      }
     }
   },
   "onboarding": {

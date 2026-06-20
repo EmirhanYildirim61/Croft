@@ -4,6 +4,7 @@ import type {
   AccountWithBalance,
   BudgetSummaryRow,
   Category,
+  CategoryMonthlyPoint,
   CsvPreviewRow,
   ExchangeRate,
   ImportRow,
@@ -140,6 +141,9 @@ export const api = {
 
   getMonthComparison: (monthA: string, monthB: string) =>
     invoke<MonthComparisonRow[]>('get_month_comparison', { monthA, monthB }),
+
+  getCategoryMonthlyTrend: (categoryId: number | null) =>
+    invoke<CategoryMonthlyPoint[]>('get_category_monthly_trend', { categoryId }),
 
   // Export
   exportToCsv: (path: string) => invoke<void>('export_to_csv', { path }),

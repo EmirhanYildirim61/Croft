@@ -27,7 +27,8 @@ pub async fn get_budget_summary(
     state: State<'_, AppState>,
     month: String,
 ) -> Result<Vec<BudgetSummaryRow>, String> {
-    // spent_cents = absolute sum of all negative (expense) transactions for that category/month
+    // spent_cents = absolute sum of all negative (expense) transactions for that category/month.
+    // The UNION adds a synthetic row for transactions with no category assigned.
     sqlx::query_as::<_, BudgetSummaryRow>(
         "SELECT c.id AS category_id,
                 c.name AS category_name,
@@ -40,8 +41,22 @@ pub async fn get_budget_summary(
          LEFT JOIN transactions t
                 ON t.category_id = c.id AND strftime('%Y-%m', t.date) = ?
          GROUP BY c.id, c.name, c.color
-         ORDER BY c.name",
+
+         UNION ALL
+
+         SELECT -1 AS category_id,
+                '__uncategorized__' AS category_name,
+                '#94a3b8' AS color,
+                0 AS budgeted_cents,
+                COALESCE(ABS(SUM(CASE WHEN amount_cents < 0 THEN amount_cents ELSE 0 END)), 0)
+                    AS spent_cents
+         FROM transactions
+         WHERE category_id IS NULL AND strftime('%Y-%m', date) = ?
+         HAVING COALESCE(ABS(SUM(CASE WHEN amount_cents < 0 THEN amount_cents ELSE 0 END)), 0) > 0
+
+         ORDER BY category_name",
     )
+    .bind(&month)
     .bind(&month)
     .bind(&month)
     .fetch_all(&state.db)

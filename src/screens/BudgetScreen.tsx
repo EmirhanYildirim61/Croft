@@ -120,6 +120,8 @@ export default function BudgetScreen({ month }: Props) {
                 ? Math.min((row.spent_cents / row.budgeted_cents) * 100, 100)
                 : 0;
 
+              const isUncategorized = row.category_id === -1;
+              const displayName = isUncategorized ? t('common.uncategorized') : row.category_name;
               return (
                 <tr key={row.category_id} className="hover:bg-slate-50">
                   <td className="px-4 py-3">
@@ -128,11 +130,11 @@ export default function BudgetScreen({ month }: Props) {
                         className="w-3 h-3 rounded-full shrink-0"
                         style={{ backgroundColor: row.color }}
                       />
-                      <span className="font-medium text-slate-700">{row.category_name}</span>
+                      <span className="font-medium text-slate-700">{displayName}</span>
                     </div>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    {isEditing ? (
+                    {!isUncategorized && isEditing ? (
                       <input
                         autoFocus
                         type="number"
@@ -146,6 +148,8 @@ export default function BudgetScreen({ month }: Props) {
                         }}
                         className="w-28 text-right border border-indigo-400 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       />
+                    ) : isUncategorized ? (
+                      <span className="text-slate-400">—</span>
                     ) : (
                       <button
                         onClick={() => startEdit(row.category_id, row.budgeted_cents)}

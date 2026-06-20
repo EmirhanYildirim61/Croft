@@ -10,7 +10,8 @@
     "skip": "Skip",
     "markPaid": "Mark paid",
     "add": "+ Add",
-    "none": "None"
+    "none": "None",
+    "uncategorized": "Uncategorized"
   },
   "nav": {
     "accounts": "Accounts",
@@ -159,7 +160,13 @@
       "category": "Category",
       "spent": "Spent",
       "total": "Total"
-    }
+    },
+    "categoryTrend": "Category Trend",
+    "selectCategory": "Select a category",
+    "categoryTrendTitle": "Monthly Trend — {{category}}",
+    "income": "Income",
+    "spending": "Spending",
+    "noCategorySelected": "Select a category above to view its monthly trend."
   },
   "netWorth": {
     "title": "Net Worth",
@@ -232,9 +239,18 @@
       "category": "Category"
     },
     "formats": {
-      "generic": { "label": "Generic CSV", "desc": "Auto-detect columns (date, payee, amount)" },
-      "ynab":    { "label": "YNAB CSV",    "desc": "YNAB export format (Inflow/Outflow columns)" },
-      "qif":     { "label": "GnuCash QIF", "desc": "Quicken Interchange Format (.qif)" }
+      "generic": {
+        "label": "Generic CSV",
+        "desc": "Auto-detect columns (date, payee, amount)"
+      },
+      "ynab": {
+        "label": "YNAB CSV",
+        "desc": "YNAB export format (Inflow/Outflow columns)"
+      },
+      "qif": {
+        "label": "GnuCash QIF",
+        "desc": "Quicken Interchange Format (.qif)"
+      }
     }
   },
   "onboarding": {

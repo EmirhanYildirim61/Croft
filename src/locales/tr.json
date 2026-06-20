@@ -10,7 +10,8 @@
     "skip": "Atla",
     "markPaid": "Ödendi olarak işaretle",
     "add": "+ Ekle",
-    "none": "Yok"
+    "none": "Yok",
+    "uncategorized": "Kategorisiz"
   },
   "nav": {
     "accounts": "Hesaplar",
@@ -159,7 +160,13 @@
       "category": "Kategori",
       "spent": "Harcanan",
       "total": "Toplam"
-    }
+    },
+    "categoryTrend": "Kategori Trendi",
+    "selectCategory": "Kategori seçin",
+    "categoryTrendTitle": "Aylık Trend — {{category}}",
+    "income": "Gelir",
+    "spending": "Harcama",
+    "noCategorySelected": "Aylık trendi görüntülemek için yukarıdan bir kategori seçin."
   },
   "netWorth": {
     "title": "Net Değer",
@@ -232,9 +239,18 @@
       "category": "Kategori"
     },
     "formats": {
-      "generic": { "label": "Genel CSV", "desc": "Sütunları otomatik algıla (tarih, alacaklı, tutar)" },
-      "ynab":    { "label": "YNAB CSV",  "desc": "YNAB dışa aktarma formatı (Giriş/Çıkış sütunları)" },
-      "qif":     { "label": "GnuCash QIF", "desc": "Quicken Interchange Format (.qif)" }
+      "generic": {
+        "label": "Genel CSV",
+        "desc": "Sütunları otomatik algıla (tarih, alacaklı, tutar)"
+      },
+      "ynab": {
+        "label": "YNAB CSV",
+        "desc": "YNAB dışa aktarma formatı (Giriş/Çıkış sütunları)"
+      },
+      "qif": {
+        "label": "GnuCash QIF",
+        "desc": "Quicken Interchange Format (.qif)"
+      }
     }
   },
   "onboarding": {

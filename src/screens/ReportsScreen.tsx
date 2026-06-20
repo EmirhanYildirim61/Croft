@@ -8,13 +8,13 @@ import {
 import { api } from '../lib/tauri';
 import { formatCents, formatMonth } from '../lib/format';
 import { useToast } from '../context/toast';
-import type { BudgetSummaryRow, MonthComparisonRow, NetWorthPoint, SpendingRow } from '../types';
+import type { BudgetSummaryRow, Category, CategoryMonthlyPoint, MonthComparisonRow, NetWorthPoint, SpendingRow } from '../types';
 
 interface Props {
   month: string;
 }
 
-type ReportView = 'monthly' | 'custom-range' | 'compare';
+type ReportView = 'monthly' | 'custom-range' | 'compare' | 'category-trend';
 
 export default function ReportsScreen({ month }: Props) {
   const { t } = useTranslation();
@@ -42,7 +42,23 @@ export default function ReportsScreen({ month }: Props) {
   const [compareB, setCompareB] = useState(month);
   const [comparison, setComparison] = useState<MonthComparisonRow[]>([]);
 
+  // Category trend view
+  const [categories, setCategories] = useState<Category[]>([]);
+  // undefined = no selection; null = uncategorized; number = specific category id
+  const [trendCategoryId, setTrendCategoryId] = useState<number | null | undefined>(undefined);
+  const [categoryTrend, setCategoryTrend] = useState<CategoryMonthlyPoint[]>([]);
+  const [trendLoading, setTrendLoading] = useState(false);
+
   const [loading, setLoading] = useState(true);
+
+  const resolvedCategoryName = (id: number | null | undefined): string => {
+    if (id === undefined) return '';
+    if (id === null || id === -1) return t('common.uncategorized');
+    return categories.find((c) => c.id === id)?.name ?? '';
+  };
+
+  const displayName = (name: string, id: number) =>
+    id === -1 ? t('common.uncategorized') : name;
 
   const loadMonthly = useCallback(async () => {
     setLoading(true);
@@ -86,11 +102,36 @@ export default function ReportsScreen({ month }: Props) {
     }
   }, [compareA, compareB, showToast]);
 
+  const loadCategoryTrend = useCallback(async (catId: number | null) => {
+    setTrendLoading(true);
+    try {
+      const points = await api.getCategoryMonthlyTrend(catId === -1 ? null : catId);
+      setCategoryTrend(points);
+    } catch (e) {
+      showToast(String(e), 'error');
+    } finally {
+      setTrendLoading(false);
+    }
+  }, [showToast]);
+
   useEffect(() => {
     if (view === 'monthly') loadMonthly();
     else if (view === 'custom-range') loadRange();
-    else loadComparison();
+    else if (view === 'compare') loadComparison();
+    else {
+      setLoading(false);
+    }
   }, [view, loadMonthly, loadRange, loadComparison]);
+
+  useEffect(() => {
+    api.listCategories().then(setCategories).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (trendCategoryId !== undefined) {
+      loadCategoryTrend(trendCategoryId);
+    }
+  }, [trendCategoryId, loadCategoryTrend]);
 
   const monthlySpending = netWorthHistory.slice(-6).map((point) => ({
     month: point.month,
@@ -121,10 +162,11 @@ export default function ReportsScreen({ month }: Props) {
           <button className={tabClass('monthly')} onClick={() => setView('monthly')}>{t('reports.monthly')}</button>
           <button className={tabClass('custom-range')} onClick={() => setView('custom-range')}>{t('reports.dateRange')}</button>
           <button className={tabClass('compare')} onClick={() => setView('compare')}>{t('reports.compareMonths')}</button>
+          <button className={tabClass('category-trend')} onClick={() => setView('category-trend')}>{t('reports.categoryTrend')}</button>
         </div>
       </div>
 
-      {loading && <div className="text-slate-400 text-sm">{t('common.loading')}</div>}
+      {loading && view !== 'category-trend' && <div className="text-slate-400 text-sm">{t('common.loading')}</div>}
 
       {/* ── Monthly view ── */}
       {!loading && view === 'monthly' && (
@@ -139,7 +181,7 @@ export default function ReportsScreen({ month }: Props) {
               <ResponsiveContainer width="100%" height={280}>
                 <PieChart>
                   <Pie
-                    data={spendingByCategory}
+                    data={spendingByCategory.map((r) => ({ ...r, category_name: displayName(r.category_name, r.category_id) }))}
                     dataKey="spent_cents"
                     nameKey="category_name"
                     cx="50%"
@@ -259,7 +301,7 @@ export default function ReportsScreen({ month }: Props) {
                 <ResponsiveContainer width="100%" height={280}>
                   <PieChart>
                     <Pie
-                      data={rangeSpending}
+                      data={rangeSpending.map((r) => ({ ...r, category_name: displayName(r.category_name, r.category_id) }))}
                       dataKey="spent_cents"
                       nameKey="category_name"
                       cx="50%"
@@ -289,7 +331,7 @@ export default function ReportsScreen({ month }: Props) {
                         <tr key={row.category_id} className="hover:bg-slate-50">
                           <td className="px-4 py-2.5 flex items-center gap-2">
                             <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: row.color }} />
-                            {row.category_name}
+                            {displayName(row.category_name, row.category_id)}
                           </td>
                           <td className="px-4 py-2.5 text-right font-semibold text-red-600 tabular-nums">
                             {formatCents(row.spent_cents)}
@@ -374,7 +416,7 @@ export default function ReportsScreen({ month }: Props) {
                         <tr key={row.category_id} className="hover:bg-slate-50">
                           <td className="px-6 py-3 flex items-center gap-2">
                             <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: row.color }} />
-                            {row.category_name}
+                            {displayName(row.category_name, row.category_id)}
                           </td>
                           <td className="px-6 py-3 text-right tabular-nums text-slate-700">
                             {row.month_a_cents > 0 ? formatCents(row.month_a_cents) : '—'}
@@ -410,6 +452,80 @@ export default function ReportsScreen({ month }: Props) {
               </>
             )}
           </section>
+        </div>
+      )}
+
+      {/* ── Category trend view ── */}
+      {view === 'category-trend' && (
+        <div className="space-y-6">
+          <div className="bg-white rounded-xl border border-slate-200 p-5">
+            <div className="flex flex-wrap items-end gap-4">
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1">{t('reports.selectCategory')}</label>
+                <select
+                  value={trendCategoryId === undefined ? '' : trendCategoryId === null ? '-1' : String(trendCategoryId)}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    if (v === '') setTrendCategoryId(undefined);
+                    else if (v === '-1') setTrendCategoryId(null);
+                    else setTrendCategoryId(Number(v));
+                  }}
+                  className="border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 min-w-[200px]"
+                >
+                  <option value="">{t('reports.selectCategory')}</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={String(cat.id)}>{cat.name}</option>
+                  ))}
+                  <option value="-1">{t('common.uncategorized')}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {trendCategoryId === undefined ? (
+            <p className="text-slate-400 text-sm py-8 text-center">{t('reports.noCategorySelected')}</p>
+          ) : trendLoading ? (
+            <div className="text-slate-400 text-sm">{t('common.loading')}</div>
+          ) : (
+            <section className="bg-white rounded-xl border border-slate-200 p-6">
+              <h2 className="text-base font-semibold text-slate-700 mb-4">
+                {t('reports.categoryTrendTitle', { category: resolvedCategoryName(trendCategoryId) })}
+              </h2>
+              {categoryTrend.every((p) => p.income_cents === 0 && p.spent_cents === 0) ? (
+                <p className="text-slate-400 text-sm py-8 text-center">{t('reports.noData')}</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={categoryTrend} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                    <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
+                    <YAxis
+                      tickFormatter={(v) => formatCents(v).replace(/\.00$/, '')}
+                      tick={{ fontSize: 10, fill: '#94a3b8' }}
+                      tickLine={false}
+                      axisLine={false}
+                      width={72}
+                    />
+                    <Tooltip
+                      formatter={(v, name) => [
+                        formatCents(Number(v)),
+                        name === 'income_cents' ? t('reports.income') : t('reports.spending'),
+                      ]}
+                      contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: 12 }}
+                    />
+                    <Legend
+                      formatter={(value) => (
+                        <span className="text-sm text-slate-600">
+                          {value === 'income_cents' ? t('reports.income') : t('reports.spending')}
+                        </span>
+                      )}
+                    />
+                    <Bar dataKey="income_cents" name="income_cents" fill="#10b981" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="spent_cents" name="spent_cents" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </section>
+          )}
         </div>
       )}
     </div>

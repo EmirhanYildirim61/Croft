@@ -74,6 +74,7 @@ pub fn run() {
             commands::reports::get_spending_by_date_range,
             commands::reports::get_net_worth_detail,
             commands::reports::get_month_comparison,
+            commands::reports::get_category_monthly_trend,
             commands::settings::get_db_path,
             commands::settings::move_db,
             commands::currency::set_exchange_rate,
